@@ -30,11 +30,29 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  flutter_modular: ^6.3.2
+  mobx: ^2.2.1
+  flutter_mobx: ^2.0.6+5
+  dio: ^5.0.0
+  cookie_jar: ^4.0.8
+  dio_cookie_manager: ^3.1.1
+
+  path_provider: ^2.1.1
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  flutter_smart_dialog: ^4.9.4
+  cached_network_image: ^3.3.0
+
+  media_kit: ^1.1.10                             # Primary package.
+  media_kit_video: ^1.2.4                        # For video rendering.
+  media_kit_libs_video: ^1.0.4                   # Native video dependencies.
 
 dev_dependencies:
   flutter_test:
@@ -46,6 +64,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  build_runner: ^2.4.6
+  mobx_codegen: ^2.3.0
+  hive_generator: ^2.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
