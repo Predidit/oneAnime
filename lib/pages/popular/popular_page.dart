@@ -19,7 +19,7 @@ class _PopularPageState extends State<PopularPage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(title: const Text('BiliNeo Popular Test Page')),
+      appBar: AppBar(title: const Text('oneAnime Popular Test Page')),
       body: Center(
         child: TextButton(
           onPressed: () {
