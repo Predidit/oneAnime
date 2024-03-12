@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:oneanime/bean/anime/anime_card.dart';
 
 class PopularPage extends StatefulWidget {
   const PopularPage({super.key});
@@ -9,25 +12,42 @@ class PopularPage extends StatefulWidget {
 }
 
 class _PopularPageState extends State<PopularPage> {
+  final PopularController popularController = Modular.get<PopularController>();
+
+  @override
+  void initState() {
+    super.initState();
+    debugPrint('Popular 开始初始化');
+    if (popularController.list.length == 0) {
+      debugPrint('动画列表缓存为空, 尝试重新加载');
+      popularController.getAnimeList();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(title: const Text('oneAnime Popular Test Page')),
-      body: Center(
-        child: TextButton(
-          onPressed: () {
-            
-          },
-          child: const Text('测试'),
-        ),
+      body: Container(
+        child: animeList
       ),
     );
+  }
+
+  Widget get animeList {
+    return Observer(builder: (context) {
+      return popularController.list.length != 0
+          ? ListView.builder(
+              itemCount: popularController.list.length,
+              itemBuilder: (context, index) {
+                return AnimeInfoCard(
+                    info: popularController.list[index], index: index);
+              },
+            )
+          : const Center(
+              child: Text('找不到任何東西 (´;ω;`)'),
+            );
+      ;
+    });
   }
 }

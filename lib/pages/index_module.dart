@@ -3,6 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/init_page.dart';
 import 'package:oneanime/pages/router.dart';
 import 'package:oneanime/pages/index_page.dart';
+import 'package:oneanime/pages/popular/popular_controller.dart';
 
 
 class IndexModule extends Module {
@@ -11,7 +12,7 @@ class IndexModule extends Module {
 
   @override
   void binds(i) {
-    
+    i.addSingleton(PopularController.new);
   }
 
   @override
