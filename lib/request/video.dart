@@ -4,6 +4,7 @@ import 'package:oneanime/request/request.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:dio/dio.dart';
+import 'package:oneanime/utils/utils.dart';
 
 class VideoRequest {
   /// Get page title to be displayed in app bar
@@ -63,16 +64,24 @@ class VideoRequest {
 
   static Future getVideoLink(String url) async {
     String link = '';
+    var result = {};
+    List<String> cookies = [];
     String token = await getVideoToken(url);
     final res = await Request().post(Api.videoAPI,
         data: 'd=' + token,
         options: Options(contentType: 'application/x-www-form-urlencoded'));
     try {
       link = 'https:' + res.data['s'][0]['src'].toString();
+      cookies = res?.headers['set-cookie'];
+      debugPrint('用于视频验权的cookie为 ${Utils.videoCookieC(cookies)}');
     } catch(e) {
       debugPrint(e.toString());
-      return link;
+      result['link'] = link;
+      result['cookie'] = '';
+      return result;
     }
-    return link;
+    result['link'] = link;
+    result['cookie'] = Utils.videoCookieC(cookies);
+    return result;
   }
 }

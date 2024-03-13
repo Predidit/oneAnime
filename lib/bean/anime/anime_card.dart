@@ -36,6 +36,7 @@ class AnimeInfoCard extends StatelessWidget {
           debugPrint('链接解析成功 $fullink');
           String title = await popularController.getPageTitle(info.link ?? '');
           debugPrint('链接标题为 $title');
+          Modular.to.navigate('/tab/video/');
         },
         child: Column(
           children: <Widget>[

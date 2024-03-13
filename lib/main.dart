@@ -3,9 +3,11 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/app_module.dart';
 import 'package:oneanime/app_widget.dart';
 import 'package:oneanime/request/request.dart';
+import 'package:media_kit/media_kit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MediaKit.ensureInitialized();
   Request();
   await Request.setCookie();
   runApp(ModularApp(

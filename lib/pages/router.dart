@@ -2,6 +2,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/popular/popular_module.dart';
 import 'package:oneanime/pages/timeline/timeline_module.dart';
 import 'package:oneanime/pages/my/my_module.dart';
+import 'package:oneanime/pages/video/video_module.dart';
 
 
  
@@ -47,5 +48,9 @@ final MenuRoute menu = MenuRoute([
   MenuRouteItem(
     path: "/my",
     module: MyModule(),
+  ),
+  MenuRouteItem(
+    path: "/video",
+    module: VideoModule(),
   ),
 ]);

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:oneanime/pages/video/video_controller.dart';
+import 'package:oneanime/pages/player/player_controller.dart';
+import 'package:oneanime/pages/player/player_item.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -9,6 +12,16 @@ class VideoPage extends StatefulWidget {
 }
 
 class _VideoPageState extends State<VideoPage> {
+  final VideoController videoController = Modular.get<VideoController>();
+  final PlayerController playerController = Modular.get<PlayerController>();
+
+  @override
+  void initState() {
+    super.initState();
+    playerController.videoUrl = videoController.videoUrl;
+    playerController.videoCookie = videoController.videoCookie;
+    playerController.init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +34,7 @@ class _VideoPageState extends State<VideoPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('oneAnime Video Test Page')),
       body: Center(
-        child: TextButton(
-          onPressed: () {
-            
-          },
-          child: const Text('测试'),
-        ),
+        child: PlayerItem(),
       ),
     );
   }

@@ -2,6 +2,8 @@ import 'package:mobx/mobx.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:oneanime/request/list.dart';
 import 'package:oneanime/request/video.dart';
+import 'package:oneanime/pages/video/video_controller.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 part 'popular_controller.g.dart';
 
@@ -24,6 +26,10 @@ abstract class _PopularController with Store {
   }
 
   Future getVideoLink(String url) async {
-    return await VideoRequest.getVideoLink(url);
+    var result = await VideoRequest.getVideoLink(url);
+    final VideoController videoController = Modular.get<VideoController>();
+    videoController.videoUrl = result['link']; 
+    videoController.videoCookie = result['cookie'];
+    return result['link'];
   }
 }
