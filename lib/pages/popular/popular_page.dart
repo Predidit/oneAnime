@@ -32,8 +32,15 @@ class _PopularPageState extends State<PopularPage>
     }
     scrollController.addListener(() {
       popularController.scrollOffset = scrollController.offset;
+      if (scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent - 200 &&
+          popularController.isLoadingMore == false) {
+        debugPrint('Popular 正在加载更多');
+        popularController.isLoadingMore = true;
+        popularController.onLoad();
+      }
     });
-    debugPrint('Popular监听器已添加');
+    debugPrint('Popular 监听器已添加');
   }
 
   @override
@@ -86,11 +93,11 @@ class _PopularPageState extends State<PopularPage>
     return Observer(builder: (context) {
       return ListView.separated(
         controller: scrollController,
-        separatorBuilder: (context, index) => SizedBox(height: 8.0),
-        itemCount: popularController.list.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 8.0),
+        itemCount: popularController.cacheList.length,
         itemBuilder: (context, index) {
-          return popularController.list.length != 0
-              ? AnimeInfoCard(info: popularController.list[index], index: index)
+          return popularController.cacheList.length != 0
+              ? AnimeInfoCard(info: popularController.cacheList[index], index: index)
               : const Center(
                   child: Text('找不到任何東西 (´;ω;`)'),
                 );
