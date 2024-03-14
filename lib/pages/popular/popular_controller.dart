@@ -13,6 +13,8 @@ abstract class _PopularController with Store {
   @observable
   List<AnimeInfo> list = [];
 
+  double scrollOffset = 0.0;
+
   Future getAnimeList() async {
     list = await ListRequest.getAnimeList();
   }
