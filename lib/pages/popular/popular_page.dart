@@ -27,7 +27,7 @@ class _PopularPageState extends State<PopularPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('oneAnime Popular Test Page')),
+      appBar: AppBar(title: const Text('最近更新')),
       body: Container(
         child: animeList
       ),
@@ -37,7 +37,8 @@ class _PopularPageState extends State<PopularPage> {
   Widget get animeList {
     return Observer(builder: (context) {
       return popularController.list.length != 0
-          ? ListView.builder(
+          ? ListView.separated(
+            separatorBuilder: (context, index) => SizedBox(height: 8.0),
               itemCount: popularController.list.length,
               itemBuilder: (context, index) {
                 return AnimeInfoCard(
@@ -47,7 +48,7 @@ class _PopularPageState extends State<PopularPage> {
           : const Center(
               child: Text('找不到任何東西 (´;ω;`)'),
             );
-      ;
+      
     });
   }
 }

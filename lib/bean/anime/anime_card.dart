@@ -20,53 +20,84 @@ class AnimeInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PopularController popularController = Modular.get<PopularController>();
+    final PopularController popularController =
+        Modular.get<PopularController>();
     final VideoController videoController = Modular.get<VideoController>();
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final first = isDark ? Colors.grey[900] : Colors.white;
-    final second = isDark ? Colors.grey[800] : Colors.grey[200];
 
-    return Material(
-      color: index % 2 == 0 ? first : second,
+    return Card(
+      margin: EdgeInsets.zero,
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
       child: InkWell(
         onTap: () async {
           SmartDialog.showLoading(msg: '获取中');
           debugPrint('AnimeButton被按下 对应链接为 ${info.link}');
           await popularController.getVideoLink(info.link ?? '');
           debugPrint('链接解析成功 ${videoController.videoUrl}');
-          await popularController.getPageTitle(info.link ?? ''); 
+          await popularController.getPageTitle(info.link ?? '');
           debugPrint('链接标题为 ${videoController.title}');
           SmartDialog.dismiss();
-          final navigationBarState = Provider.of<NavigationBarState>(context, listen: false); 
+          final navigationBarState =
+              Provider.of<NavigationBarState>(context, listen: false);
           navigationBarState.hideNavigate();
           Modular.to.navigate('/tab/video/');
         },
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Text(
-                info.name ?? "賽博朋克",
-                maxLines: 1,
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    info.name ?? "賽博朋克",
+                    maxLines: 1,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        color: Colors.black),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    decoration: BoxDecoration(
+                      color: Colors.purple,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Text(
+                      info.episode ?? "77",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            Table(children: [
-              TableRow(children: [
-                Text(info.episode ?? "77", textAlign: TextAlign.center),
-                // Cyperpunk?
-                Text(
-                  (info.year ?? "2077") + (info.season ?? ""),
-                  textAlign: TextAlign.center,
-                ),
-                Text(
-                  info.subtitle ?? "",
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                ),
-              ]),
-            ]),
-          ],
+              SizedBox(height: 8.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    (info.year ?? "2077") + (info.season ?? ""),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  info.subtitle != '' ? Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple,
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: Text(
+                      info.subtitle ?? "",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ) : Container(),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
