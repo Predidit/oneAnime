@@ -26,7 +26,7 @@ class VideoRequest {
     }
   }
 
-  /// Get full link instead of /cat for going toi next page
+  /// Get full link instead of /cat for going to next page
   static Future getFullLink(String url) async {
     final res = await Request().get(url);
     String resString = res.data;
@@ -41,17 +41,20 @@ class VideoRequest {
     }
   }
 
-  static Future getVideoToken(String url) async {
-    String token = '';
+  static Future getVideoToken(String url) async { 
+    List<String> token = [];
     final res = await Request().get(url);
     String resString = res.data;
     try {
       var document = parse(resString);
       final videoTags = document.getElementsByTagName('video');
       if (videoTags.length > 0) {
-        final element = videoTags[0];
-        token = element.attributes['data-apireq'] ?? '';
-        debugPrint('从网页上成功捕获视频凭据 $token');
+        for (int i = 0; i < videoTags.length ; i++) {
+          final element = videoTags[i];
+          token.add(element.attributes['data-apireq'] ?? '');
+        }
+        debugPrint('从网页上成功捕获视频凭据 ${token[0]}');
+        debugPrint('合集总长度 ${videoTags.length}');
       } else {
         debugPrint('未从网页上找到视频源');
       }
@@ -62,11 +65,11 @@ class VideoRequest {
     return token;
   }
 
-  static Future getVideoLink(String url) async {
+  static Future getVideoLink(String token) async {
+    // Todo 剧集切换
     String link = '';
     var result = {};
     List<String> cookies = [];
-    String token = await getVideoToken(url);
     final res = await Request().post(Api.videoAPI,
         data: 'd=' + token,
         options: Options(contentType: 'application/x-www-form-urlencoded'));

@@ -22,14 +22,16 @@ abstract class _PopularController with Store {
   }
 
   Future getPageTitle(String url) async {
-    return await VideoRequest.getPageTitle(url);
+    var result = await VideoRequest.getPageTitle(url); 
+    final VideoController videoController = Modular.get<VideoController>();
+    videoController.title = result;
   }
 
-  Future getVideoLink(String url) async {
-    var result = await VideoRequest.getVideoLink(url);
-    final VideoController videoController = Modular.get<VideoController>();
+  Future getVideoLink(String url, {int episode = 1}) async {
+    final VideoController videoController = Modular.get<VideoController>(); 
+    videoController.token = await VideoRequest.getVideoToken(url);
+    var result = await VideoRequest.getVideoLink(videoController.token[videoController.token.length - episode]);
     videoController.videoUrl = result['link']; 
     videoController.videoCookie = result['cookie'];
-    return result['link'];
   }
 }

@@ -3,6 +3,10 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:oneanime/pages/player/player_item.dart';
+import 'package:oneanime/pages/menu/menu.dart';
+import 'package:provider/provider.dart';
+import 'package:oneanime/bean/anime/anime_panel.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -24,18 +28,38 @@ class _VideoPageState extends State<VideoPage> {
   }
 
   @override
+  void dispose() {
+    playerController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    final navigationBarState = Provider.of<NavigationBarState>(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('oneAnime Video Test Page')),
-      body: Center(
-        child: PlayerItem(),
+      appBar: AppBar(
+        title: Text(videoController.title),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            navigationBarState.showNavigate();
+            navigationBarState.updateSelectedIndex(0);
+            Modular.to.navigate('/tab/popular/');
+          },
+        ),
       ),
+      body: Observer(builder: (context) {
+        return Column(
+          children: [
+            const PlayerItem(),
+            BangumiPanel(
+              sheetHeight: MediaQuery.sizeOf(context).height -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.sizeOf(context).width * 9 / 16,
+            )
+          ],
+        );
+      }),
     );
   }
 }

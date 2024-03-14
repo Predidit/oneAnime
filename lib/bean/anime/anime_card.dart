@@ -2,6 +2,10 @@ import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:oneanime/pages/menu/menu.dart';
+import 'package:oneanime/pages/video/video_controller.dart';
+import 'package:provider/provider.dart';
 
 /// Takes an AnimeInfo object and render it to a card
 class AnimeInfoCard extends StatelessWidget {
@@ -17,6 +21,7 @@ class AnimeInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PopularController popularController = Modular.get<PopularController>();
+    final VideoController videoController = Modular.get<VideoController>();
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     final first = isDark ? Colors.grey[900] : Colors.white;
     final second = isDark ? Colors.grey[800] : Colors.grey[200];
@@ -25,17 +30,15 @@ class AnimeInfoCard extends StatelessWidget {
       color: index % 2 == 0 ? first : second,
       child: InkWell(
         onTap: () async {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => Anime(link: this.info.link),
-          //   ),
-          // );
+          SmartDialog.showLoading(msg: '获取中');
           debugPrint('AnimeButton被按下 对应链接为 ${info.link}');
-          String fullink = await popularController.getVideoLink(info.link ?? '');
-          debugPrint('链接解析成功 $fullink');
-          String title = await popularController.getPageTitle(info.link ?? '');
-          debugPrint('链接标题为 $title');
+          await popularController.getVideoLink(info.link ?? '');
+          debugPrint('链接解析成功 ${videoController.videoUrl}');
+          await popularController.getPageTitle(info.link ?? ''); 
+          debugPrint('链接标题为 ${videoController.title}');
+          SmartDialog.dismiss();
+          final navigationBarState = Provider.of<NavigationBarState>(context, listen: false); 
+          navigationBarState.hideNavigate();
           Modular.to.navigate('/tab/video/');
         },
         child: Column(
