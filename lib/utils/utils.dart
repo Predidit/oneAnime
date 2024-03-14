@@ -1,3 +1,6 @@
+import 'package:dio/dio.dart';
+import 'package:oneanime/request/api.dart';
+
 class Utils {
   static videoCookieC(List<String> baseCookies) {
     String finalCookie = '';
@@ -15,5 +18,18 @@ class Utils {
     });
     finalCookie = finalCookie.replaceAll(RegExp(r';\s*$'), '');
     return finalCookie;
+  }
+
+  static Future<String> latest() async {
+    try {
+      var resp = await Dio().get<Map<String, dynamic>>(Api.latestApp);
+    if (resp.data?.containsKey("tag_name") ?? false) {
+      return resp.data!["tag_name"];
+    } else {
+      throw resp.data?["message"];
+    }
+    } catch (e) {
+      return Api.version;
+    }
   }
 }
