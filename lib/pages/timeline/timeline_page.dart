@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:oneanime/pages/timeline/timeline_controller.dart';
+import 'package:oneanime/pages/video/video_controller.dart';
+import 'package:oneanime/pages/popular/popular_controller.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:oneanime/pages/menu/menu.dart';
+import 'package:provider/provider.dart';
 
 class TimelinePage extends StatefulWidget {
   const TimelinePage({super.key});
@@ -8,26 +15,123 @@ class TimelinePage extends StatefulWidget {
   State<TimelinePage> createState() => _TimelinePageState();
 }
 
-class _TimelinePageState extends State<TimelinePage> {
+class _TimelinePageState extends State<TimelinePage>
+    with SingleTickerProviderStateMixin {
+  final TimelineController timelineController =
+      Modular.get<TimelineController>();
+  final VideoController videoController = Modular.get<VideoController>();
+  final PopularController popularController = Modular.get<PopularController>();
+  TabController? controller;
+
+  @override
+  void initState() {
+    super.initState();
+    int weekday = DateTime.now().weekday - 1;
+    controller =
+        TabController(vsync: this, length: tabs.length, initialIndex: weekday);
+    if (timelineController.schedules.length == 0) {
+      debugPrint('时间表缓存为空, 尝试重新加载');
+      timelineController.getSchedules();
+    }
+  }
+
+  final List<Tab> tabs = const <Tab>[
+    Tab(text: '一'),
+    Tab(text: '二'),
+    Tab(text: '三'),
+    Tab(text: '四'),
+    Tab(text: '五'),
+    Tab(text: '六'),
+    Tab(text: '日'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(title: const Text('oneAnime Timeline Test Page')),
-      body: Center(
-        child: TextButton(
-          onPressed: () {
-            
-          },
-          child: const Text('测试'),
+    return Observer(builder: (context) {
+      return Scaffold(
+        appBar: AppBar(
+          bottom: TabBar(
+            controller: controller,
+            tabs: tabs,
+            indicatorColor: Theme.of(context).colorScheme.primary,
+          ),
+          title: Text(timelineController.sessonName),
         ),
-      ),
-    );
+        body: renderBody,
+      );
+    });
+  }
+
+  Widget get renderBody {
+    if (timelineController.schedules.length > 0) {
+      return TabBarView(
+        controller: controller,
+        children: renderSchedule(),
+      );
+    } else {
+      return const Center(
+        child: Text('數據還沒有更新 (´;ω;`)'),
+      );
+    }
+  }
+
+  List<Widget> renderSchedule() {
+    List<Widget> children = [];
+    for (int i = 0; i < tabs.length; i++) {
+      final list = timelineController.schedules.where((s) => s.weekday == i);
+      children.add(SafeArea(
+        child: ListView.builder(
+          itemCount: list.length,
+          itemBuilder: (c, i) {
+            final item = list.elementAt(i);
+            return SizedBox(
+              height: 48,
+              child: InkWell(
+                onTap: () async {
+                  // It might be null
+                  if (item.link != null) {
+                    SmartDialog.showLoading(msg: '获取中');
+                    await popularController.getVideoLink(item.link ?? '');
+                    videoController.title = item.name ?? '';
+                    SmartDialog.dismiss();
+                    final navigationBarState =
+                        Provider.of<NavigationBarState>(context, listen: false);
+                    navigationBarState.hideNavigate();
+                    Modular.to.navigate('/tab/video/');
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        // Has update now
+                        return const AlertDialog(
+                          content: Text('動畫還沒有更新第一集 >_<',
+                              textAlign: TextAlign.center),
+                        );
+                      },
+                    );
+                  }
+                },
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Text(
+                      item.formattedName() ?? "賽博朋克",
+                      maxLines: 1,
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+            );
+            ;
+          },
+        ),
+      ));
+    }
+
+    return children;
   }
 }

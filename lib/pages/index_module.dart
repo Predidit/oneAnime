@@ -5,6 +5,7 @@ import 'package:oneanime/pages/router.dart';
 import 'package:oneanime/pages/index_page.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
+import 'package:oneanime/pages/timeline/timeline_controller.dart';
 
 
 class IndexModule extends Module {
@@ -15,6 +16,7 @@ class IndexModule extends Module {
   void binds(i) {
     i.addSingleton(PopularController.new);
     i.addSingleton(VideoController.new);
+    i.addSingleton(TimelineController.new);
   }
 
   @override
