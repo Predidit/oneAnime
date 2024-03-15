@@ -34,9 +34,6 @@ class _MyPageState extends State<MyPage> {
   }
 
   void onBackPressed(BuildContext context) {
-    navigationBarState = Platform.isWindows
-        ? Provider.of<SideNavigationBarState>(context, listen: false)
-        : Provider.of<NavigationBarState>(context, listen: false);
     navigationBarState.showNavigate();
     navigationBarState.updateSelectedIndex(0);
     Modular.to.navigate('/tab/popular/');
