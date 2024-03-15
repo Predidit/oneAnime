@@ -48,11 +48,21 @@ class _PopularPageState extends State<PopularPage>
   @override
   void dispose() {
     scrollController.removeListener(() {});
+    if (popularController.keyword != '') {
+      popularController.filterList('');
+      popularController.scrollOffset = 0.0;
+    }
     debugPrint('popular 模块已卸载, 监听器移除');
     super.dispose();
   }
 
   void onBackPressed(BuildContext context) {
+    if (popularController.keyword != '') {
+      _controller.clear();
+      popularController.filterList('');
+      scrollController.jumpTo(0.0);
+      return;
+    }
     if (_lastPressedAt == null ||
         DateTime.now().difference(_lastPressedAt!) >
             const Duration(seconds: 2)) {
@@ -102,8 +112,10 @@ class _PopularPageState extends State<PopularPage>
                   // _controller.clear(); // 清空文本字段内容
                 });
               },
-
-              onChanged: (t) => popularController.filterList(t),
+              onChanged: (t) {
+                scrollController.jumpTo(0.0);
+                popularController.filterList(t);
+              },
             ),
           ),
           body: Container(child: animeList),

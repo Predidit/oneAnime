@@ -39,8 +39,7 @@ class AnimeInfoCard extends StatelessWidget {
           debugPrint('AnimeButton被按下 对应链接为 ${info.link}');
           await popularController.getVideoLink(info.link ?? '');
           debugPrint('链接解析成功 ${videoController.videoUrl}');
-          await popularController.getPageTitle(info.link ?? '');
-          debugPrint('链接标题为 ${videoController.title}');
+          await popularController.getPageTitle(info.name ?? '');
           SmartDialog.dismiss();
           final navigationBarState =
               Provider.of<NavigationBarState>(context, listen: false);

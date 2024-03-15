@@ -41,7 +41,7 @@ class VideoRequest {
     }
   }
 
-  static Future getVideoToken(String url) async { 
+  static Future getVideoToken(String url) async {
     List<String> token = [];
     final res = await Request().get(url);
     String resString = res.data;
@@ -49,7 +49,7 @@ class VideoRequest {
       var document = parse(resString);
       final videoTags = document.getElementsByTagName('video');
       if (videoTags.length > 0) {
-        for (int i = 0; i < videoTags.length ; i++) {
+        for (int i = 0; i < videoTags.length; i++) {
           final element = videoTags[i];
           token.add(element.attributes['data-apireq'] ?? '');
         }
@@ -57,6 +57,25 @@ class VideoRequest {
         debugPrint('合集总长度 ${videoTags.length}');
       } else {
         debugPrint('未从网页上找到视频源');
+      }
+      if (token.length == 14) {
+        for (int p = 2; p <= ((token.length / 14).floor() + 1); p++) {
+          final link = document.getElementsByClassName('cat-links').first;
+          final resNext = await Request()
+              .get(link.nodes[1].attributes['href']! + '/page/$p');
+          document = parse(resNext.data);
+          final videoTags = document.getElementsByTagName('video');
+          if (videoTags.length > 0) {
+            for (int i = 0; i < videoTags.length; i++) {
+              final element = videoTags[i];
+              token.add(element.attributes['data-apireq'] ?? '');
+            }
+            debugPrint('从网页$p上成功捕获视频凭据 ${token[0]}');
+            debugPrint('合集$p总长度 ${videoTags.length}');
+          } else {
+            debugPrint('未从网页$p上找到视频源');
+          }
+        }
       }
     } catch (e) {
       debugPrint('其他错误 ${e.toString()}');
@@ -77,7 +96,7 @@ class VideoRequest {
       link = 'https:' + res.data['s'][0]['src'].toString();
       cookies = res?.headers['set-cookie'];
       debugPrint('用于视频验权的cookie为 ${Utils.videoCookieC(cookies)}');
-    } catch(e) {
+    } catch (e) {
       debugPrint(e.toString());
       result['link'] = link;
       result['cookie'] = '';

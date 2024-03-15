@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -64,6 +65,14 @@ class _MyPageState extends State<MyPage> {
                 defaultVal: true,
               ),
             ),
+            (Platform.isAndroid || Platform.isAndroid) ? const InkWell(
+              child: SetSwitchItem(
+                title: '搜索优化',
+                subTitle: '自动翻译关键词',
+                setKey: SettingBoxKey.searchEnhanceEnable, 
+                defaultVal: true,
+              ),
+            ) : Container(),
             ListTile(
               onTap: () {
                 _mineController.checkUpdata();

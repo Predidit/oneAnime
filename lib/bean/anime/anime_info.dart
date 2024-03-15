@@ -1,5 +1,6 @@
 import 'package:html/dom.dart';
 import 'package:oneanime/request/api.dart';
+import 'package:oneanime/utils/constans.dart';
 
 import 'anime_basic.dart';
 
@@ -15,7 +16,7 @@ class AnimeInfo extends AnimeBasic {
     try {
       this.name = list[0].text;
       final href = list[0].nodes[0].attributes["href"];
-      if (href != null) this.link = Api.domain + href;
+      if (href != null) this.link = HttpString.apiBaseUrl + href;
       this.episode = list[1].text;
       this.year = list[2].text;
       this.season = list[3].text;

@@ -363,6 +363,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.3.2"
+  flutter_open_chinese_convert:
+    dependency: "direct main"
+    description:
+      name: flutter_open_chinese_convert
+      sha256: "20e68f1526b1c00d58cc1082043a8e24ea8469fc1060c4cd0571965a50d8e74d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   flutter_smart_dialog:
     dependency: "direct main"
     description:

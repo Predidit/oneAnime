@@ -1,6 +1,7 @@
 import 'package:oneanime/request/api.dart';
 import 'package:oneanime/bean/anime/anime_basic.dart';
 import 'package:html/dom.dart';
+import 'package:oneanime/utils/constans.dart';
 
 /// This class saves anime name, link and schedule (0 - 6)
 class AnimeSchedule extends AnimeBasic { 
@@ -18,7 +19,7 @@ class AnimeSchedule extends AnimeBasic {
       // They haven't put the link so be careful
       String? link = tr.firstChild?.attributes['href'];
       if (link != null) {
-        this.link = Api.domain + link;
+        this.link = HttpString.apiBaseUrl + link;
       }
     }
   }
