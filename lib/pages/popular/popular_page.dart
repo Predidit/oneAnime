@@ -75,15 +75,20 @@ class _PopularPageState extends State<PopularPage>
       onPopInvoked: (bool didPop) async {
         onBackPressed(context);
       },
-      child: Scaffold(
-        appBar: AppBar(title: const Text('最近更新')),
-        body: Container(child: animeList),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            scrollController.jumpTo(0.0);
-            popularController.scrollOffset = 0.0;
-          },
-          child: const Icon(Icons.arrow_upward),
+      child: RefreshIndicator(
+        onRefresh: () async {
+          await popularController.getAnimeList();
+        },
+        child: Scaffold(
+          appBar: AppBar(title: const Text('最近更新')),
+          body: Container(child: animeList),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              scrollController.jumpTo(0.0);
+              popularController.scrollOffset = 0.0;
+            },
+            child: const Icon(Icons.arrow_upward),
+          ),
         ),
       ),
     );
@@ -94,13 +99,22 @@ class _PopularPageState extends State<PopularPage>
       return ListView.separated(
         controller: scrollController,
         separatorBuilder: (context, index) => const SizedBox(height: 8.0),
-        itemCount: popularController.cacheList.length,
+        itemCount: popularController.cacheList.length == 0
+            ? 1
+            : popularController.cacheList.length,
         itemBuilder: (context, index) {
           return popularController.cacheList.length != 0
-              ? AnimeInfoCard(info: popularController.cacheList[index], index: index)
-              : const Center(
-                  child: Text('找不到任何東西 (´;ω;`)'),
-                );
+              ? AnimeInfoCard(
+                  info: popularController.cacheList[index], index: index)
+              : const SizedBox(
+                  height: 600,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                    ],
+                  ));
         },
       );
     });

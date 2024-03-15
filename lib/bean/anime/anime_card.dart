@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -53,13 +55,17 @@ class AnimeInfoCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    info.name ?? "賽博朋克",
-                    maxLines: 1,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: Colors.black),
+                  SizedBox(
+                    width: Platform.isWindows ? 350 : 200,
+                    child: Text(
+                      info.name ?? '',
+                      maxLines: 2,
+                      softWrap: true,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          color: Colors.black),
+                    ),
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),

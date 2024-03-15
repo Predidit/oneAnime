@@ -35,6 +35,14 @@ class _TimelinePageState extends State<TimelinePage>
     }
   }
 
+  void onBackPressed(BuildContext context) {
+    final navigationBarState =
+        Provider.of<NavigationBarState>(context, listen: false);
+    navigationBarState.showNavigate();
+    navigationBarState.updateSelectedIndex(0);
+    Modular.to.navigate('/tab/popular/');
+  }
+
   final List<Tab> tabs = const <Tab>[
     Tab(text: '一'),
     Tab(text: '二'),
@@ -48,16 +56,22 @@ class _TimelinePageState extends State<TimelinePage>
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
-      return Scaffold(
-        appBar: AppBar(
-          bottom: TabBar(
-            controller: controller,
-            tabs: tabs,
-            indicatorColor: Theme.of(context).colorScheme.primary,
+      return PopScope(
+        canPop: false,
+        onPopInvoked: (bool didPop) async {
+          onBackPressed(context);
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              controller: controller,
+              tabs: tabs,
+              indicatorColor: Theme.of(context).colorScheme.primary,
+            ),
+            title: Text(timelineController.sessonName),
           ),
-          title: Text(timelineController.sessonName),
+          body: renderBody,
         ),
-        body: renderBody,
       );
     });
   }

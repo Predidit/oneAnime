@@ -34,33 +34,57 @@ class _VideoPageState extends State<VideoPage> {
     super.dispose();
   }
 
+  void onBackPressed(BuildContext context) {
+    if (MediaQuery.of(context).orientation == Orientation.landscape) {
+      debugPrint('当前播放器全屏');
+      try {
+        playerController.exitFullScreen();
+        Modular.to.pop(context);
+        return;
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    }
+    debugPrint('当前播放器非全屏');
+    final navigationBarState = Provider.of<NavigationBarState>(context, listen: false);
+    navigationBarState.showNavigate();
+    navigationBarState.updateSelectedIndex(0);
+    Modular.to.navigate('/tab/popular/');
+  }
+
   @override
   Widget build(BuildContext context) {
     final navigationBarState = Provider.of<NavigationBarState>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(videoController.title),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            navigationBarState.showNavigate();
-            navigationBarState.updateSelectedIndex(0);
-            Modular.to.navigate('/tab/popular/');
-          },
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        onBackPressed(context);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(videoController.title),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              navigationBarState.showNavigate();
+              navigationBarState.updateSelectedIndex(0);
+              Modular.to.navigate('/tab/popular/');
+            },
+          ),
         ),
+        body: Observer(builder: (context) {
+          return Column(
+            children: [
+              const PlayerItem(),
+              BangumiPanel(
+                sheetHeight: MediaQuery.sizeOf(context).height -
+                    MediaQuery.of(context).padding.top -
+                    MediaQuery.sizeOf(context).width * 9 / 16,
+              )
+            ],
+          );
+        }),
       ),
-      body: Observer(builder: (context) {
-        return Column(
-          children: [
-            const PlayerItem(),
-            BangumiPanel(
-              sheetHeight: MediaQuery.sizeOf(context).height -
-                  MediaQuery.of(context).padding.top -
-                  MediaQuery.sizeOf(context).width * 9 / 16,
-            )
-          ],
-        );
-      }),
     );
   }
 }

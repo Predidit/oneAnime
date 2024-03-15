@@ -5,6 +5,9 @@ import 'package:mobx/mobx.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:oneanime/utils/constans.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 part 'player_controller.g.dart';
 
@@ -87,5 +90,34 @@ abstract class _PlayerController with Store {
       play: false,
     );
     return mediaPlayer;
+  }
+  //退出全屏显示
+  Future<void> exitFullScreen() async {
+    debugPrint('退出全屏模式');
+    dynamic document;
+    late SystemUiMode mode = SystemUiMode.edgeToEdge;
+    try {
+      if (kIsWeb) {
+        document.exitFullscreen();
+      } else if (Platform.isAndroid || Platform.isIOS) {
+        if (Platform.isAndroid &&
+            (await DeviceInfoPlugin().androidInfo).version.sdkInt < 29) {
+          mode = SystemUiMode.manual;
+        }
+        await SystemChrome.setEnabledSystemUIMode(
+          mode,
+          overlays: SystemUiOverlay.values,
+        );
+        await SystemChrome.setPreferredOrientations([]);
+      } else if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+        await const MethodChannel('com.alexmercerind/media_kit_video')
+            .invokeMethod(
+          'Utils.ExitNativeFullscreen',
+        );
+      }
+    } catch (exception, stacktrace) {
+      debugPrint(exception.toString());
+      debugPrint(stacktrace.toString());
+    }
   }
 }

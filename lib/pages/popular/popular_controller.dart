@@ -22,6 +22,7 @@ abstract class _PopularController with Store {
 
   Future getAnimeList() async {
     list = await ListRequest.getAnimeList();
+    cacheList.clear();
     if (list.length >= 20) {
       cacheList.addAll(list.sublist(0, 20));
     } else {
