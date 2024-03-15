@@ -26,7 +26,7 @@ class AnimeInfoCard extends StatelessWidget {
     final PopularController popularController =
         Modular.get<PopularController>();
     final VideoController videoController = Modular.get<VideoController>();
-    late final navigationBarState;
+    dynamic navigationBarState;
     // final navigationBarState = Platform.isWindows
     //           ? Provider.of<SideNavigationBarState>(context, listen: false)
     //           : Provider.of<NavigationBarState>(context, listen: false);

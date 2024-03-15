@@ -54,6 +54,7 @@ dependencies:
   url_launcher: ^6.1.14
   device_info_plus: ^9.0.2
   flutter_open_chinese_convert: ^0.3.0
+  flutter_launcher_icons: ^0.13.1
 
   media_kit: ^1.1.10                             # Primary package.
   media_kit_video: ^1.2.4                        # For video rendering.
@@ -75,6 +76,24 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: assets/images/logo/logo_android_2.png
+  image_path_android: assets/images/logo/logo_android_2.png
+  image_path_ios: assets/images/logo/logo_ios.png
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: assets/images/logo/logo_android_2.png
+  adaptive_icon_monochrome: assets/images/logo/logo_android_2.png
+  macos:
+    generate: true
+    image_path: assets/images/logo/logo_ios.png
+  windows:
+    generate: true
+    image_path: assets/images/logo/logo_ios.png
+    icon_size: 256 # min:48, max:256, default: 48
+
 
 # The following section is specific to Flutter packages.
 flutter:
@@ -91,6 +110,7 @@ flutter:
   assets:
     - assets/images/ 
     - assets/images/lv/
+    - assets/images/logo/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

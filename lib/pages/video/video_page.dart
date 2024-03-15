@@ -19,7 +19,7 @@ class VideoPage extends StatefulWidget {
 }
 
 class _VideoPageState extends State<VideoPage> {
-  late final navigationBarState;
+  dynamic navigationBarState;
   final VideoController videoController = Modular.get<VideoController>();
   final PlayerController playerController = Modular.get<PlayerController>();
 

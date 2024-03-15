@@ -18,7 +18,7 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  late final navigationBarState;
+  dynamic navigationBarState;
   final _mineController = Modular.get<MyController>();
 
   @override

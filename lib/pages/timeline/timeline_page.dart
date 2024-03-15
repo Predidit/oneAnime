@@ -24,7 +24,7 @@ class _TimelinePageState extends State<TimelinePage>
       Modular.get<TimelineController>();
   final VideoController videoController = Modular.get<VideoController>();
   final PopularController popularController = Modular.get<PopularController>();
-  late final navigationBarState;
+  dynamic navigationBarState;
   TabController? controller;
 
   @override
