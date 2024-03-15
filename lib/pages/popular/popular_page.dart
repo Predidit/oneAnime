@@ -16,6 +16,8 @@ class PopularPage extends StatefulWidget {
 class _PopularPageState extends State<PopularPage>
     with AutomaticKeepAliveClientMixin {
   DateTime? _lastPressedAt;
+  final FocusNode _focusNode = FocusNode();
+  final TextEditingController _controller = TextEditingController();
   final ScrollController scrollController = ScrollController();
   final PopularController popularController = Modular.get<PopularController>();
 
@@ -80,7 +82,30 @@ class _PopularPageState extends State<PopularPage>
           await popularController.getAnimeList();
         },
         child: Scaffold(
-          appBar: AppBar(title: const Text('最近更新')),
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.primary, // 使用应用主题的主色
+            title: TextField(
+              focusNode: _focusNode,
+              controller: _controller,
+              style: const TextStyle(color: Colors.white, fontSize: 20),
+              decoration: const InputDecoration(
+                hintText: '快速搜索',
+                hintStyle: TextStyle(color: Colors.white, fontSize: 20),
+                border: InputBorder.none, // 隐藏下划线
+                prefixIcon: Icon(Icons.search, color: Colors.white), // 搜索图标
+              ),
+              autocorrect: false,
+              autofocus: false,
+              onTap: () {
+                setState(() {
+                  _focusNode.requestFocus();
+                  // _controller.clear(); // 清空文本字段内容
+                });
+              },
+
+              onChanged: (t) => popularController.filterList(t),
+            ),
+          ),
           body: Container(child: animeList),
           floatingActionButton: FloatingActionButton(
             onPressed: () {

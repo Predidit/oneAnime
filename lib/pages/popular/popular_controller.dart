@@ -11,7 +11,6 @@ part 'popular_controller.g.dart';
 class PopularController = _PopularController with _$PopularController;
 
 abstract class _PopularController with Store {
-
   List<AnimeInfo> list = [];
 
   @observable
@@ -61,5 +60,12 @@ abstract class _PopularController with Store {
         videoController.token[videoController.token.length - episode]);
     videoController.videoUrl = result['link'];
     videoController.videoCookie = result['cookie'];
+  }
+
+  void filterList(String keyword) {
+    cacheList.clear();
+    cacheList.addAll(list.where((e) {
+      return e.contains(keyword);
+    }).toList());
   }
 }
