@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:oneanime/pages/menu/menu.dart';
+import 'package:oneanime/pages/menu/side_menu.dart';
 
 
 class IndexPage extends StatefulWidget {
@@ -36,6 +38,6 @@ class _IndexPageState extends State<IndexPage> with  WidgetsBindingObserver {
     //     ),
     //   )
     // ]);
-    return const BottomMenu();
+    return Platform.isWindows ? const SideMenu() : const BottomMenu();
   }
 }

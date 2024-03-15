@@ -36,7 +36,8 @@ class _PopularPageState extends State<PopularPage>
       popularController.scrollOffset = scrollController.offset;
       if (scrollController.position.pixels >=
               scrollController.position.maxScrollExtent - 200 &&
-          popularController.isLoadingMore == false) {
+          popularController.isLoadingMore == false &&
+          popularController.keyword == '') {
         debugPrint('Popular 正在加载更多');
         popularController.isLoadingMore = true;
         popularController.onLoad();
@@ -89,7 +90,9 @@ class _PopularPageState extends State<PopularPage>
       },
       child: RefreshIndicator(
         onRefresh: () async {
-          await popularController.getAnimeList();
+          if (popularController.keyword == '') {
+            await popularController.getAnimeList();
+          }
         },
         child: Scaffold(
           appBar: AppBar(

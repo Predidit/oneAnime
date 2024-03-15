@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -7,6 +8,8 @@ import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/pages/menu/menu.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:oneanime/pages/menu/side_menu.dart';
 
 class TimelinePage extends StatefulWidget {
   const TimelinePage({super.key});
@@ -21,6 +24,7 @@ class _TimelinePageState extends State<TimelinePage>
       Modular.get<TimelineController>();
   final VideoController videoController = Modular.get<VideoController>();
   final PopularController popularController = Modular.get<PopularController>();
+  late final navigationBarState;
   TabController? controller;
 
   @override
@@ -36,8 +40,9 @@ class _TimelinePageState extends State<TimelinePage>
   }
 
   void onBackPressed(BuildContext context) {
-    final navigationBarState =
-        Provider.of<NavigationBarState>(context, listen: false);
+    navigationBarState = Platform.isWindows
+        ? Provider.of<SideNavigationBarState>(context, listen: false)
+        : Provider.of<NavigationBarState>(context, listen: false);
     navigationBarState.showNavigate();
     navigationBarState.updateSelectedIndex(0);
     Modular.to.navigate('/tab/popular/');
@@ -108,21 +113,15 @@ class _TimelinePageState extends State<TimelinePage>
                     await popularController.getVideoLink(item.link ?? '');
                     videoController.title = item.name ?? '';
                     SmartDialog.dismiss();
-                    final navigationBarState =
-                        Provider.of<NavigationBarState>(context, listen: false);
+                    navigationBarState = Platform.isWindows
+                        ? Provider.of<SideNavigationBarState>(context,
+                            listen: false)
+                        : Provider.of<NavigationBarState>(context,
+                            listen: false);
                     navigationBarState.hideNavigate();
                     Modular.to.navigate('/tab/video/');
                   } else {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        // Has update now
-                        return const AlertDialog(
-                          content: Text('動畫還沒有更新第一集 >_<',
-                              textAlign: TextAlign.center),
-                        );
-                      },
-                    );
+                    SmartDialog.showToast('動畫還沒有更新第一集 >_<');
                   }
                 },
                 child: Align(

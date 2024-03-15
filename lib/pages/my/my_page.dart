@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:oneanime/pages/menu/menu.dart';
 import 'package:oneanime/request/api.dart';
@@ -17,6 +18,7 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  late final navigationBarState;
   final _mineController = Modular.get<MyController>();
 
   @override
@@ -24,22 +26,21 @@ class _MyPageState extends State<MyPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 在widget构建完成后调用的函数
-      final navigationBarState =
-          Provider.of<NavigationBarState>(context, listen: false);
-      if (navigationBarState.isHide == true) {
-        navigationBarState.showNavigate();
-      }
+      navigationBarState = Platform.isWindows
+          ? Provider.of<SideNavigationBarState>(context, listen: false)
+          : Provider.of<NavigationBarState>(context, listen: false);
+      navigationBarState.showNavigate();
     });
   }
 
   void onBackPressed(BuildContext context) {
-    final navigationBarState =
-        Provider.of<NavigationBarState>(context, listen: false);
+    navigationBarState = Platform.isWindows
+        ? Provider.of<SideNavigationBarState>(context, listen: false)
+        : Provider.of<NavigationBarState>(context, listen: false);
     navigationBarState.showNavigate();
     navigationBarState.updateSelectedIndex(0);
     Modular.to.navigate('/tab/popular/');
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -65,14 +66,16 @@ class _MyPageState extends State<MyPage> {
                 defaultVal: true,
               ),
             ),
-            (Platform.isAndroid || Platform.isAndroid) ? const InkWell(
-              child: SetSwitchItem(
-                title: '搜索优化',
-                subTitle: '自动翻译关键词',
-                setKey: SettingBoxKey.searchEnhanceEnable, 
-                defaultVal: true,
-              ),
-            ) : Container(),
+            (Platform.isAndroid || Platform.isAndroid)
+                ? const InkWell(
+                    child: SetSwitchItem(
+                      title: '搜索优化',
+                      subTitle: '自动翻译关键词',
+                      setKey: SettingBoxKey.searchEnhanceEnable,
+                      defaultVal: true,
+                    ),
+                  )
+                : Container(),
             ListTile(
               onTap: () {
                 _mineController.checkUpdata();

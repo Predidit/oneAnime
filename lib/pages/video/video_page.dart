@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
@@ -7,6 +9,7 @@ import 'package:oneanime/pages/menu/menu.dart';
 import 'package:provider/provider.dart';
 import 'package:oneanime/bean/anime/anime_panel.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:oneanime/pages/menu/side_menu.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -16,6 +19,7 @@ class VideoPage extends StatefulWidget {
 }
 
 class _VideoPageState extends State<VideoPage> {
+  late final navigationBarState;
   final VideoController videoController = Modular.get<VideoController>();
   final PlayerController playerController = Modular.get<PlayerController>();
 
@@ -46,7 +50,6 @@ class _VideoPageState extends State<VideoPage> {
       }
     }
     debugPrint('当前播放器非全屏');
-    final navigationBarState = Provider.of<NavigationBarState>(context, listen: false);
     navigationBarState.showNavigate();
     navigationBarState.updateSelectedIndex(0);
     Modular.to.navigate('/tab/popular/');
@@ -54,37 +57,81 @@ class _VideoPageState extends State<VideoPage> {
 
   @override
   Widget build(BuildContext context) {
-    final navigationBarState = Provider.of<NavigationBarState>(context);
+    navigationBarState = Platform.isWindows
+              ? Provider.of<SideNavigationBarState>(context, listen: false)
+              : Provider.of<NavigationBarState>(context, listen: false);
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {
         onBackPressed(context);
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(videoController.title),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              navigationBarState.showNavigate();
-              navigationBarState.updateSelectedIndex(0);
-              Modular.to.navigate('/tab/popular/');
-            },
-          ),
-        ),
-        body: Observer(builder: (context) {
-          return Column(
-            children: [
-              const PlayerItem(),
-              BangumiPanel(
-                sheetHeight: MediaQuery.sizeOf(context).height -
-                    MediaQuery.of(context).padding.top -
-                    MediaQuery.sizeOf(context).width * 9 / 16,
-              )
-            ],
-          );
-        }),
-      ),
+      child: Platform.isWindows
+          ? Scaffold(
+              body: Observer(builder: (context) {
+                return Stack(children: [
+                  Container(
+                    child: Column(
+                      children: [
+                        const PlayerItem(),
+                        BangumiPanel(
+                          sheetHeight: MediaQuery.sizeOf(context).height -
+                              MediaQuery.of(context).padding.top -
+                              MediaQuery.sizeOf(context).width * 9 / 16,
+                        )
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Column(
+                      children: [
+                        AppBar(
+                          iconTheme: IconThemeData(color: Colors.white), 
+                          backgroundColor: Colors.transparent, // 设置为透明
+                          elevation: 0, // 去除阴影
+                          // title: Text(videoController.title),
+                          leading: IconButton(
+                            icon: const Icon(Icons.arrow_back),
+                            onPressed: () {
+                              navigationBarState.showNavigate();
+                              navigationBarState.updateSelectedIndex(0);
+                              Modular.to.navigate('/tab/popular/');
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ]);
+              }),
+            )
+          : Scaffold(
+              appBar: AppBar(
+                title: Text(videoController.title),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    navigationBarState.showNavigate();
+                    navigationBarState.updateSelectedIndex(0);
+                    Modular.to.navigate('/tab/popular/');
+                  },
+                ),
+              ),
+              body: Observer(builder: (context) {
+                return Column(
+                  children: [
+                    const PlayerItem(),
+                    BangumiPanel(
+                      sheetHeight: MediaQuery.sizeOf(context).height -
+                          MediaQuery.of(context).padding.top -
+                          MediaQuery.sizeOf(context).width * 9 / 16,
+                    )
+                  ],
+                );
+              }),
+            ),
     );
   }
 }

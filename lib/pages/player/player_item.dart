@@ -37,10 +37,10 @@ class _PlayerItemState extends State<PlayerItem> {
         Observer(builder: (context) {
           return SizedBox(
             width: Platform.isWindows
-                ? MediaQuery.of(context).size.width / 2
+                ? MediaQuery.of(context).size.width
                 : MediaQuery.of(context).size.width,
             height: Platform.isWindows
-                ? MediaQuery.of(context).size.width * 9.0 / 32.0
+                ? (MediaQuery.of(context).size.width * 9.0 / (16.0 * 1.18))
                 : MediaQuery.of(context).size.width * 9.0 / 16.0,
             child: playerController.dataStatus == 'loaded'
                 ? Video(

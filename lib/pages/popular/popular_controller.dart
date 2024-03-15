@@ -69,7 +69,7 @@ abstract class _PopularController with Store {
 
   void filterList(String keyword) async {
     this.keyword = keyword;
-    if (setting.get(SettingBoxKey.searchEnhanceEnable, defaultValue: false) && (Platform.isAndroid || Platform.isIOS)) {
+    if (setting.get(SettingBoxKey.searchEnhanceEnable, defaultValue: true) && (Platform.isAndroid || Platform.isIOS)) {
       try {
         debugPrint('开始转换关键词');
         keyword = await ChineseConverter.convert(keyword, S2TWp());
