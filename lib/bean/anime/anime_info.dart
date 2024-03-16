@@ -1,35 +1,42 @@
 import 'package:html/dom.dart';
 import 'package:oneanime/request/api.dart';
 import 'package:oneanime/utils/constans.dart';
+import 'package:hive/hive.dart';
 
 import 'anime_basic.dart';
 
 /// This class parses a Node and stores anime info like anime name, anime link, total episodes, year, season and subtitle group
-class AnimeInfo extends AnimeBasic {
+@HiveType(typeId: 0)
+class AnimeInfo extends HiveObject {
+  @HiveField(0)
+  int? link;
+  @HiveField(1)
+  String? name;
+  @HiveField(2)
   String? episode;
+  @HiveField(3)
   String? year;
+  @HiveField(4)
   String? season;
+  @HiveField(5) 
   String? subtitle;
+  @HiveField(6)
+  bool? follow;
 
-  AnimeInfo(Node tr) : super.fromJson(null) {
-    final list = tr.nodes;
-    try {
-      this.name = list[0].text;
-      final href = list[0].nodes[0].attributes["href"];
-      if (href != null) this.link = HttpString.apiBaseUrl + href;
-      this.episode = list[1].text;
-      this.year = list[2].text;
-      this.season = list[3].text;
-      this.subtitle = list[4].text ?? "-";
-    } catch (e) {
-      throw new Exception('AnimeInfo - Tr has been changed\n${e.toString()}');
-    }
-  }
+  AnimeInfo({
+    this.link,
+    this.name,
+    this.episode,
+    this.year,
+    this.season,
+    this.subtitle,
+    this.follow,
+  });
 
-  @override
+
   bool contains(String t) {
     // emm, any better way of writing this?
-    if (super.contains(t)) return true;
+    if (basicContains(t)) return true;
     if (year != null && season != null && (year! + season!).contains(t))
       return true;
     if (episode != null && episode!.contains(t)) return true;
@@ -38,21 +45,26 @@ class AnimeInfo extends AnimeBasic {
     return false;
   }
 
-  AnimeInfo.fromJson(Map<String, dynamic> json)
-      : episode = json['episode'],
-        year = json['year'],
-        season = json['season'],
-        subtitle = json['subtitle'],
-        super.fromJson(json);
+  bool basicContains(String t) {
+    final tL = t.toLowerCase();
+    final nL = this.name?.toLowerCase();
+    if (nL == null) {
+      return false;
+    } else {
+      return nL.contains(tL);
+    }
+  }
 
-  AnimeInfo.fromList(List list) : super.fromJson(null) {
+  AnimeInfo.fromList(List list) { 
     // The ID is the link
-    this.link = 'https://anime1.me/?cat=${list[0]}';
+    // this.link = 'https://anime1.me/?cat=${list[0]}';
+    this.link = list[0];
     this.name = list[1];
     this.episode = list[2];
     this.year = list[3];
     this.season = list[4];
     this.subtitle = list[5];
+    this.follow = false;
   }
 
   Map<String, dynamic> toJson() => {
@@ -69,3 +81,33 @@ class AnimeInfo extends AnimeBasic {
     return "Name: $name\nLink: $link\nEpisode: $episode\nYear: $year\nSeason: $season\nSubtitle: $subtitle";
   }
 }
+
+class AnimeInfoAdapter extends TypeAdapter<AnimeInfo> {
+  @override
+  final int typeId = 0;
+
+  @override
+  AnimeInfo read(BinaryReader reader) {
+    return AnimeInfo(
+      link: reader.readInt(),
+      name: reader.readString(),
+      episode: reader.readString(),
+      year: reader.readString(),
+      season: reader.readString(),
+      subtitle: reader.readString(),
+      follow: reader.readBool(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, AnimeInfo obj) {
+    writer.writeInt(obj.link ?? 19951);
+    writer.writeString(obj.name ?? '');
+    writer.writeString(obj.episode ?? '');
+    writer.writeString(obj.year ?? '');
+    writer.writeString(obj.season ?? '');
+    writer.writeString(obj.subtitle ?? '');
+    writer.writeBool(obj.follow ?? false);
+  }
+}
+

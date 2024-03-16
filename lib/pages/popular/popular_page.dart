@@ -28,10 +28,11 @@ class _PopularPageState extends State<PopularPage>
   void initState() {
     super.initState();
     debugPrint('Popular 开始初始化');
-    if (popularController.list.length == 0) {
-      debugPrint('动画列表缓存为空, 尝试重新加载');
+    if (popularController.cacheList.length == 0) {
+      debugPrint('页面列表缓存为空, 尝试重新加载');
       popularController.getAnimeList();
     }
+    debugPrint('动画缓存列表长度为 ${popularController.list.length}');
     scrollController.addListener(() {
       popularController.scrollOffset = scrollController.offset;
       if (scrollController.position.pixels >=
@@ -96,7 +97,10 @@ class _PopularPageState extends State<PopularPage>
         },
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.primary, // 使用应用主题的主色
+            backgroundColor: Theme.of(context)
+                .colorScheme
+                .primary
+                .withOpacity(0.5), // 调整背景颜色的透明度以使其更柔和
             title: TextField(
               focusNode: _focusNode,
               controller: _controller,
@@ -104,21 +108,29 @@ class _PopularPageState extends State<PopularPage>
               decoration: const InputDecoration(
                 hintText: '快速搜索',
                 hintStyle: TextStyle(color: Colors.white, fontSize: 20),
-                border: InputBorder.none, // 隐藏下划线
-                prefixIcon: Icon(Icons.search, color: Colors.white), // 搜索图标
+                border: InputBorder.none,
+                prefixIcon: Icon(Icons.search, color: Colors.white),
               ),
               autocorrect: false,
               autofocus: false,
               onTap: () {
                 setState(() {
                   _focusNode.requestFocus();
-                  // _controller.clear(); // 清空文本字段内容
+                  // 添加动效
+                  _controller.clear(); // 如果需要清空文本字段内容
                 });
               },
               onChanged: (t) {
                 scrollController.jumpTo(0.0);
                 popularController.filterList(t);
               },
+            ),
+            elevation: 0, // 移除阴影效果
+            shape: const RoundedRectangleBorder(
+              // 添加圆角
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(30),
+              ),
             ),
           ),
           body: Container(child: animeList),

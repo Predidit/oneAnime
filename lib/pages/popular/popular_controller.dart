@@ -16,7 +16,7 @@ class PopularController = _PopularController with _$PopularController;
 
 abstract class _PopularController with Store {
   static Box setting = GStorage.setting;
-  List<AnimeInfo> list = [];
+  List<AnimeInfo> list = GStorage.listCahce.values.toList();
 
   @observable
   ObservableList<AnimeInfo> cacheList = ObservableList<AnimeInfo>.of([]);
@@ -47,6 +47,22 @@ abstract class _PopularController with Store {
       }
     }
     isLoadingMore = false;
+  }
+
+  Future updateFollow(int link, bool status) async {
+    list.asMap().forEach((index, item) {
+      if(item.link == link) {
+        list[index].follow = status;
+        return;
+      }
+    });
+    // debugPrint('与本地数据库同步数据');
+    updateData();
+  }
+
+  Future updateData() async {
+    await GStorage.listCahce.clear();
+    await GStorage.listCahce.addAll(list);
   }
 
   Future getFullLink(String url) async {
