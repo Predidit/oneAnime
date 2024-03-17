@@ -51,7 +51,7 @@ class _VideoPageState extends State<VideoPage> {
     }
     debugPrint('当前播放器非全屏');
     navigationBarState.showNavigate();
-    videoController.from == '/tab/popular' ? navigationBarState.updateSelectedIndex(0) : navigationBarState.updateSelectedIndex(2);
+    videoController.from == '/tab/popular/' ? navigationBarState.updateSelectedIndex(0) : (videoController.from == '/tab/follow/' ? navigationBarState.updateSelectedIndex(2) : navigationBarState.updateSelectedIndex(1));
     Modular.to.navigate(videoController.from);
   }
 
@@ -96,7 +96,7 @@ class _VideoPageState extends State<VideoPage> {
                             icon: const Icon(Icons.arrow_back),
                             onPressed: () {
                               navigationBarState.showNavigate();
-                              videoController.from == '/tab/popular' ? navigationBarState.updateSelectedIndex(0) : navigationBarState.updateSelectedIndex(2);
+                              videoController.from == '/tab/popular/' ? navigationBarState.updateSelectedIndex(0) : (videoController.from == '/tab/follow/' ? navigationBarState.updateSelectedIndex(2) : navigationBarState.updateSelectedIndex(1));
                               Modular.to.navigate(videoController.from);
                             },
                           ),
@@ -114,7 +114,7 @@ class _VideoPageState extends State<VideoPage> {
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     navigationBarState.showNavigate();
-                    videoController.from == '/tab/popular' ? navigationBarState.updateSelectedIndex(0) : navigationBarState.updateSelectedIndex(2);
+                    videoController.from == '/tab/popular/' ? navigationBarState.updateSelectedIndex(0) : (videoController.from == '/tab/follow/' ? navigationBarState.updateSelectedIndex(2) : navigationBarState.updateSelectedIndex(1));
                     Modular.to.navigate(videoController.from);
                   },
                 ),

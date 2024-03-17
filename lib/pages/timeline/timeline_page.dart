@@ -119,6 +119,7 @@ class _TimelinePageState extends State<TimelinePage>
                         : Provider.of<NavigationBarState>(context,
                             listen: false);
                     navigationBarState.hideNavigate();
+                    videoController.from = '/tab/timeline/';
                     Modular.to.navigate('/tab/video/');
                   } else {
                     SmartDialog.showToast('動畫還沒有更新第一集 >_<');
