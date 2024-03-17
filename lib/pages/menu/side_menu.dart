@@ -63,9 +63,14 @@ class _SideMenu extends State<SideMenu> {
                         label: Text('时间表'),
                       ),
                       NavigationRailDestination(
+                        selectedIcon: Icon(Icons.favorite),
+                        icon: Icon(Icons.favorite_border),
+                        label: Text('追番'),
+                      ),
+                      NavigationRailDestination(
                         selectedIcon: Icon(Icons.settings),
                         icon: Icon(Icons.settings_outlined),
-                        label: Text('我的'),
+                        label: Text('设置'),
                       ),
                     ],
                     selectedIndex: state.selectedIndex,
@@ -79,6 +84,9 @@ class _SideMenu extends State<SideMenu> {
                           Modular.to.navigate('/tab/timeline/');
                           break;
                         case 2:
+                          Modular.to.navigate('/tab/follow/');
+                          break;
+                        case 3:
                           Modular.to.navigate('/tab/my/');
                           break;
                       }
@@ -93,7 +101,8 @@ class _SideMenu extends State<SideMenu> {
                 child: PageView.builder(
                   controller: _page,
                   itemCount: menu.size,
-                  onPageChanged: (i) => Modular.to.navigate("/tab${menu.getPath(i)}/"),
+                  onPageChanged: (i) =>
+                      Modular.to.navigate("/tab${menu.getPath(i)}/"),
                   itemBuilder: (_, __) => const RouterOutlet(),
                 ),
               ),

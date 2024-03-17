@@ -26,7 +26,7 @@ class _VideoPageState extends State<VideoPage> {
   @override
   void initState() {
     super.initState();
-    videoController.episode = 1;
+    // videoController.episode = 1;
     playerController.videoUrl = videoController.videoUrl;
     playerController.videoCookie = videoController.videoCookie;
     playerController.init();
@@ -51,8 +51,8 @@ class _VideoPageState extends State<VideoPage> {
     }
     debugPrint('当前播放器非全屏');
     navigationBarState.showNavigate();
-    navigationBarState.updateSelectedIndex(0);
-    Modular.to.navigate('/tab/popular/');
+    videoController.from == '/tab/popular' ? navigationBarState.updateSelectedIndex(0) : navigationBarState.updateSelectedIndex(2);
+    Modular.to.navigate(videoController.from);
   }
 
   @override
@@ -96,8 +96,8 @@ class _VideoPageState extends State<VideoPage> {
                             icon: const Icon(Icons.arrow_back),
                             onPressed: () {
                               navigationBarState.showNavigate();
-                              navigationBarState.updateSelectedIndex(0);
-                              Modular.to.navigate('/tab/popular/');
+                              videoController.from == '/tab/popular' ? navigationBarState.updateSelectedIndex(0) : navigationBarState.updateSelectedIndex(2);
+                              Modular.to.navigate(videoController.from);
                             },
                           ),
                         ),
@@ -114,8 +114,8 @@ class _VideoPageState extends State<VideoPage> {
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     navigationBarState.showNavigate();
-                    navigationBarState.updateSelectedIndex(0);
-                    Modular.to.navigate('/tab/popular/');
+                    videoController.from == '/tab/popular' ? navigationBarState.updateSelectedIndex(0) : navigationBarState.updateSelectedIndex(2);
+                    Modular.to.navigate(videoController.from);
                   },
                 ),
               ),

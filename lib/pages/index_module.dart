@@ -7,6 +7,8 @@ import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/timeline/timeline_controller.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
+import 'package:oneanime/pages/follow/follow_controller.dart';
+import 'package:oneanime/pages/video/video_module.dart';
 
 
 class IndexModule extends Module {
@@ -19,6 +21,7 @@ class IndexModule extends Module {
     i.addSingleton(VideoController.new);
     i.addSingleton(TimelineController.new);
     i.addSingleton(MyController.new);
+    // i.addSingleton(FollowController.new);
   }
 
   @override
@@ -38,5 +41,6 @@ class IndexModule extends Module {
     r.child("/tab", child: (_) {
       return const IndexPage();
     }, children: menu.routes, transition: TransitionType.noTransition);
+    // r.module("/video", module: VideoModule());
   }
 }

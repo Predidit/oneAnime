@@ -69,9 +69,14 @@ class _BottomMenu extends State<BottomMenu> {
                         label: '时间表',
                       ),
                       NavigationDestination(
+                        selectedIcon: Icon(Icons.favorite),
+                        icon: Icon(Icons.favorite_border),
+                        label: '追番',
+                      ),
+                      NavigationDestination(
                         selectedIcon: Icon(Icons.settings),
                         icon: Icon(Icons.settings_outlined),
-                        label: '我的',
+                        label: '设置',
                       ),
                     ],
                     selectedIndex: state.selectedIndex,
@@ -92,6 +97,11 @@ class _BottomMenu extends State<BottomMenu> {
                           }
                           break;
                         case 2:
+                          {
+                            Modular.to.navigate('/tab/follow/');
+                          }
+                          break;
+                        case 3:
                           {
                             Modular.to.navigate('/tab/my/');
                           }

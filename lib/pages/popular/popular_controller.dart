@@ -26,6 +26,11 @@ abstract class _PopularController with Store {
   String keyword = '';
 
   Future getAnimeList() async {
+    if (list.length >= 20) {
+      cacheList.addAll(list.sublist(0, 20));
+    } else {
+      cacheList.addAll(list);
+    }
     list = await ListRequest.getAnimeList();
     cacheList.clear();
     if (list.length >= 20) {
@@ -52,13 +57,24 @@ abstract class _PopularController with Store {
   Future updateFollow(int link, bool status) async {
     list.asMap().forEach((index, item) {
       if(item.link == link) {
-        list[index].follow = status;
+        list[index].follow = status; 
         return;
       }
     });
     // debugPrint('与本地数据库同步数据');
     updateData();
   }
+
+  Future updateAnimeProgress(int episode, String title) async {
+    list.asMap().forEach((index, item) {
+      if(item.name == title) {
+        debugPrint('找到之前的观看记录');
+        list[index].progress = episode;
+        return;
+      }
+    });
+    updateData();
+  } 
 
   Future updateData() async {
     await GStorage.listCahce.clear();
@@ -76,6 +92,7 @@ abstract class _PopularController with Store {
 
   Future getVideoLink(String url, {int episode = 1}) async {
     final VideoController videoController = Modular.get<VideoController>();
+    videoController.episode = episode;
     videoController.token = await VideoRequest.getVideoToken(url);
     var result = await VideoRequest.getVideoLink(
         videoController.token[videoController.token.length - episode]);

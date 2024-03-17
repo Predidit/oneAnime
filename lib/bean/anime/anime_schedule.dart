@@ -1,4 +1,3 @@
-import 'package:oneanime/request/api.dart';
 import 'package:oneanime/bean/anime/anime_basic.dart';
 import 'package:html/dom.dart';
 import 'package:oneanime/utils/constans.dart';

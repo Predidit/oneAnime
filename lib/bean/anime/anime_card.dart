@@ -16,10 +16,12 @@ class AnimeInfoCard extends StatefulWidget {
     Key? key,
     required this.info,
     required this.index,
+    required this.type,
   }) : super(key: key);
 
   final AnimeInfo info;
   final int index;
+  final String type;
   @override
   _AnimeInfoCardState createState() => _AnimeInfoCardState();
 }
@@ -44,11 +46,23 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
       child: InkWell(
         onTap: () async {
           SmartDialog.showLoading(msg: '获取中');
-          debugPrint('AnimeButton被按下 对应链接为 https://anime1.me/?cat=${widget.info.link}');
-          await popularController.getVideoLink('https://anime1.me/?cat=${widget.info.link}');
+          debugPrint(
+              'AnimeButton被按下 对应链接为 https://anime1.me/?cat=${widget.info.link}');
+          if (widget.info.progress != 1) {
+            await popularController.getVideoLink(
+                'https://anime1.me/?cat=${widget.info.link}',
+                episode: widget.info.progress ?? 1);
+          } else {
+            await popularController
+                .getVideoLink('https://anime1.me/?cat=${widget.info.link}');
+          }
           debugPrint('链接解析成功 ${videoController.videoUrl}');
           await popularController.getPageTitle(widget.info.name ?? '');
           SmartDialog.dismiss();
+          if (widget.info.progress != 1) {
+            SmartDialog.showToast('上次观看到第 ${widget.info.progress} 话');
+          }
+          videoController.from = '/tab/' + widget.type + '/';
           navigationBarState = Platform.isWindows
               ? Provider.of<SideNavigationBarState>(context, listen: false)
               : Provider.of<NavigationBarState>(context, listen: false);
@@ -56,86 +70,106 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
           Modular.to.navigate('/tab/video/');
         },
         child: Container(
-  padding: EdgeInsets.all(16.0),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: <Widget>[
-      SizedBox(
-        width: Platform.isWindows ? 800 : 200,
-        child: Text(
-          widget.info.name ?? '',
-          maxLines: 2,
-          softWrap: true,
-          style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-              color: Colors.black),
-        ),
-      ),
-      SizedBox(height: 8.0),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                decoration: BoxDecoration(
-                  color: Colors.purple,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
+              SizedBox(
+                width: Platform.isWindows ? 800 : 200,
                 child: Text(
-                  widget.info.episode ?? "77",
-                  style: TextStyle(color: Colors.white),
+                  widget.info.name ?? '',
+                  maxLines: 2,
+                  softWrap: true,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Colors.black),
                 ),
               ),
-              SizedBox(width: 8.0),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                decoration: BoxDecoration(
-                  color: Colors.deepPurple,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(
-                  (widget.info.year ?? "2077") + (widget.info.season ?? ""),
-                  style: TextStyle(color: Colors.white),
-                ),
+              SizedBox(height: 8.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0),
+                        decoration: BoxDecoration(
+                          color: Colors.purple,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Text(
+                          widget.info.episode ?? "77",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      SizedBox(width: 8.0),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 4.0),
+                        decoration: BoxDecoration(
+                          color: Colors.deepPurple,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Text(
+                          (widget.info.year ?? "2077") +
+                              (widget.info.season ?? ""),
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      SizedBox(width: 8.0),
+                      widget.type == 'popular'
+                          ? widget.info.subtitle != ''
+                              ? Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 4.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.deepPurple,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  child: Text(
+                                    widget.info.subtitle ?? "",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                )
+                              : Container()
+                          : Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 4.0),
+                              decoration: BoxDecoration(
+                                color: Colors.deepPurple,
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Text(
+                                "已追 ${widget.info.progress ?? 1} 话",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: (follow)
+                        ? Icon(Icons.favorite, color: Colors.orange)
+                        : Icon(Icons.favorite_border, color: Colors.orange),
+                    onPressed: () {
+                      if (popularController.isLoadingMore == false) {
+                        popularController.updateFollow(
+                            widget.info.link ?? 19951, !(follow));
+                        setState(() {
+                          follow = !follow;
+                        });
+                        SmartDialog.showToast(
+                            follow ? '自己追的番要好好看完哦' : '取消追番成功');
+                      }
+                    },
+                    splashColor: Colors.orange.withOpacity(0.5),
+                  ),
+                ],
               ),
-              SizedBox(width: 8.0),
-              widget.info.subtitle != ''
-                  ? Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                      decoration: BoxDecoration(
-                        color: Colors.deepPurple,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Text(
-                        widget.info.subtitle ?? "",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )
-                  : Container(),
             ],
           ),
-          IconButton(
-  icon: (follow)
-      ? Icon(Icons.favorite, color: Colors.orange)
-      : Icon(Icons.favorite_border, color: Colors.orange),
-  onPressed: () {
-    popularController.updateFollow(widget.info.link ?? 19951, !(follow)); 
-    setState(() {
-      follow = !follow;
-    });
-    SmartDialog.showToast(follow ? '自己追的番要好好看完哦' : '取消追番成功');
-  },
-  splashColor: Colors.orange.withOpacity(0.5),
-),
-        ],
-      ),
-    ],
-  ),
-),
-
+        ),
       ),
     );
   }

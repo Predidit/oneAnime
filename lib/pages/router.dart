@@ -3,6 +3,7 @@ import 'package:oneanime/pages/popular/popular_module.dart';
 import 'package:oneanime/pages/timeline/timeline_module.dart';
 import 'package:oneanime/pages/my/my_module.dart';
 import 'package:oneanime/pages/video/video_module.dart';
+import 'package:oneanime/pages/follow/follow_module.dart';
 
 
  
@@ -52,5 +53,9 @@ final MenuRoute menu = MenuRoute([
   MenuRouteItem(
     path: "/video",
     module: VideoModule(),
+  ),
+  MenuRouteItem(
+    path: "/follow",
+    module: FollowModule(),
   ),
 ]);

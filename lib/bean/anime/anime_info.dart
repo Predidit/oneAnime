@@ -1,9 +1,4 @@
-import 'package:html/dom.dart';
-import 'package:oneanime/request/api.dart';
-import 'package:oneanime/utils/constans.dart';
 import 'package:hive/hive.dart';
-
-import 'anime_basic.dart';
 
 /// This class parses a Node and stores anime info like anime name, anime link, total episodes, year, season and subtitle group
 @HiveType(typeId: 0)
@@ -22,6 +17,8 @@ class AnimeInfo extends HiveObject {
   String? subtitle;
   @HiveField(6)
   bool? follow;
+  @HiveField(7)
+  int? progress;
 
   AnimeInfo({
     this.link,
@@ -31,6 +28,7 @@ class AnimeInfo extends HiveObject {
     this.season,
     this.subtitle,
     this.follow,
+    this.progress,
   });
 
 
@@ -65,6 +63,7 @@ class AnimeInfo extends HiveObject {
     this.season = list[4];
     this.subtitle = list[5];
     this.follow = false;
+    this.progress = 1;
   }
 
   Map<String, dynamic> toJson() => {
@@ -73,7 +72,9 @@ class AnimeInfo extends HiveObject {
         'year': year,
         'episode': episode,
         'name': name,
-        'link': link
+        'link': link,
+        'follow': follow,
+        'progress': progress
       };
 
   @override
@@ -96,6 +97,7 @@ class AnimeInfoAdapter extends TypeAdapter<AnimeInfo> {
       season: reader.readString(),
       subtitle: reader.readString(),
       follow: reader.readBool(),
+      progress: reader.readInt(),
     );
   }
 
@@ -108,6 +110,7 @@ class AnimeInfoAdapter extends TypeAdapter<AnimeInfo> {
     writer.writeString(obj.season ?? '');
     writer.writeString(obj.subtitle ?? '');
     writer.writeBool(obj.follow ?? false);
+    writer.writeInt(obj.progress ?? 1);
   }
 }
 

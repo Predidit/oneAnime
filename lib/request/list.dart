@@ -36,6 +36,11 @@ class ListRequest {
       debugPrint('新缓存列表长度为 ${list.length}');
       newList.addAll(list.getRange(0, list.length - oldlist.length));
       newList.addAll(oldlist);
+      newList.asMap().forEach((index, item) {
+        if (item.episode!.startsWith('連載中')) {
+          newList[index].episode = list[index].episode;
+        }
+      });
       await GStorage.listCahce.clear();
       await GStorage.listCahce.addAll(newList);
       debugPrint('更新列表成功');
@@ -80,6 +85,5 @@ class ListRequest {
       debugPrint('服务器响应不合法 ${e.toString()}');
       return schedules;
     }
-    // Todo 缓存
   }
 }

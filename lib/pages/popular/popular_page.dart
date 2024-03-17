@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
@@ -29,7 +30,7 @@ class _PopularPageState extends State<PopularPage>
     super.initState();
     debugPrint('Popular 开始初始化');
     if (popularController.cacheList.length == 0) {
-      debugPrint('页面列表缓存为空, 尝试重新加载');
+      debugPrint('页面列表尝试重新加载');
       popularController.getAnimeList();
     }
     debugPrint('动画缓存列表长度为 ${popularController.list.length}');
@@ -91,8 +92,10 @@ class _PopularPageState extends State<PopularPage>
       },
       child: RefreshIndicator(
         onRefresh: () async {
-          if (popularController.keyword == '') {
+          if (popularController.keyword == '' && popularController.isLoadingMore == false) {
+            popularController.isLoadingMore == true;
             await popularController.getAnimeList();
+            popularController.isLoadingMore == false;
           }
         },
         child: Scaffold(
@@ -126,12 +129,13 @@ class _PopularPageState extends State<PopularPage>
               },
             ),
             elevation: 0, // 移除阴影效果
-            shape: const RoundedRectangleBorder(
+            shape: Platform.isWindows ? const RoundedRectangleBorder(
               // 添加圆角
               borderRadius: BorderRadius.vertical(
+                top: Radius.circular(30),
                 bottom: Radius.circular(30),
               ),
-            ),
+            ) : null,
           ),
           body: Container(child: animeList),
           floatingActionButton: FloatingActionButton(
@@ -157,16 +161,28 @@ class _PopularPageState extends State<PopularPage>
         itemBuilder: (context, index) {
           return popularController.cacheList.length != 0
               ? AnimeInfoCard(
-                  info: popularController.cacheList[index], index: index)
-              : const SizedBox(
-                  height: 600,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                    ],
-                  ));
+                  info: popularController.cacheList[index],
+                  index: index,
+                  type: 'popular')
+              : (popularController.keyword == ''
+                  ? const SizedBox(
+                      height: 600,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                        ],
+                      ))
+                  : const SizedBox(
+                      height: 600,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('空空如也 >_<'),
+                        ],
+                      )));
         },
       );
     });
