@@ -51,15 +51,19 @@ class _VideoPageState extends State<VideoPage> {
     }
     debugPrint('当前播放器非全屏');
     navigationBarState.showNavigate();
-    videoController.from == '/tab/popular/' ? navigationBarState.updateSelectedIndex(0) : (videoController.from == '/tab/follow/' ? navigationBarState.updateSelectedIndex(2) : navigationBarState.updateSelectedIndex(1));
+    videoController.from == '/tab/popular/'
+        ? navigationBarState.updateSelectedIndex(0)
+        : (videoController.from == '/tab/follow/'
+            ? navigationBarState.updateSelectedIndex(2)
+            : navigationBarState.updateSelectedIndex(1));
     Modular.to.navigate(videoController.from);
   }
 
   @override
   Widget build(BuildContext context) {
     navigationBarState = Platform.isWindows
-              ? Provider.of<SideNavigationBarState>(context, listen: false)
-              : Provider.of<NavigationBarState>(context, listen: false);
+        ? Provider.of<SideNavigationBarState>(context, listen: false)
+        : Provider.of<NavigationBarState>(context, listen: false);
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {
@@ -88,7 +92,7 @@ class _VideoPageState extends State<VideoPage> {
                     child: Column(
                       children: [
                         AppBar(
-                          iconTheme: IconThemeData(color: Colors.white), 
+                          iconTheme: IconThemeData(color: Colors.white),
                           backgroundColor: Colors.transparent, // 设置为透明
                           elevation: 0, // 去除阴影
                           // title: Text(videoController.title),
@@ -96,8 +100,15 @@ class _VideoPageState extends State<VideoPage> {
                             icon: const Icon(Icons.arrow_back),
                             onPressed: () {
                               navigationBarState.showNavigate();
-                              videoController.from == '/tab/popular/' ? navigationBarState.updateSelectedIndex(0) : (videoController.from == '/tab/follow/' ? navigationBarState.updateSelectedIndex(2) : navigationBarState.updateSelectedIndex(1));
+                              videoController.from == '/tab/popular/'
+                                  ? navigationBarState.updateSelectedIndex(0)
+                                  : (videoController.from == '/tab/follow/'
+                                      ? navigationBarState
+                                          .updateSelectedIndex(2)
+                                      : navigationBarState
+                                          .updateSelectedIndex(1));
                               Modular.to.navigate(videoController.from);
+                              // videoController.getDanmakuList(videoController.title);
                             },
                           ),
                         ),
@@ -114,7 +125,11 @@ class _VideoPageState extends State<VideoPage> {
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () {
                     navigationBarState.showNavigate();
-                    videoController.from == '/tab/popular/' ? navigationBarState.updateSelectedIndex(0) : (videoController.from == '/tab/follow/' ? navigationBarState.updateSelectedIndex(2) : navigationBarState.updateSelectedIndex(1));
+                    videoController.from == '/tab/popular/'
+                        ? navigationBarState.updateSelectedIndex(0)
+                        : (videoController.from == '/tab/follow/'
+                            ? navigationBarState.updateSelectedIndex(2)
+                            : navigationBarState.updateSelectedIndex(1));
                     Modular.to.navigate(videoController.from);
                   },
                 ),
@@ -127,7 +142,7 @@ class _VideoPageState extends State<VideoPage> {
                       sheetHeight: MediaQuery.sizeOf(context).height -
                           MediaQuery.of(context).padding.top -
                           MediaQuery.sizeOf(context).width * 9 / 16,
-                    )
+                    ),
                   ],
                 );
               }),

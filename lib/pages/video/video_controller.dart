@@ -4,6 +4,7 @@ import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/request/video.dart';
 import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:oneanime/request/danmaku.dart';
 
 part 'video_controller.g.dart';
 
@@ -12,6 +13,8 @@ class VideoController = _VideoController with _$VideoController;
 abstract class _VideoController with Store {
   @observable
   List<String> token = [];
+
+  List<String> danmakuToken = [];
 
   @observable
   int episode = 1;
@@ -32,5 +35,9 @@ abstract class _VideoController with Store {
     playerController.videoCookie = videoCookie; 
     this.episode = episode;
     await playerController.init();
+  }
+
+  Future getDanmakuList(String title) async {
+    danmakuToken = await DanmakuRequest.getAniDanmakuList(title);
   }
 }
