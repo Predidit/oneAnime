@@ -11,6 +11,7 @@ import 'package:oneanime/bean/anime/anime_schedule.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/timeline/timeline_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
+import 'package:oneanime/pages/video/danmaku_module.dart';
 
 class ListRequest {
   static Future getAnimeList() async {

@@ -8,6 +8,9 @@ class Api {
   static String sourceUrl = "https://github.com/Predidit/oneAnime";
   static String aniDanmakuAPI = "https://ani.gamer.com.tw/ajax/danmuGet.php";
   static String aniSearch = "https://ani.gamer.com.tw/search.php";
+  static String dandanAPI = "https://api.dandanplay.net/api/v2/comment/";
+  static String dandanSearch = "https://api.dandanplay.net/api/v2/search/anime";
+  static String dandanInfo = "https://api.dandanplay.net/api/v2/bangumi/";
   static const String latestApp =
       'https://api.github.com/repos/Predidit/oneAnime/releases/latest'; 
 }

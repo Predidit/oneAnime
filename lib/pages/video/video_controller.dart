@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
@@ -5,6 +6,7 @@ import 'package:oneanime/request/video.dart';
 import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/request/danmaku.dart';
+import 'package:oneanime/pages/video/danmaku_module.dart';
 
 part 'video_controller.g.dart';
 
@@ -14,7 +16,9 @@ abstract class _VideoController with Store {
   @observable
   List<String> token = [];
 
-  List<String> danmakuToken = [];
+  int bangumiID = 0;
+  List<String> aniDanmakuToken = [];
+  List<Danmaku> danDanmakus = [];
 
   @observable
   int episode = 1;
@@ -37,7 +41,18 @@ abstract class _VideoController with Store {
     await playerController.init();
   }
 
-  Future getDanmakuList(String title) async {
-    danmakuToken = await DanmakuRequest.getAniDanmakuList(title);
+  Future getAniDanmakuList(String title) async {
+    aniDanmakuToken = await DanmakuRequest.getAniDanmakuList(title);
+  }
+
+  // Future getBangumiID(String title) async {
+  //   bangumiID = await DanmakuRequest.getBangumiID(title);
+  // }
+
+  Future getDanDanmaku(String title, int episode) async {
+    bangumiID = await DanmakuRequest.getBangumiID(title);
+    var res = await DanmakuRequest.getDanDanmaku(bangumiID, episode);
+    danDanmakus.addAll(res);
+    debugPrint('当前弹幕库 ${danDanmakus.toString()}');
   }
 }

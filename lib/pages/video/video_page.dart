@@ -108,7 +108,7 @@ class _VideoPageState extends State<VideoPage> {
                                       : navigationBarState
                                           .updateSelectedIndex(1));
                               Modular.to.navigate(videoController.from);
-                              // videoController.getDanmakuList(videoController.title);
+                              // videoController.getDanDanmaku(videoController.title, videoController.episode);
                             },
                           ),
                         ),
