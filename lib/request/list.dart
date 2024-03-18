@@ -14,6 +14,7 @@ import 'package:oneanime/pages/popular/popular_controller.dart';
 
 class ListRequest {
   static Future getAnimeList() async {
+    bool needFix = false;
     List<AnimeInfo> list = [];
     List<AnimeInfo> newList = [];
     final res = await Request().get(Api.animeList);
@@ -38,19 +39,29 @@ class ListRequest {
       popularController.list.clear();
     }
 
-    if (popularController.list.length <= list.length) {
+    if (list.length != 0) {
       List<AnimeInfo> oldlist = popularController.list;
       debugPrint('老缓存列表长度为 ${oldlist.length}');
       debugPrint('新缓存列表长度为 ${list.length}');
-      newList.addAll(list.getRange(0, list.length - oldlist.length));
-      newList.addAll(oldlist);
-      newList.asMap().forEach((index, item) {
-        if (item.episode!.startsWith('連載中')) {
-          newList[index].episode = list[index].episode;
-        }
-      });
+      if (popularController.list.length > list.length) {
+        needFix == true;
+      }
+      if (needFix == false) {
+        newList.addAll(list.getRange(0, list.length - oldlist.length));
+        newList.addAll(oldlist);
+        newList.asMap().forEach((index, item) {
+          if (item.episode!.startsWith('連載中')) {
+            if (newList[index].link == list[index].link) {
+              newList[index].episode = list[index].episode;
+            } else {
+              needFix = true;
+            }
+          }
+        });
+      }
+
       // 在 Anime01 目录发生变动时进行深拷贝
-      if (isSorted(newList)) {
+      if (isSorted(newList) && !needFix) {
         debugPrint('新缓存符合规范');
       } else {
         debugPrint('检测到远方番剧数据库变动');
@@ -72,10 +83,9 @@ class ListRequest {
       await GStorage.listCahce.addAll(newList);
       debugPrint('更新列表成功');
       return newList;
-    } else {
-      debugPrint('更新列表失败');
-      return popularController.list;
     }
+    debugPrint('更新列表失败');
+    return popularController.list;
   }
 
   static bool isSorted(List<AnimeInfo> animeList) {
