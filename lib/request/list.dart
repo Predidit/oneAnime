@@ -28,8 +28,16 @@ class ListRequest {
     } else {
       debugPrint('非法的Json ${res.toString()}');
     }
+    list.sort((a, b) => b.link!.compareTo(a.link!));
     final PopularController popularController =
         Modular.get<PopularController>();
+
+    // fix bug below 1.0.2
+    if (!isSorted(popularController.list)) {
+      debugPrint('缓存结构错误, 尝试重置');
+      popularController.list.clear();
+    }
+
     if (popularController.list.length <= list.length) {
       List<AnimeInfo> oldlist = popularController.list;
       debugPrint('老缓存列表长度为 ${oldlist.length}');
@@ -41,6 +49,25 @@ class ListRequest {
           newList[index].episode = list[index].episode;
         }
       });
+      // 在 Anime01 目录发生变动时进行深拷贝
+      if (isSorted(newList)) {
+        debugPrint('新缓存符合规范');
+      } else {
+        debugPrint('检测到远方番剧数据库变动');
+        newList.clear();
+        newList.addAll(list);
+        for (var oldAnime in oldlist) {
+          if (oldAnime.follow == true) {
+            var index = newList
+                .indexWhere((newAnime) => newAnime.name == oldAnime.name);
+            if (index != -1) {
+              newList[index].follow = oldAnime.follow;
+              newList[index].progress = oldAnime.progress;
+            }
+          }
+        }
+        ;
+      }
       await GStorage.listCahce.clear();
       await GStorage.listCahce.addAll(newList);
       debugPrint('更新列表成功');
@@ -49,6 +76,15 @@ class ListRequest {
       debugPrint('更新列表失败');
       return popularController.list;
     }
+  }
+
+  static bool isSorted(List<AnimeInfo> animeList) {
+    for (int i = 0; i < animeList.length - 1; i++) {
+      if (animeList[i].link! < (animeList[i + 1].link ?? 0)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   static Future getAnimeScedule() async {
