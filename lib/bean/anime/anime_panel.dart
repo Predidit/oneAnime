@@ -33,7 +33,7 @@ class _BangumiPanelState extends State<BangumiPanel> {
           Platform.isWindows ? Column(
             children: [
               const SizedBox(height: 7),
-              SizedBox(height: 0, child: Text(' 正在播放：第 ${videoController.episode} 话'))
+              SizedBox(height: 0, child: Text(' 正在播放：${videoController.title}'))
             ],
           ) : Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 6),

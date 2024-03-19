@@ -1,6 +1,6 @@
 # oneAnime
 
-使用 flutter 开发的 Anime1 第三方客户端, 一款简洁清爽无广告的看番软件。界面符合 Material You 规范。
+使用 flutter 开发的 Anime1 第三方客户端, 一款简洁清爽无广告的看番软件。界面符合 Material You 规范。除了番剧，还有弹幕 (～￣▽￣)～
 
 ## 支持平台
 
@@ -18,6 +18,7 @@
 - [x] 硬件加速
 - [x] 在线更新
 - [x] 追番列表
+- [x] 番剧弹幕 <(￣︶￣)> 这个真的可以有
 - [ ] 番剧下载
 - [ ] 番剧更新提醒
 - [ ] 还有更多 (/・ω・＼) 
@@ -40,9 +41,15 @@ A: 受限于 Anime1 网站本身的架构与设计，Anime1 不向用户提供�
 
  A: APP正常运行状态下不会加载 webview， 我们也很讨厌套壳浏览器。
 
+#### Q: Anime1 本身不支持弹幕功能，弹幕来自哪里呢。
+
+A: 弹幕来自 dandanplayer 开放API，集成 Bilibili / 动画疯 弹幕。
+
  ## 致谢
 
 特别感谢 [AnimeOne](https://github.com/HQAnime/AnimeOne) 本项目使用了部分来自 AnimeOne 的代码以处理与 Anime1 的交互
+
+特别感谢 [DandanPlayer](https://www.dandanplay.com/) 本项目使用了 dandanplayer 开放API 以提供弹幕交互。
 
 感谢 [media_kit](https://github.com/media-kit/media-kit) 本项目跨平台媒体播放能力来自 media_kit
 
