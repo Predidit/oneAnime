@@ -47,7 +47,7 @@ class _PlayerItemState extends State<PlayerItem> {
             child: playerController.dataStatus == 'loaded'
                 ? Video(
                     controller: playerController.videoController,
-                    controls: Platform.isWindows ? null : NoVideoControls,
+                    controls: Platform.isWindows ? MaterialDesktopVideoControls : NoVideoControls,
                     subtitleViewConfiguration: SubtitleViewConfiguration(
                       style: TextStyle(
                         color: Colors.pink, // 深粉色字体

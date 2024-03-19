@@ -32,7 +32,7 @@ abstract class _VideoController with Store {
   @observable
   Duration duration = Duration.zero;
 
-  // 播放器状态监听
+  // (弃用) 播放器状态监听 media_kit 的流监听似乎存在问题
   // late StreamSubscription<bool>? playingSubscription;
   // late StreamSubscription<Duration>? postionSubscription;
   // late StreamSubscription<Duration>? bufferSubscription;
