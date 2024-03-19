@@ -72,8 +72,12 @@ abstract class _VideoController with Store {
     playing = false;
     currentPosition = Duration.zero;
     duration = Duration.zero;
-    danDanmakus.clear();
-    getDanDanmaku(title, episode);
+    try {
+      danDanmakus.clear();
+      getDanDanmaku(title, episode);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
     // playingSubscription?.cancel();
     // postionSubscription?.cancel();
     // bufferSubscription?.cancel();

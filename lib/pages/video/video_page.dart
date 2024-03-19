@@ -4,7 +4,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:oneanime/pages/player/player_item.dart';
@@ -41,10 +40,18 @@ class _VideoPageState extends State<VideoPage> {
   double _duration = 8;
   double _fontSize = (Platform.isIOS || Platform.isAndroid) ? 16 : 25;
 
+  Timer? hideTimer;
+  Timer? playerTimer;
+
   void _handleTap() {
     videoController.showPositioned = true;
-    Timer(const Duration(seconds: 4), () {
+    if (hideTimer != null) {
+      hideTimer!.cancel();
+    }
+
+    hideTimer = Timer(const Duration(seconds: 4), () {
       videoController.showPositioned = false;
+      hideTimer = null; 
     });
   }
 
@@ -81,7 +88,7 @@ class _VideoPageState extends State<VideoPage> {
     // videoController.bufferSubscription?.resume();
     // videoController.durationSubscription?.resume();
 
-    Timer.periodic(Duration(seconds: 1), (timer) {
+     playerTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       videoController.playing = playerController.mediaPlayer.state.playing;
       videoController.currentPosition =
           playerController.mediaPlayer.state.position;
@@ -103,6 +110,11 @@ class _VideoPageState extends State<VideoPage> {
 
   @override
   void dispose() {
+    try {
+      playerTimer?.cancel();
+    } catch(e) {
+      debugPrint(e.toString());
+    }
     playerController.dispose();
     super.dispose();
   }
