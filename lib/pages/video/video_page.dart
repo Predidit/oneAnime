@@ -51,7 +51,7 @@ class _VideoPageState extends State<VideoPage> {
 
     hideTimer = Timer(const Duration(seconds: 4), () {
       videoController.showPositioned = false;
-      hideTimer = null; 
+      hideTimer = null;
     });
   }
 
@@ -88,8 +88,10 @@ class _VideoPageState extends State<VideoPage> {
     // videoController.bufferSubscription?.resume();
     // videoController.durationSubscription?.resume();
 
-     playerTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    playerTimer = Timer.periodic(Duration(seconds: 1), (timer) {
       videoController.playing = playerController.mediaPlayer.state.playing;
+      videoController.isBuffering =
+          playerController.mediaPlayer.state.buffering;
       videoController.currentPosition =
           playerController.mediaPlayer.state.position;
       videoController.buffer = playerController.mediaPlayer.state.buffer;
@@ -112,7 +114,7 @@ class _VideoPageState extends State<VideoPage> {
   void dispose() {
     try {
       playerTimer?.cancel();
-    } catch(e) {
+    } catch (e) {
       debugPrint(e.toString());
     }
     playerController.dispose();
@@ -254,6 +256,13 @@ class _VideoPageState extends State<VideoPage> {
                           width: MediaQuery.of(context).size.width,
                           child: Stack(children: [
                             const Center(child: PlayerItem()),
+                            videoController.isBuffering
+                                ? const Positioned.fill(
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  )
+                                : Container(),
                             GestureDetector(
                               onTap: _handleTap,
                               child: Container(

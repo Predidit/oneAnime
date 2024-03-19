@@ -26,6 +26,8 @@ abstract class _VideoController with Store {
   @observable
   bool playing = false;
   @observable
+  bool isBuffering = true;
+  @observable
   Duration currentPosition = Duration.zero;
   @observable
   Duration buffer = Duration.zero;

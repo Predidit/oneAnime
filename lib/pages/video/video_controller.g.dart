@@ -57,6 +57,22 @@ mixin _$VideoController on _VideoController, Store {
     });
   }
 
+  late final _$isBufferingAtom =
+      Atom(name: '_VideoController.isBuffering', context: context);
+
+  @override
+  bool get isBuffering {
+    _$isBufferingAtom.reportRead();
+    return super.isBuffering;
+  }
+
+  @override
+  set isBuffering(bool value) {
+    _$isBufferingAtom.reportWrite(value, super.isBuffering, () {
+      super.isBuffering = value;
+    });
+  }
+
   late final _$currentPositionAtom =
       Atom(name: '_VideoController.currentPosition', context: context);
 
@@ -175,6 +191,7 @@ mixin _$VideoController on _VideoController, Store {
 token: ${token},
 danDanmakus: ${danDanmakus},
 playing: ${playing},
+isBuffering: ${isBuffering},
 currentPosition: ${currentPosition},
 buffer: ${buffer},
 duration: ${duration},
