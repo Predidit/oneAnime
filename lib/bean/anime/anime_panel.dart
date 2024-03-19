@@ -43,7 +43,7 @@ class _BangumiPanelState extends State<BangumiPanel> {
                 const Text('合集 '),
                 Expanded(
                   child: Text(
-                    ' 正在播放：第 ${videoController.episode} 话',
+                    ' 正在播放：${videoController.title}',
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 12,
