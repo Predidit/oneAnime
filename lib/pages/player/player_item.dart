@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:oneanime/pages/video/video_controller.dart' as videoPage;
 
 class PlayerItem extends StatefulWidget {
   const PlayerItem({super.key});
@@ -15,6 +16,7 @@ class PlayerItem extends StatefulWidget {
 
 class _PlayerItemState extends State<PlayerItem> {
   final PlayerController playerController = Modular.get<PlayerController>();
+  final videoPage.VideoController videoPageController = Modular.get<videoPage.VideoController>();
 
   @override
   void initState() {
@@ -38,13 +40,14 @@ class _PlayerItemState extends State<PlayerItem> {
           return SizedBox(
             width: Platform.isWindows
                 ? MediaQuery.of(context).size.width
-                : MediaQuery.of(context).size.width,
+                : ((!videoPageController.androidFullscreen) ? MediaQuery.of(context).size.width : (MediaQuery.of(context).size.height * 16.0 / 9.0)),
             height: Platform.isWindows
                 ? (MediaQuery.of(context).size.width * 9.0 / (16.0 * 1.18))
-                : MediaQuery.of(context).size.width * 9.0 / 16.0,
+                : ((!videoPageController.androidFullscreen) ? MediaQuery.of(context).size.width * 9.0 / 16.0 : MediaQuery.of(context).size.height),
             child: playerController.dataStatus == 'loaded'
                 ? Video(
                     controller: playerController.videoController,
+                    controls: Platform.isWindows ? null : NoVideoControls,
                     subtitleViewConfiguration: SubtitleViewConfiguration(
                       style: TextStyle(
                         color: Colors.pink, // 深粉色字体

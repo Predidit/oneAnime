@@ -8,6 +8,7 @@ import 'package:oneanime/utils/constans.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:auto_orientation/auto_orientation.dart';
 
 part 'player_controller.g.dart';
 
@@ -78,19 +79,30 @@ abstract class _PlayerController with Store {
     debugPrint('videoController 配置成功');
 
     var httpHeaders = {
-          'user-agent':
-              'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_3_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15',
-          'referer': HttpString.baseUrl,
-          'Cookie': videoCookie,
-        };
+      'user-agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_3_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15',
+      'referer': HttpString.baseUrl,
+      'Cookie': videoCookie,
+    };
 
     mediaPlayer.setPlaylistMode(PlaylistMode.none);
     mediaPlayer.open(
-      Media(videoUrl, httpHeaders: httpHeaders),  
+      Media(videoUrl, httpHeaders: httpHeaders),
       play: false,
     );
     return mediaPlayer;
   }
+
+  Future<void> enterFullScreen() async {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+    await landScape();
+    await SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.immersiveSticky,
+  );
+  }
+
   //退出全屏显示
   Future<void> exitFullScreen() async {
     debugPrint('退出全屏模式');
@@ -114,10 +126,48 @@ abstract class _PlayerController with Store {
             .invokeMethod(
           'Utils.ExitNativeFullscreen',
         );
+        // verticalScreen();
       }
     } catch (exception, stacktrace) {
       debugPrint(exception.toString());
       debugPrint(stacktrace.toString());
     }
+  }
+
+  //横屏
+  Future<void> landScape() async {
+    dynamic document;
+    try {
+      if (kIsWeb) {
+        await document.documentElement?.requestFullscreen();
+      } else if (Platform.isAndroid || Platform.isIOS) {
+        // await SystemChrome.setEnabledSystemUIMode(
+        //   SystemUiMode.immersiveSticky,
+        //   overlays: [],
+        // );
+        // await SystemChrome.setPreferredOrientations(
+        //   [
+        //     DeviceOrientation.landscapeLeft,
+        //     DeviceOrientation.landscapeRight,
+        //   ],
+        // );
+        await AutoOrientation.landscapeAutoMode(forceSensor: true);
+      } else if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
+        await const MethodChannel('com.alexmercerind/media_kit_video')
+            .invokeMethod(
+          'Utils.EnterNativeFullscreen',
+        );
+      }
+    } catch (exception, stacktrace) {
+      debugPrint(exception.toString());
+      debugPrint(stacktrace.toString());
+    }
+  }
+
+//竖屏
+  Future<void> verticalScreen() async {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
   }
 }

@@ -44,7 +44,7 @@ class VideoRequest {
   static Future getVideoToken(String url) async {
     List<String> token = [];
     final res = await Request().get(url);
-    String resString = res.data;
+    String resString = res.data.toString();
     try {
       var document = parse(resString);
       final videoTags = document.getElementsByTagName('video');

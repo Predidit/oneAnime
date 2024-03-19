@@ -25,6 +25,86 @@ mixin _$VideoController on _VideoController, Store {
     });
   }
 
+  late final _$danDanmakusAtom =
+      Atom(name: '_VideoController.danDanmakus', context: context);
+
+  @override
+  List<Danmaku> get danDanmakus {
+    _$danDanmakusAtom.reportRead();
+    return super.danDanmakus;
+  }
+
+  @override
+  set danDanmakus(List<Danmaku> value) {
+    _$danDanmakusAtom.reportWrite(value, super.danDanmakus, () {
+      super.danDanmakus = value;
+    });
+  }
+
+  late final _$playingAtom =
+      Atom(name: '_VideoController.playing', context: context);
+
+  @override
+  bool get playing {
+    _$playingAtom.reportRead();
+    return super.playing;
+  }
+
+  @override
+  set playing(bool value) {
+    _$playingAtom.reportWrite(value, super.playing, () {
+      super.playing = value;
+    });
+  }
+
+  late final _$currentPositionAtom =
+      Atom(name: '_VideoController.currentPosition', context: context);
+
+  @override
+  Duration get currentPosition {
+    _$currentPositionAtom.reportRead();
+    return super.currentPosition;
+  }
+
+  @override
+  set currentPosition(Duration value) {
+    _$currentPositionAtom.reportWrite(value, super.currentPosition, () {
+      super.currentPosition = value;
+    });
+  }
+
+  late final _$bufferAtom =
+      Atom(name: '_VideoController.buffer', context: context);
+
+  @override
+  Duration get buffer {
+    _$bufferAtom.reportRead();
+    return super.buffer;
+  }
+
+  @override
+  set buffer(Duration value) {
+    _$bufferAtom.reportWrite(value, super.buffer, () {
+      super.buffer = value;
+    });
+  }
+
+  late final _$durationAtom =
+      Atom(name: '_VideoController.duration', context: context);
+
+  @override
+  Duration get duration {
+    _$durationAtom.reportRead();
+    return super.duration;
+  }
+
+  @override
+  set duration(Duration value) {
+    _$durationAtom.reportWrite(value, super.duration, () {
+      super.duration = value;
+    });
+  }
+
   late final _$episodeAtom =
       Atom(name: '_VideoController.episode', context: context);
 
@@ -41,11 +121,67 @@ mixin _$VideoController on _VideoController, Store {
     });
   }
 
+  late final _$danmakuOnAtom =
+      Atom(name: '_VideoController.danmakuOn', context: context);
+
+  @override
+  bool get danmakuOn {
+    _$danmakuOnAtom.reportRead();
+    return super.danmakuOn;
+  }
+
+  @override
+  set danmakuOn(bool value) {
+    _$danmakuOnAtom.reportWrite(value, super.danmakuOn, () {
+      super.danmakuOn = value;
+    });
+  }
+
+  late final _$showPositionedAtom =
+      Atom(name: '_VideoController.showPositioned', context: context);
+
+  @override
+  bool get showPositioned {
+    _$showPositionedAtom.reportRead();
+    return super.showPositioned;
+  }
+
+  @override
+  set showPositioned(bool value) {
+    _$showPositionedAtom.reportWrite(value, super.showPositioned, () {
+      super.showPositioned = value;
+    });
+  }
+
+  late final _$androidFullscreenAtom =
+      Atom(name: '_VideoController.androidFullscreen', context: context);
+
+  @override
+  bool get androidFullscreen {
+    _$androidFullscreenAtom.reportRead();
+    return super.androidFullscreen;
+  }
+
+  @override
+  set androidFullscreen(bool value) {
+    _$androidFullscreenAtom.reportWrite(value, super.androidFullscreen, () {
+      super.androidFullscreen = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
 token: ${token},
-episode: ${episode}
+danDanmakus: ${danDanmakus},
+playing: ${playing},
+currentPosition: ${currentPosition},
+buffer: ${buffer},
+duration: ${duration},
+episode: ${episode},
+danmakuOn: ${danmakuOn},
+showPositioned: ${showPositioned},
+androidFullscreen: ${androidFullscreen}
     ''';
   }
 }
