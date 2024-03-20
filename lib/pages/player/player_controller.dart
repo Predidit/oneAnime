@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:auto_orientation/auto_orientation.dart';
+import 'package:window_manager/window_manager.dart';
 
 part 'player_controller.g.dart';
 
@@ -94,6 +95,10 @@ abstract class _PlayerController with Store {
   }
 
   Future<void> enterFullScreen() async {
+    if (Platform.isWindows) {
+      await windowManager.setFullScreen(true);
+      return;
+    }
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
@@ -106,6 +111,9 @@ abstract class _PlayerController with Store {
   //退出全屏显示
   Future<void> exitFullScreen() async {
     debugPrint('退出全屏模式');
+    if (Platform.isWindows) {
+      await windowManager.setFullScreen(false);
+    }
     dynamic document;
     late SystemUiMode mode = SystemUiMode.edgeToEdge;
     try {

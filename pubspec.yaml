@@ -55,6 +55,7 @@ dependencies:
   device_info_plus: ^9.0.2
   flutter_open_chinese_convert: ^0.3.0
   flutter_launcher_icons: ^0.13.1
+  window_manager: ^0.3.8
 
   media_kit: ^1.1.10                             # Primary package.
   media_kit_video: ^1.2.4                        # For video rendering.

@@ -42,12 +42,12 @@ class _PlayerItemState extends State<PlayerItem> {
                 ? MediaQuery.of(context).size.width
                 : ((!videoPageController.androidFullscreen) ? MediaQuery.of(context).size.width : (MediaQuery.of(context).size.height * 16.0 / 9.0)),
             height: Platform.isWindows
-                ? (MediaQuery.of(context).size.width * 9.0 / (16.0 * 1.18))
+                ? (MediaQuery.of(context).size.width * 9.0 / (16.0))
                 : ((!videoPageController.androidFullscreen) ? MediaQuery.of(context).size.width * 9.0 / 16.0 : MediaQuery.of(context).size.height),
             child: playerController.dataStatus == 'loaded'
                 ? Video(
                     controller: playerController.videoController,
-                    controls: Platform.isWindows ? MaterialDesktopVideoControls : NoVideoControls,
+                    controls:  NoVideoControls,
                     subtitleViewConfiguration: SubtitleViewConfiguration(
                       style: TextStyle(
                         color: Colors.pink, // 深粉色字体

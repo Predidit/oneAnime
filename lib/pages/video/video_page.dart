@@ -14,6 +14,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:ns_danmaku/ns_danmaku.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:window_manager/window_manager.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -22,7 +23,7 @@ class VideoPage extends StatefulWidget {
   State<VideoPage> createState() => _VideoPageState();
 }
 
-class _VideoPageState extends State<VideoPage> {
+class _VideoPageState extends State<VideoPage> with WindowListener {
   // var _key = new GlobalKey<ScaffoldState>();
   dynamic navigationBarState;
   late DanmakuController danmakuController;
@@ -53,6 +54,11 @@ class _VideoPageState extends State<VideoPage> {
       videoController.showPositioned = false;
       hideTimer = null;
     });
+  }
+
+  @override
+  void onWindowRestore() {
+    danmakuController.onClear();
   }
 
   @override
@@ -153,274 +159,172 @@ class _VideoPageState extends State<VideoPage> {
       onPopInvoked: (bool didPop) async {
         onBackPressed(context);
       },
-      child: Platform.isWindows
-          ? Scaffold(
-              body: Observer(builder: (context) {
-                return Column(
-                  children: [
-                    SizedBox(
-                      height: (MediaQuery.of(context).size.width *
-                          9.0 /
-                          (16.0 * 1.18)),
-                      child: Stack(children: [
-                        const PlayerItem(),
-                        Positioned.fill(
-                          child: DanmakuView(
-                            key: _danmuKey,
-                            createdController: (DanmakuController e) {
-                              danmakuController = e;
-                              debugPrint('弹幕控制器创建成功');
-                            },
-                            option: DanmakuOption(
-                              opacity: _opacity,
-                              fontSize: _fontSize,
-                              duration: _duration,
-                              borderText: _border,
-                            ),
-                            statusChanged: (e) {
-                              setState(() {
-                                _running = e;
-                              });
-                            },
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 8,
-                          right: 60,
-                          child: IconButton(
-                            color: Colors.white,
-                            icon: Icon(videoController.danmakuOn
-                                ? Icons.comment
-                                : Icons.comments_disabled),
-                            onPressed: () {
-                              if (videoController.danDanmakus.length == 0) {
-                                SmartDialog.showToast('当前剧集没有找到弹幕的说');
-                                return;
-                              }
-                              videoController.danmakuOn =
-                                  !videoController.danmakuOn;
-                              debugPrint(
-                                  '弹幕开关变更为 ${videoController.danmakuOn}');
-                            },
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: AppBar(
-                            iconTheme: const IconThemeData(color: Colors.white),
-                            backgroundColor: Colors.transparent, // 设置为透明
-                            elevation: 0, // 去除阴影
-                            // title: Text(videoController.title),
-                            leading: IconButton(
-                              icon: const Icon(Icons.arrow_back),
-                              onPressed: () {
-                                navigationBarState.showNavigate();
-                                videoController.from == '/tab/popular/'
-                                    ? navigationBarState.updateSelectedIndex(0)
-                                    : (videoController.from == '/tab/follow/'
-                                        ? navigationBarState
-                                            .updateSelectedIndex(2)
-                                        : navigationBarState
-                                            .updateSelectedIndex(1));
-                                Modular.to.navigate(videoController.from);
-                              },
-                            ),
-                          ),
-                        )
-                      ]),
-                    ),
-                    BangumiPanel(
-                      sheetHeight: MediaQuery.sizeOf(context).height -
-                          MediaQuery.of(context).padding.top -
-                          MediaQuery.sizeOf(context).width * 9 / 16,
-                    )
-                  ],
-                );
-              }),
-            )
-          : SafeArea(
-              child: Scaffold(
-                body: Observer(builder: (context) {
-                  return Column(
-                    children: [
-                      Container(
-                        color: Colors.black,
-                        child: SizedBox(
-                          height: videoController.androidFullscreen
-                              ? (MediaQuery.of(context).size.height)
-                              : (MediaQuery.of(context).size.width *
-                                  9.0 /
-                                  (16.0)),
-                          width: MediaQuery.of(context).size.width,
-                          child: Stack(children: [
-                            const Center(child: PlayerItem()),
-                            videoController.isBuffering
-                                ? const Positioned.fill(
-                                    child: Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  )
-                                : Container(),
-                            GestureDetector(
-                              onTap: _handleTap,
-                              child: Container(
-                                color: Colors.transparent,
-                                width: double.infinity,
-                                height: double.infinity,
+      child: SafeArea(
+        child: Scaffold(
+          body: Observer(builder: (context) {
+            return Column(
+              children: [
+                Container(
+                  color: Colors.black,
+                  child: SizedBox(
+                    height: videoController.androidFullscreen
+                        ? (MediaQuery.of(context).size.height)
+                        : (MediaQuery.of(context).size.width * 9.0 / (16.0)),
+                    width: MediaQuery.of(context).size.width,
+                    child: Stack(children: [
+                      const Center(child: PlayerItem()),
+                      videoController.isBuffering
+                          ? const Positioned.fill(
+                              child: Center(
+                                child: CircularProgressIndicator(),
                               ),
-                            ),
-                            Positioned.fill(
-                              child: DanmakuView(
-                                key: _danmuKey,
-                                createdController: (DanmakuController e) {
-                                  danmakuController = e;
-                                  debugPrint('弹幕控制器创建成功');
-                                },
-                                option: DanmakuOption(
-                                  opacity: _opacity,
-                                  fontSize: _fontSize,
-                                  duration: _duration,
-                                  borderText: _border,
-                                ),
-                                statusChanged: (e) {
-                                  setState(() {
-                                    _running = e;
-                                  });
-                                },
-                              ),
-                            ),
-                            (videoController.showPositioned ||
-                                    !playerController.mediaPlayer.state.playing)
-                                ? Positioned(
-                                    top: 0,
-                                    left: 0,
-                                    child: IconButton(
-                                      color: Colors.white,
-                                      icon: const Icon(Icons.arrow_back),
-                                      onPressed: () {
-                                        if (videoController.androidFullscreen ==
-                                            true) {
-                                          playerController.exitFullScreen();
-                                          videoController.androidFullscreen =
-                                              false;
-                                          return;
-                                        }
-                                        navigationBarState.showNavigate();
-                                        videoController.from == '/tab/popular/'
-                                            ? navigationBarState
-                                                .updateSelectedIndex(0)
-                                            : (videoController.from ==
-                                                    '/tab/follow/'
-                                                ? navigationBarState
-                                                    .updateSelectedIndex(2)
-                                                : navigationBarState
-                                                    .updateSelectedIndex(1));
-                                        Modular.to
-                                            .navigate(videoController.from);
-                                      },
-                                    ),
-                                  )
-                                : Container(),
-
-                            // 自定义播放器底部组件
-                            (videoController.showPositioned ||
-                                    !playerController.mediaPlayer.state.playing)
-                                ? Positioned(
-                                    bottom: 0,
-                                    left: 0,
-                                    right: 0,
-                                    child: Row(
-                                      children: [
-                                        IconButton(
-                                          color: Colors.white,
-                                          icon: Icon(videoController.playing
-                                              ? Icons.pause
-                                              : Icons.play_arrow),
-                                          onPressed: () {
-                                            if (videoController.playing) {
-                                              playerController.mediaPlayer
-                                                  .pause();
-                                            } else {
-                                              playerController.mediaPlayer
-                                                  .play();
-                                            }
-                                          },
-                                        ),
-                                        Expanded(
-                                          child: ProgressBar(
-                                            timeLabelLocation:
-                                                TimeLabelLocation.none,
-                                            progress:
-                                                videoController.currentPosition,
-                                            buffered: videoController.buffer,
-                                            total: videoController.duration,
-                                            onSeek: (duration) {
-                                              playerController.mediaPlayer
-                                                  .seek(duration);
-                                            },
-                                          ),
-                                        ),
-                                        IconButton(
-                                          color: Colors.white,
-                                          icon: Icon(videoController.danmakuOn
-                                              ? Icons.comment
-                                              : Icons.comments_disabled),
-                                          onPressed: () {
-                                            if (videoController
-                                                    .danDanmakus.length ==
-                                                0) {
-                                              SmartDialog.showToast(
-                                                  '当前剧集没有找到弹幕的说');
-                                              return;
-                                            }
-                                            videoController.danmakuOn =
-                                                !videoController.danmakuOn;
-                                            debugPrint(
-                                                '弹幕开关变更为 ${videoController.danmakuOn}');
-                                          },
-                                        ),
-                                        IconButton(
-                                          color: Colors.white,
-                                          icon: Icon(
-                                              videoController.androidFullscreen
-                                                  ? Icons.fullscreen
-                                                  : Icons.fullscreen_exit),
-                                          onPressed: () {
-                                            if (videoController
-                                                .androidFullscreen) {
-                                              playerController.exitFullScreen();
-                                            } else {
-                                              playerController
-                                                  .enterFullScreen();
-                                            }
-                                            videoController.androidFullscreen =
-                                                !videoController
-                                                    .androidFullscreen;
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Container(),
-                          ]),
+                            )
+                          : Container(),
+                      GestureDetector(
+                        onTap: _handleTap,
+                        child: Container(
+                          color: Colors.transparent,
+                          width: double.infinity,
+                          height: double.infinity,
                         ),
                       ),
+                      Positioned.fill(
+                        child: DanmakuView(
+                          key: _danmuKey,
+                          createdController: (DanmakuController e) {
+                            danmakuController = e;
+                            debugPrint('弹幕控制器创建成功');
+                          },
+                          option: DanmakuOption(
+                            opacity: _opacity,
+                            fontSize: _fontSize,
+                            duration: _duration,
+                            borderText: _border,
+                          ),
+                          statusChanged: (e) {
+                            setState(() {
+                              _running = e;
+                            });
+                          },
+                        ),
+                      ),
+                      (videoController.showPositioned ||
+                              !playerController.mediaPlayer.state.playing)
+                          ? Positioned(
+                              top: 0,
+                              left: 0,
+                              child: IconButton(
+                                color: Colors.white,
+                                icon: const Icon(Icons.arrow_back),
+                                onPressed: () {
+                                  if (videoController.androidFullscreen ==
+                                      true) {
+                                    playerController.exitFullScreen();
+                                    videoController.androidFullscreen = false;
+                                    return;
+                                  }
+                                  navigationBarState.showNavigate();
+                                  videoController.from == '/tab/popular/'
+                                      ? navigationBarState
+                                          .updateSelectedIndex(0)
+                                      : (videoController.from == '/tab/follow/'
+                                          ? navigationBarState
+                                              .updateSelectedIndex(2)
+                                          : navigationBarState
+                                              .updateSelectedIndex(1));
+                                  Modular.to.navigate(videoController.from);
+                                },
+                              ),
+                            )
+                          : Container(),
 
-                      videoController.androidFullscreen
-                          ? Container()
-                          : BangumiPanel(
-                              sheetHeight: MediaQuery.sizeOf(context).height -
-                                  MediaQuery.of(context).padding.top -
-                                  MediaQuery.sizeOf(context).width * 9 / 16,
-                            ),
-                      // SizedBox(child: Text("${videoController.androidFullscreen}")),
-                    ],
-                  );
-                }),
-              ),
-            ),
+                      // 自定义播放器底部组件
+                      (videoController.showPositioned ||
+                              !playerController.mediaPlayer.state.playing)
+                          ? Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    color: Colors.white,
+                                    icon: Icon(videoController.playing
+                                        ? Icons.pause
+                                        : Icons.play_arrow),
+                                    onPressed: () {
+                                      if (videoController.playing) {
+                                        playerController.mediaPlayer.pause();
+                                      } else {
+                                        playerController.mediaPlayer.play();
+                                      }
+                                    },
+                                  ),
+                                  Expanded(
+                                    child: ProgressBar(
+                                      timeLabelLocation: TimeLabelLocation.none,
+                                      progress: videoController.currentPosition,
+                                      buffered: videoController.buffer,
+                                      total: videoController.duration,
+                                      onSeek: (duration) {
+                                        playerController.mediaPlayer
+                                            .seek(duration);
+                                      },
+                                    ),
+                                  ),
+                                  IconButton(
+                                    color: Colors.white,
+                                    icon: Icon(videoController.danmakuOn
+                                        ? Icons.comment
+                                        : Icons.comments_disabled),
+                                    onPressed: () {
+                                      if (videoController.danDanmakus.length ==
+                                          0) {
+                                        SmartDialog.showToast('当前剧集没有找到弹幕的说');
+                                        return;
+                                      }
+                                      videoController.danmakuOn =
+                                          !videoController.danmakuOn;
+                                      debugPrint(
+                                          '弹幕开关变更为 ${videoController.danmakuOn}');
+                                    },
+                                  ),
+                                  IconButton(
+                                    color: Colors.white,
+                                    icon: Icon(videoController.androidFullscreen
+                                        ? Icons.fullscreen
+                                        : Icons.fullscreen_exit),
+                                    onPressed: () {
+                                      if (videoController.androidFullscreen) {
+                                        playerController.exitFullScreen();
+                                      } else {
+                                        playerController.enterFullScreen();
+                                      }
+                                      videoController.androidFullscreen =
+                                          !videoController.androidFullscreen;
+                                    },
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(),
+                    ]),
+                  ),
+                ),
+
+                videoController.androidFullscreen
+                    ? Container()
+                    : BangumiPanel(
+                        sheetHeight: MediaQuery.sizeOf(context).height -
+                            MediaQuery.of(context).padding.top -
+                            MediaQuery.sizeOf(context).width * 9 / 16,
+                      ),
+                // SizedBox(child: Text("${videoController.androidFullscreen}")),
+              ],
+            );
+          }),
+        ),
+      ),
     );
   }
 }
