@@ -57,5 +57,6 @@ class SettingBoxKey {
   static const String HAenable = 'HAenable',
       searchEnhanceEnable = 'searchEnhanceEnable',
       // Todo 检查更新
-      autoUpdate = '';
+      autoUpdate = '',
+      autoPlay = 'autoPlay';
 }

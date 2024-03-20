@@ -10,6 +10,8 @@ import 'package:flutter/foundation.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:oneanime/utils/storage.dart';
+import 'package:hive/hive.dart';
 
 part 'player_controller.g.dart';
 
@@ -18,6 +20,7 @@ class PlayerController = _PlayerController with _$PlayerController;
 abstract class _PlayerController with Store {
   String videoUrl = '';
   String videoCookie = '';
+  Box setting = GStorage.setting;
   late Player mediaPlayer;
   late VideoController videoController;
 
@@ -86,10 +89,12 @@ abstract class _PlayerController with Store {
       'Cookie': videoCookie,
     };
 
+    bool aotoPlay = setting.get(SettingBoxKey.autoPlay, defaultValue: true);
+
     mediaPlayer.setPlaylistMode(PlaylistMode.none);
     mediaPlayer.open(
       Media(videoUrl, httpHeaders: httpHeaders),
-      play: false,
+      play: aotoPlay,
     );
     return mediaPlayer;
   }

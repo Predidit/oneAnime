@@ -63,6 +63,13 @@ class _MyPageState extends State<MyPage> {
                 defaultVal: true,
               ),
             ),
+            const InkWell(
+              child: SetSwitchItem(
+                title: '自动播放',
+                setKey: SettingBoxKey.autoPlay,
+                defaultVal: true,
+              ),
+            ),
             (Platform.isAndroid || Platform.isAndroid)
                 ? const InkWell(
                     child: SetSwitchItem(
