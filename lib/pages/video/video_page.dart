@@ -15,6 +15,8 @@ import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:ns_danmaku/ns_danmaku.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:screen_brightness/screen_brightness.dart';
+import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -139,6 +141,33 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     Modular.to.navigate(videoController.from);
   }
 
+  Future<void> setVolume(double value) async {
+    try {
+      FlutterVolumeController.updateShowSystemUI(false);
+      await FlutterVolumeController.setVolume(value);
+    } catch (_) {}
+  }
+
+  Future<void> raiseVolume(double value) async {
+    try {
+      FlutterVolumeController.updateShowSystemUI(false);
+      await FlutterVolumeController.raiseVolume(value);
+    } catch (_) {}
+  }
+
+  Future<void> lowerVolume(double value) async {
+    try {
+      FlutterVolumeController.updateShowSystemUI(false);
+      await FlutterVolumeController.lowerVolume(value);
+    } catch (_) {}
+  }
+
+  Future<void> setBrightness(double value) async {
+    try {
+      await ScreenBrightness().setScreenBrightness(value);
+    } catch (_) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     navigationBarState = Platform.isWindows
@@ -166,9 +195,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                           ? (MediaQuery.of(context).size.height)
                           : (MediaQuery.of(context).size.width * 9.0 / (16.0)),
                       width: MediaQuery.of(context).size.width,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
+                      child: Stack(alignment: Alignment.center, children: [
                         const Center(child: PlayerItem()),
                         videoController.isBuffering
                             ? const Positioned.fill(
@@ -178,7 +205,16 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                               )
                             : Container(),
                         GestureDetector(
-                          onTap: _handleTap,
+                          onTap: () async {
+                            _handleTap;
+                            try {
+                              videoController.volume =
+                                  await FlutterVolumeController.getVolume() ??
+                                      videoController.volume;
+                            } catch (e) {
+                              debugPrint(e.toString());
+                            }
+                          },
                           child: Container(
                             color: Colors.transparent,
                             width: double.infinity,
@@ -192,30 +228,70 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                             top: 25,
                             right: 15,
                             bottom: 15,
-                            child: GestureDetector(
-                              onHorizontalDragUpdate:
-                                  (DragUpdateDetails details) {
-                                videoController.showPosition = true;
-                                if (playerTimer != null) {
-                                  // debugPrint('检测到拖动, 定时器取消');
-                                  playerTimer!.cancel();
+                            child: GestureDetector(onHorizontalDragUpdate:
+                                (DragUpdateDetails details) {
+                              videoController.showPosition = true;
+                              if (playerTimer != null) {
+                                // debugPrint('检测到拖动, 定时器取消');
+                                playerTimer!.cancel();
+                              }
+                              playerController.mediaPlayer.pause();
+                              final double scale =
+                                  180000 / MediaQuery.sizeOf(context).width;
+                              videoController.currentPosition = Duration(
+                                  milliseconds: videoController
+                                          .currentPosition.inMilliseconds +
+                                      (details.delta.dx * scale).round());
+                            }, onHorizontalDragEnd: (DragEndDetails details) {
+                              playerController.mediaPlayer
+                                  .seek(videoController.currentPosition);
+                              playerController.mediaPlayer.play();
+                              playerTimer = getPlayerTimer();
+                              videoController.showPosition = false;
+                            }, onVerticalDragUpdate:
+                                (DragUpdateDetails details) async {
+                              final double totalWidth =
+                                  MediaQuery.sizeOf(context).width;
+                              final double totalHeight =
+                                  MediaQuery.sizeOf(context).height;
+                              final double tapPosition =
+                                  details.localPosition.dx;
+                              final double sectionWidth = totalWidth / 2;
+                              final double delta = details.delta.dy;
+
+                              /// 非全屏时禁用
+                              if (!videoController.androidFullscreen) {
+                                return;
+                              }
+                              if (tapPosition < sectionWidth) {
+                                // 左边区域
+                                videoController.showBrightness = true;
+                                try {
+                                  videoController.brightness =
+                                      await ScreenBrightness().current;
+                                } catch (e) {
+                                  debugPrint(e.toString());
                                 }
-                                playerController.mediaPlayer.pause();
-                                final double scale =
-                                    180000 / MediaQuery.sizeOf(context).width;
-                                videoController.currentPosition = Duration(
-                                    milliseconds: videoController
-                                            .currentPosition.inMilliseconds +
-                                        (details.delta.dx * scale).round());
-                              },
-                              onHorizontalDragEnd: (DragEndDetails details) {
-                                playerController.mediaPlayer
-                                    .seek(videoController.currentPosition);
-                                playerController.mediaPlayer.play();
-                                playerTimer = getPlayerTimer();
-                                videoController.showPosition = false;
-                              },
-                            )),
+                                final double level = (totalHeight) * 3;
+                                final double brightness =
+                                    videoController.brightness - delta / level;
+                                final double result =
+                                    brightness.clamp(0.0, 1.0);
+                                setBrightness(result);
+                              } else {
+                                // 右边区域
+                                videoController.showVolume = true;
+                                final double level = (totalHeight) * 3;
+                                final double volume =
+                                    videoController.volume - delta / level;
+                                final double result = volume.clamp(0.0, 1.0);
+                                setVolume(result);
+                                videoController.volume = result;
+                              }
+                            }, onVerticalDragEnd: (DragEndDetails details) {
+                              videoController.showBrightness = false;
+                              videoController.showVolume = false;
+                            })),
                         // 顶部进度条
                         Positioned(
                             top: 25,
@@ -238,6 +314,66 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                           ),
                                         ),
                                       ),
+                                    ],
+                                  )
+                                : Container()),
+                        // 亮度条
+                        Positioned(
+                            top: 25,
+                            child: videoController.showBrightness
+                                ? Wrap(
+                                    alignment: WrapAlignment.center,
+                                    children: <Widget>[
+                                      Container(
+                                          padding: const EdgeInsets.all(8.0),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.black.withOpacity(0.5),
+                                            borderRadius: BorderRadius.circular(
+                                                8.0), // 圆角
+                                          ),
+                                          child: Row(
+                                            children: <Widget>[
+                                              const Icon(Icons.brightness_7,
+                                                  color: Colors.white),
+                                              Text(
+                                                ' ${(videoController.brightness * 100).toInt()} %',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          )),
+                                    ],
+                                  )
+                                : Container()),
+                        // 音量条
+                        Positioned(
+                            top: 25,
+                            child: videoController.showVolume
+                                ? Wrap(
+                                    alignment: WrapAlignment.center,
+                                    children: <Widget>[
+                                      Container(
+                                          padding: const EdgeInsets.all(8.0),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.black.withOpacity(0.5),
+                                            borderRadius: BorderRadius.circular(
+                                                8.0), // 圆角
+                                          ),
+                                          child: Row(
+                                            children: <Widget>[
+                                              const Icon(Icons.volume_down,
+                                                  color: Colors.white),
+                                              Text(
+                                                ' ${(videoController.volume * 100).toInt()}%',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          )),
                                     ],
                                   )
                                 : Container()),

@@ -185,6 +185,70 @@ mixin _$VideoController on _VideoController, Store {
     });
   }
 
+  late final _$showBrightnessAtom =
+      Atom(name: '_VideoController.showBrightness', context: context);
+
+  @override
+  bool get showBrightness {
+    _$showBrightnessAtom.reportRead();
+    return super.showBrightness;
+  }
+
+  @override
+  set showBrightness(bool value) {
+    _$showBrightnessAtom.reportWrite(value, super.showBrightness, () {
+      super.showBrightness = value;
+    });
+  }
+
+  late final _$showVolumeAtom =
+      Atom(name: '_VideoController.showVolume', context: context);
+
+  @override
+  bool get showVolume {
+    _$showVolumeAtom.reportRead();
+    return super.showVolume;
+  }
+
+  @override
+  set showVolume(bool value) {
+    _$showVolumeAtom.reportWrite(value, super.showVolume, () {
+      super.showVolume = value;
+    });
+  }
+
+  late final _$volumeAtom =
+      Atom(name: '_VideoController.volume', context: context);
+
+  @override
+  double get volume {
+    _$volumeAtom.reportRead();
+    return super.volume;
+  }
+
+  @override
+  set volume(double value) {
+    _$volumeAtom.reportWrite(value, super.volume, () {
+      super.volume = value;
+    });
+  }
+
+  late final _$brightnessAtom =
+      Atom(name: '_VideoController.brightness', context: context);
+
+  @override
+  double get brightness {
+    _$brightnessAtom.reportRead();
+    return super.brightness;
+  }
+
+  @override
+  set brightness(double value) {
+    _$brightnessAtom.reportWrite(value, super.brightness, () {
+      super.brightness = value;
+    });
+  }
+
   late final _$androidFullscreenAtom =
       Atom(name: '_VideoController.androidFullscreen', context: context);
 
@@ -215,6 +279,10 @@ episode: ${episode},
 danmakuOn: ${danmakuOn},
 showPositioned: ${showPositioned},
 showPosition: ${showPosition},
+showBrightness: ${showBrightness},
+showVolume: ${showVolume},
+volume: ${volume},
+brightness: ${brightness},
 androidFullscreen: ${androidFullscreen}
     ''';
   }
