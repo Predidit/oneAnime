@@ -508,7 +508,9 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                               : Icons.fullscreen_exit),
                                       onPressed: () {
                                         if (videoController.androidFullscreen) {
-                                          danmakuController.onClear();
+                                          try {
+                                            danmakuController.onClear();
+                                          } catch(_) {}
                                           playerController.exitFullScreen();
                                         } else {
                                           playerController.enterFullScreen();
