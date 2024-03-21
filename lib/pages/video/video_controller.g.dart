@@ -169,6 +169,22 @@ mixin _$VideoController on _VideoController, Store {
     });
   }
 
+  late final _$showPositionAtom =
+      Atom(name: '_VideoController.showPosition', context: context);
+
+  @override
+  bool get showPosition {
+    _$showPositionAtom.reportRead();
+    return super.showPosition;
+  }
+
+  @override
+  set showPosition(bool value) {
+    _$showPositionAtom.reportWrite(value, super.showPosition, () {
+      super.showPosition = value;
+    });
+  }
+
   late final _$androidFullscreenAtom =
       Atom(name: '_VideoController.androidFullscreen', context: context);
 
@@ -198,6 +214,7 @@ duration: ${duration},
 episode: ${episode},
 danmakuOn: ${danmakuOn},
 showPositioned: ${showPositioned},
+showPosition: ${showPosition},
 androidFullscreen: ${androidFullscreen}
     ''';
   }

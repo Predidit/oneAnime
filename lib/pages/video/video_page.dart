@@ -75,8 +75,23 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     } catch (e) {
       debugPrint(e.toString());
     }
+    playerTimer = getPlayerTimer();
+  }
 
-    playerTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+  @override
+  void dispose() {
+    try {
+      playerTimer?.cancel();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    windowManager.removeListener(this);
+    playerController.dispose();
+    super.dispose();
+  }
+
+  getPlayerTimer() {
+    return Timer.periodic(Duration(seconds: 1), (timer) {
       videoController.playing = playerController.mediaPlayer.state.playing;
       videoController.isBuffering =
           playerController.mediaPlayer.state.buffering;
@@ -95,23 +110,12 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
           }
         });
       }
-      if (playerController.mediaPlayer.state.completed == true && videoController.episode < videoController.token.length) {
+      if (playerController.mediaPlayer.state.completed == true &&
+          videoController.episode < videoController.token.length) {
         videoController.changeEpisode(videoController.episode + 1);
       }
       windowManager.addListener(this);
     });
-  }
-
-  @override
-  void dispose() {
-    try {
-      playerTimer?.cancel();
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-    windowManager.removeListener(this);
-    playerController.dispose();
-    super.dispose();
   }
 
   void onBackPressed(BuildContext context) {
@@ -162,7 +166,9 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                           ? (MediaQuery.of(context).size.height)
                           : (MediaQuery.of(context).size.width * 9.0 / (16.0)),
                       width: MediaQuery.of(context).size.width,
-                      child: Stack(children: [
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
                         const Center(child: PlayerItem()),
                         videoController.isBuffering
                             ? const Positioned.fill(
@@ -179,6 +185,62 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                             height: double.infinity,
                           ),
                         ),
+
+                        // 播放器手势控制
+                        Positioned.fill(
+                            left: 16,
+                            top: 25,
+                            right: 15,
+                            bottom: 15,
+                            child: GestureDetector(
+                              onHorizontalDragUpdate:
+                                  (DragUpdateDetails details) {
+                                videoController.showPosition = true;
+                                if (playerTimer != null) {
+                                  // debugPrint('检测到拖动, 定时器取消');
+                                  playerTimer!.cancel();
+                                }
+                                playerController.mediaPlayer.pause();
+                                final double scale =
+                                    180000 / MediaQuery.sizeOf(context).width;
+                                videoController.currentPosition = Duration(
+                                    milliseconds: videoController
+                                            .currentPosition.inMilliseconds +
+                                        (details.delta.dx * scale).round());
+                              },
+                              onHorizontalDragEnd: (DragEndDetails details) {
+                                playerController.mediaPlayer
+                                    .seek(videoController.currentPosition);
+                                playerController.mediaPlayer.play();
+                                playerTimer = getPlayerTimer();
+                                videoController.showPosition = false;
+                              },
+                            )),
+                        // 顶部进度条
+                        Positioned(
+                            top: 25,
+                            width: 200,
+                            child: videoController.showPosition
+                                ? Wrap(
+                                    alignment: WrapAlignment.center,
+                                    children: <Widget>[
+                                      Container(
+                                        padding: const EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.5),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0), // 圆角
+                                        ),
+                                        child: Text(
+                                          '${videoController.currentPosition.inMinutes}:${(videoController.currentPosition.inSeconds) % 60}/${videoController.duration.inMinutes}:${(videoController.duration.inSeconds) % 60}',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : Container()),
                         Positioned.fill(
                           child: DanmakuView(
                             key: _danmuKey,

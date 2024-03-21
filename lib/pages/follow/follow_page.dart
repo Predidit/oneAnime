@@ -21,9 +21,6 @@ class FollowPage extends StatefulWidget {
 class _FollowPageState extends State<FollowPage>
     with AutomaticKeepAliveClientMixin {
   dynamic navigationBarState;
-  DateTime? _lastPressedAt;
-  final FocusNode _focusNode = FocusNode();
-  final TextEditingController _controller = TextEditingController();
   final ScrollController scrollController = ScrollController();
   final FollowController followController = Modular.get<FollowController>();
 

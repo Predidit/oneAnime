@@ -50,6 +50,8 @@ abstract class _VideoController with Store {
   // 界面管理
   @observable
   bool showPositioned = false;
+  @observable
+  bool showPosition = false;
 
   // 安卓全屏状态
   @observable
@@ -80,41 +82,7 @@ abstract class _VideoController with Store {
     } catch (e) {
       debugPrint(e.toString());
     }
-    // playingSubscription?.cancel();
-    // postionSubscription?.cancel();
-    // bufferSubscription?.cancel();
-    // durationSubscription?.cancel();
-    // playingSubscription = null;
-    // postionSubscription = null;
-    // bufferSubscription = null;
-    // durationSubscription = null;
-
     await playerController.init();
-
-    // playingSubscription = playerController.mediaPlayer.stream.playing.listen(
-    //   (bool playing) {
-    //     playing = playing;
-    //   },
-    // );
-
-    // postionSubscription = playerController.mediaPlayer.stream.position
-    //     .listen((Duration position) {
-    //   currentPosition = position;
-    // });
-
-    // bufferSubscription =
-    //     playerController.mediaPlayer.stream.buffer.listen((Duration buffer) {
-    //   buffer = buffer;
-    // });
-
-    // durationSubscription = playerController.mediaPlayer.stream.duration
-    //     .listen((Duration duration) {
-    //   duration = duration;
-    // });
-    // playingSubscription?.resume();
-    // postionSubscription?.resume();
-    // bufferSubscription?.resume();
-    // durationSubscription?.resume();
   }
 
   Future getAniDanmakuList(String title) async {
