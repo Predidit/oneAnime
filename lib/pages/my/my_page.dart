@@ -9,6 +9,7 @@ import 'package:oneanime/request/api.dart';
 import 'package:oneanime/bean/settings/settings.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
+import 'package:hive/hive.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -19,11 +20,15 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   dynamic navigationBarState;
+  Box setting = GStorage.setting;
+  late dynamic defaultDanmakuArea;
   final _mineController = Modular.get<MyController>();
 
   @override
   void initState() {
     super.initState();
+    defaultDanmakuArea =
+        setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 在widget构建完成后调用的函数
       navigationBarState = Platform.isWindows
@@ -56,6 +61,14 @@ class _MyPageState extends State<MyPage> {
         appBar: AppBar(title: const Text('设置')),
         body: Column(
           children: [
+            ListTile(
+              title: Text('播放设置',
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  )),
+            ),
             const InkWell(
               child: SetSwitchItem(
                 title: '硬件解码',
@@ -69,6 +82,49 @@ class _MyPageState extends State<MyPage> {
                 setKey: SettingBoxKey.autoPlay,
                 defaultVal: true,
               ),
+            ),
+            ListTile(
+              title: Text('弹幕设置',
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  )),
+            ),
+            ListTile(
+              onTap: () async {
+                double? result = await showDialog(
+                  context: context,
+                  builder: (context) {
+                    return SelectDialog<double>(
+                        title: '弹幕区域',
+                        value: defaultDanmakuArea,
+                        values: [0.25, 0.5, 1.0].map((e) {
+                          return {'title': '$e 屏幕', 'value': e};
+                        }).toList());
+                  },
+                );
+                if (result != null) {
+                  defaultDanmakuArea = result;
+                  setting.put(SettingBoxKey.danmakuArea, result);
+                  setState(() {});
+                }
+              },
+              dense: false,
+              title: const Text('弹幕区域'),
+              subtitle: Text('当前占据 $defaultDanmakuArea 屏幕',
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.outline)),
+            ),
+            ListTile(
+              title: Text('其他',
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  )),
             ),
             (Platform.isAndroid || Platform.isAndroid)
                 ? const InkWell(

@@ -46,18 +46,23 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
       child: InkWell(
         onTap: () async {
           SmartDialog.showLoading(msg: '获取中');
-          debugPrint(
-              'AnimeButton被按下 对应链接为 https://anime1.me/?cat=${widget.info.link}');
-          if (widget.info.progress != 1) {
-            await popularController.getVideoLink(
-                'https://anime1.me/?cat=${widget.info.link}',
-                episode: widget.info.progress ?? 1);
-          } else {
-            await popularController
-                .getVideoLink('https://anime1.me/?cat=${widget.info.link}');
+          try {
+            debugPrint(
+                'AnimeButton被按下 对应链接为 https://anime1.me/?cat=${widget.info.link}');
+            if (widget.info.progress != 1) {
+              await popularController.getVideoLink(
+                  'https://anime1.me/?cat=${widget.info.link}',
+                  episode: widget.info.progress ?? 1);
+            } else {
+              await popularController
+                  .getVideoLink('https://anime1.me/?cat=${widget.info.link}');
+            }
+            debugPrint('链接解析成功 ${videoController.videoUrl}');
+            await popularController.getPageTitle(widget.info.name ?? '');
+          } catch (e) {
+            SmartDialog.dismiss();
+            SmartDialog.showToast(e.toString());
           }
-          debugPrint('链接解析成功 ${videoController.videoUrl}');
-          await popularController.getPageTitle(widget.info.name ?? '');
           SmartDialog.dismiss();
           if (widget.info.progress != 1) {
             SmartDialog.showToast('上次观看到第 ${widget.info.progress} 话');

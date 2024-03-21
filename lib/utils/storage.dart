@@ -58,5 +58,9 @@ class SettingBoxKey {
       searchEnhanceEnable = 'searchEnhanceEnable',
       // Todo 检查更新
       autoUpdate = '',
+      danmakuTop = 'danmakuTop',
+      danmakuScroll = 'danmakuScroll',
+      danmakuBottom = 'danmakuBottom',
+      danmakuArea = 'danmakuArea',
       autoPlay = 'autoPlay';
 }

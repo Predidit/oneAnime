@@ -17,6 +17,8 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
+import 'package:hive/hive.dart';
+import 'package:oneanime/utils/storage.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -28,20 +30,13 @@ class VideoPage extends StatefulWidget {
 class _VideoPageState extends State<VideoPage> with WindowListener {
   // var _key = new GlobalKey<ScaffoldState>();
   dynamic navigationBarState;
+  Box setting = GStorage.setting;
   late DanmakuController danmakuController;
   final VideoController videoController = Modular.get<VideoController>();
   final PlayerController playerController = Modular.get<PlayerController>();
 
-  // 弹幕设置
+  // 弹幕
   final _danmuKey = GlobalKey();
-  bool _running = true;
-  bool _hideTop = false;
-  bool _hideBottom = false;
-  bool _hideScroll = false;
-  bool _border = true;
-  double _opacity = 1.0;
-  double _duration = 8;
-  double _fontSize = (Platform.isIOS || Platform.isAndroid) ? 16 : 25;
 
   Timer? hideTimer;
   Timer? playerTimer;
@@ -173,6 +168,21 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     navigationBarState = Platform.isWindows
         ? Provider.of<SideNavigationBarState>(context, listen: false)
         : Provider.of<NavigationBarState>(context, listen: false);
+
+    // 弹幕设置
+    // bool _running = true;
+    bool _border = true;
+    double _opacity = 1.0;
+    double _duration = 8;
+    double _fontSize = (Platform.isIOS || Platform.isAndroid) ? 16 : 25;
+    double danmakuArea =
+        setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
+    bool _hideTop = !setting.get(SettingBoxKey.danmakuTop, defaultValue: true);
+    bool _hideBottom =
+        !setting.get(SettingBoxKey.danmakuBottom, defaultValue: true);
+    bool _hideScroll =
+        !setting.get(SettingBoxKey.danmakuScroll, defaultValue: true);
+
     return PopScope(
       // key: _key,
       canPop: false,
@@ -377,7 +387,16 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                     ],
                                   )
                                 : Container()),
-                        Positioned.fill(
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          height: videoController.androidFullscreen
+                              ? MediaQuery.sizeOf(context).height * danmakuArea
+                              : (MediaQuery.sizeOf(context).width *
+                                  9 /
+                                  16 *
+                                  danmakuArea),
                           child: DanmakuView(
                             key: _danmuKey,
                             createdController: (DanmakuController e) {
@@ -385,16 +404,15 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                               debugPrint('弹幕控制器创建成功');
                             },
                             option: DanmakuOption(
+                              hideTop: _hideTop,
+                              hideScroll: _hideScroll,
+                              hideBottom: _hideBottom,
                               opacity: _opacity,
                               fontSize: _fontSize,
                               duration: _duration,
                               borderText: _border,
                             ),
-                            statusChanged: (e) {
-                              setState(() {
-                                _running = e;
-                              });
-                            },
+                            statusChanged: (e) {},
                           ),
                         ),
                         (videoController.showPositioned ||
@@ -490,6 +508,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                               : Icons.fullscreen_exit),
                                       onPressed: () {
                                         if (videoController.androidFullscreen) {
+                                          danmakuController.onClear();
                                           playerController.exitFullScreen();
                                         } else {
                                           playerController.enterFullScreen();
