@@ -110,7 +110,13 @@ class _TimelinePageState extends State<TimelinePage>
                   // It might be null
                   if (item.link != null) {
                     SmartDialog.showLoading(msg: '获取中');
-                    await popularController.getVideoLink(item.link ?? '');
+                    try {
+                      await popularController.getVideoLink(item.link ?? '');
+                    } catch (e) {
+                      SmartDialog.dismiss();
+                      SmartDialog.showToast(e.toString());
+                      return;
+                    }
                     videoController.title = item.name ?? '';
                     SmartDialog.dismiss();
                     navigationBarState = Platform.isWindows

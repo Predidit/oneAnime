@@ -62,6 +62,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
           } catch (e) {
             SmartDialog.dismiss();
             SmartDialog.showToast(e.toString());
+            return;
           }
           SmartDialog.dismiss();
           if (widget.info.progress != 1) {
