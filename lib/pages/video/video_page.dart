@@ -88,7 +88,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
   }
 
   getPlayerTimer() {
-    return Timer.periodic(Duration(seconds: 1), (timer) {
+    return Timer.periodic(const Duration(seconds: 1), (timer) {
       videoController.playing = playerController.mediaPlayer.state.playing;
       videoController.isBuffering =
           playerController.mediaPlayer.state.buffering;
@@ -118,6 +118,9 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
   void onBackPressed(BuildContext context) {
     if (videoController.androidFullscreen) {
       debugPrint('当前播放器全屏');
+      try {
+        danmakuController.onClear();
+      } catch (_) {}
       try {
         playerController.exitFullScreen();
         videoController.androidFullscreen = false;
@@ -510,7 +513,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                         if (videoController.androidFullscreen) {
                                           try {
                                             danmakuController.onClear();
-                                          } catch(_) {}
+                                          } catch (_) {}
                                           playerController.exitFullScreen();
                                         } else {
                                           playerController.enterFullScreen();
