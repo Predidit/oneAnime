@@ -133,7 +133,8 @@ abstract class _PlayerController with Store {
           mode,
           overlays: SystemUiOverlay.values,
         );
-        await SystemChrome.setPreferredOrientations([]);
+        // await SystemChrome.setPreferredOrientations([]);
+        verticalScreen();
       } else if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
         await const MethodChannel('com.alexmercerind/media_kit_video')
             .invokeMethod(
