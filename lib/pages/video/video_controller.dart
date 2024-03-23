@@ -63,6 +63,10 @@ abstract class _VideoController with Store {
   @observable
   double brightness = 0;
 
+  // 播放器倍速
+  @observable
+  double playerSpeed = 1.0;
+
   // 安卓全屏状态
   @observable
   bool androidFullscreen = false;
@@ -71,6 +75,16 @@ abstract class _VideoController with Store {
   String videoCookie = '';
   String title = '';
   String from = '/tab/popular/';
+
+  Future setPlaybackSpeed(double playerSpeed) async {
+    final PlayerController playerController = Modular.get<PlayerController>();
+    try {
+      playerController.mediaPlayer.setRate(playerSpeed);
+    } catch(e) {
+      debugPrint(e.toString());
+    }
+    this.playerSpeed = playerSpeed;
+  }
 
   Future changeEpisode(int episode) async {
     final PlayerController playerController = Modular.get<PlayerController>();
@@ -92,6 +106,7 @@ abstract class _VideoController with Store {
     } catch (e) {
       debugPrint(e.toString());
     }
+    playerSpeed = 1.0;
     await playerController.init();
   }
 

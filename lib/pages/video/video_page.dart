@@ -61,7 +61,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
   @override
   void initState() {
     super.initState();
-    // videoController.episode = 1;
+    videoController.playerSpeed = 1.0;
     playerController.videoUrl = videoController.videoUrl;
     playerController.videoCookie = videoController.videoCookie;
     playerController.init();
@@ -73,6 +73,11 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
       debugPrint(e.toString());
     }
     playerTimer = getPlayerTimer();
+    try {
+      playerController.mediaPlayer.setRate(videoController.playerSpeed);
+    } catch(e) {
+      debugPrint(e.toString());
+    }
   }
 
   @override
@@ -146,24 +151,77 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     } catch (_) {}
   }
 
-  Future<void> raiseVolume(double value) async {
-    try {
-      FlutterVolumeController.updateShowSystemUI(false);
-      await FlutterVolumeController.raiseVolume(value);
-    } catch (_) {}
-  }
-
-  Future<void> lowerVolume(double value) async {
-    try {
-      FlutterVolumeController.updateShowSystemUI(false);
-      await FlutterVolumeController.lowerVolume(value);
-    } catch (_) {}
-  }
-
   Future<void> setBrightness(double value) async {
     try {
       await ScreenBrightness().setScreenBrightness(value);
     } catch (_) {}
+  }
+
+  // 选择倍速
+  void showSetSpeedSheet() {
+    final double currentSpeed = videoController.playerSpeed;
+    final List<double> speedsList = [
+      0.25,
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5,
+      1.75,
+      2.0
+    ];
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('播放速度'),
+          content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Wrap(
+              spacing: 8,
+              runSpacing: 2,
+              children: [
+                for (final double i in speedsList) ...<Widget>[
+                  if (i == currentSpeed) ...<Widget>[
+                    FilledButton(
+                      onPressed: () async {
+                        await videoController.setPlaybackSpeed(i);
+                        Modular.to.pop();
+                      },
+                      child: Text(i.toString()),
+                    ),
+                  ] else ...[
+                    FilledButton.tonal(
+                      onPressed: () async {
+                        await videoController.setPlaybackSpeed(i);
+                        Modular.to.pop();
+                      },
+                      child: Text(i.toString()),
+                    ),
+                  ]
+                ]
+              ],
+            );
+          }),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Modular.to.pop(),
+              child: Text(
+                '取消',
+                style: TextStyle(color: Theme.of(context).colorScheme.outline),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                await videoController.setPlaybackSpeed(1.0);
+                Modular.to.pop();
+              },
+              child: const Text('默认速度'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -445,6 +503,33 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                 .updateSelectedIndex(1));
                                     Modular.to.navigate(videoController.from);
                                   },
+                                ),
+                              )
+                            : Container(),
+
+                        // 倍速条
+                        (videoController.showPositioned ||
+                                !playerController.mediaPlayer.state.playing)
+                            ? Positioned(
+                                top: 0,
+                                right: 0,
+                                child: SizedBox(
+                                  width: 45,
+                                  height: 34,
+                                  child: TextButton(
+                                    style: ButtonStyle(
+                                      padding: MaterialStateProperty.all(
+                                          EdgeInsets.zero),
+                                    ),
+                                    onPressed: () => showSetSpeedSheet(),
+                                    child: Text(
+                                      '${videoController.playerSpeed}X',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               )
                             : Container(),

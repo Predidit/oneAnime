@@ -249,6 +249,22 @@ mixin _$VideoController on _VideoController, Store {
     });
   }
 
+  late final _$playerSpeedAtom =
+      Atom(name: '_VideoController.playerSpeed', context: context);
+
+  @override
+  double get playerSpeed {
+    _$playerSpeedAtom.reportRead();
+    return super.playerSpeed;
+  }
+
+  @override
+  set playerSpeed(double value) {
+    _$playerSpeedAtom.reportWrite(value, super.playerSpeed, () {
+      super.playerSpeed = value;
+    });
+  }
+
   late final _$androidFullscreenAtom =
       Atom(name: '_VideoController.androidFullscreen', context: context);
 
@@ -283,6 +299,7 @@ showBrightness: ${showBrightness},
 showVolume: ${showVolume},
 volume: ${volume},
 brightness: ${brightness},
+playerSpeed: ${playerSpeed},
 androidFullscreen: ${androidFullscreen}
     ''';
   }
