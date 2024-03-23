@@ -7,6 +7,7 @@ import 'package:oneanime/app_widget.dart';
 import 'package:oneanime/request/request.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:oneanime/utils/storage.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,7 @@ void main() async {
     });
     windowManager.setMaximizable(false);
   }
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   MediaKit.ensureInitialized();
   await GStorage.init();
   Request();

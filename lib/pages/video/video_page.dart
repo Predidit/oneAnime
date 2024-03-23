@@ -75,7 +75,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     playerTimer = getPlayerTimer();
     try {
       playerController.mediaPlayer.setRate(videoController.playerSpeed);
-    } catch(e) {
+    } catch (e) {
       debugPrint(e.toString());
     }
   }
@@ -218,6 +218,69 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
               },
               child: const Text('默认速度'),
             ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// 发送弹幕 由于接口限制, 暂时未提交云端
+  void showShootDanmakuSheet() {
+    final TextEditingController textController = TextEditingController();
+    bool isSending = false; // 追踪是否正在发送
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('发送弹幕'),
+          content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return TextField(
+              controller: textController,
+            );
+          }),
+          actions: [
+            TextButton(
+              onPressed: () => Modular.to.pop(),
+              child: Text(
+                '取消',
+                style: TextStyle(color: Theme.of(context).colorScheme.outline),
+              ),
+            ),
+            StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return TextButton(
+                onPressed: isSending
+                    ? null
+                    : () async {
+                        final String msg = textController.text;
+                        if (msg.isEmpty) {
+                          SmartDialog.showToast('弹幕内容不能为空');
+                          return;
+                        } else if (msg.length > 100) {
+                          SmartDialog.showToast('弹幕内容不能超过100个字符');
+                          return;
+                        }
+                        setState(() {
+                          isSending = true; // 开始发送，更新状态
+                        });
+                        // Todo 接口方限制
+
+                        setState(() {
+                          isSending = false; // 发送结束，更新状态
+                        });
+                        SmartDialog.showToast('发送成功');
+                        danmakuController.addItems([
+                          DanmakuItem(
+                            msg,
+                            // color: Colors.purple,
+                          )
+                        ]);
+                        Modular.to.pop();
+                      },
+                child: Text(isSending ? '发送中...' : '发送'),
+              );
+            })
           ],
         );
       },
@@ -507,29 +570,33 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                               )
                             : Container(),
 
-                        // 倍速条
+                        // 倍速和发送弹幕
                         (videoController.showPositioned ||
                                 !playerController.mediaPlayer.state.playing)
                             ? Positioned(
                                 top: 0,
                                 right: 0,
-                                child: SizedBox(
-                                  width: 45,
-                                  height: 34,
-                                  child: TextButton(
-                                    style: ButtonStyle(
-                                      padding: MaterialStateProperty.all(
-                                          EdgeInsets.zero),
-                                    ),
-                                    onPressed: () => showSetSpeedSheet(),
-                                    child: Text(
-                                      '${videoController.playerSpeed}X',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 45,
+                                      height: 34,
+                                      child: TextButton(
+                                        style: ButtonStyle(
+                                          padding: MaterialStateProperty.all(
+                                              EdgeInsets.zero),
+                                        ),
+                                        onPressed: () => showSetSpeedSheet(),
+                                        child: Text(
+                                          '${videoController.playerSpeed}X',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               )
                             : Container(),
@@ -572,6 +639,19 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                     ),
                                     IconButton(
                                       color: Colors.white,
+                                      icon: const Icon(Icons.notes),
+                                      onPressed: () {
+                                        if (videoController
+                                                .danDanmakus.length ==
+                                            0) {
+                                          SmartDialog.showToast('当前剧集不支持弹幕发送的说');
+                                          return;
+                                        }
+                                        showShootDanmakuSheet();
+                                      },
+                                    ),
+                                    IconButton(
+                                      color: Colors.white,
                                       icon: Icon(videoController.danmakuOn
                                           ? Icons.comment
                                           : Icons.comments_disabled),
@@ -592,8 +672,8 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                       color: Colors.white,
                                       icon: Icon(
                                           videoController.androidFullscreen
-                                              ? Icons.fullscreen
-                                              : Icons.fullscreen_exit),
+                                              ? Icons.fullscreen_exit
+                                              : Icons.fullscreen),
                                       onPressed: () {
                                         if (videoController.androidFullscreen) {
                                           try {
