@@ -38,7 +38,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
 
     return Card(
       margin: EdgeInsets.zero,
-      color: Colors.white,
+      // color: Colors.white,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
@@ -89,7 +89,8 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                   style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
-                      color: Colors.black),
+                      // color: Colors.black
+                      ),
                 ),
               ),
               SizedBox(height: 8.0),

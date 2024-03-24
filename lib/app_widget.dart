@@ -20,7 +20,12 @@ class _AppWidgetState extends State<AppWidget> {
       locale: const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans', countryCode: "CN"),
       theme: ThemeData(
         useMaterial3: true,
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.purple,
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        primaryColor: Colors.purple,
       ),
       routerConfig: Modular.routerConfig,
       builder: FlutterSmartDialog.init(),
