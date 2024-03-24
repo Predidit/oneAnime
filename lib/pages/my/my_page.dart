@@ -10,6 +10,7 @@ import 'package:oneanime/bean/settings/settings.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:hive/hive.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -42,6 +43,13 @@ class _MyPageState extends State<MyPage> {
     navigationBarState.showNavigate();
     navigationBarState.updateSelectedIndex(0);
     Modular.to.navigate('/tab/popular/');
+  }
+
+  void updateDanmakuArea(double i) async {
+    await setting.put(SettingBoxKey.danmakuArea, i);
+    setState(() {
+      defaultDanmakuArea = i;
+    });
   }
 
   @override
@@ -93,22 +101,79 @@ class _MyPageState extends State<MyPage> {
             ),
             ListTile(
               onTap: () async {
-                double? result = await showDialog(
-                  context: context,
-                  builder: (context) {
-                    return SelectDialog<double>(
-                        title: '弹幕区域',
-                        value: defaultDanmakuArea,
-                        values: [0.25, 0.5, 1.0].map((e) {
-                          return {'title': '$e 屏幕', 'value': e};
-                        }).toList());
-                  },
-                );
-                if (result != null) {
-                  defaultDanmakuArea = result;
-                  setting.put(SettingBoxKey.danmakuArea, result);
-                  setState(() {});
-                }
+                // double? result = await showDialog(
+                //   context: context,
+                //   builder: (context) {
+                //     return SelectDialog<double>(
+                //         title: '弹幕区域',
+                //         value: defaultDanmakuArea,
+                //         values: [0.25, 0.5, 1.0].map((e) {
+                //           return {'title': '$e 屏幕', 'value': e};
+                //         }).toList());
+                //   },
+                // );
+                // if (result != null) {
+                //   defaultDanmakuArea = result;
+                //   setting.put(SettingBoxKey.danmakuArea, result);
+                //   setState(() {});
+                // }
+                final List<double> danAreaList = [
+                  0.25,
+                  0.5,
+                  1.0,
+                ];
+                SmartDialog.show(
+                    useAnimation: false,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('弹幕区域'),
+                        content: StatefulBuilder(builder:
+                            (BuildContext context, StateSetter setState) {
+                          return Wrap(
+                            spacing: 8,
+                            runSpacing: 2,
+                            children: [
+                              for (final double i in danAreaList) ...<Widget>[
+                                if (i == defaultDanmakuArea) ...<Widget>[
+                                  FilledButton(
+                                    onPressed: () async {
+                                      updateDanmakuArea(i);
+                                      SmartDialog.dismiss();
+                                    },
+                                    child: Text(i.toString()),
+                                  ),
+                                ] else ...[
+                                  FilledButton.tonal(
+                                    onPressed: () async {
+                                      updateDanmakuArea(i);
+                                      SmartDialog.dismiss();
+                                    },
+                                    child: Text(i.toString()),
+                                  ),
+                                ]
+                              ]
+                            ],
+                          );
+                        }),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => SmartDialog.dismiss(),
+                            child: Text(
+                              '取消',
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.outline),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              updateDanmakuArea(1.0);
+                              SmartDialog.dismiss();
+                            },
+                            child: const Text('默认设置'),
+                          ),
+                        ],
+                      );
+                    });
               },
               dense: false,
               title: const Text('弹幕区域'),
