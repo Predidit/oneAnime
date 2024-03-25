@@ -62,5 +62,6 @@ class SettingBoxKey {
       danmakuScroll = 'danmakuScroll',
       danmakuBottom = 'danmakuBottom',
       danmakuArea = 'danmakuArea',
+      themeMode = 'themeMode',
       autoPlay = 'autoPlay';
 }
