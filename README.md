@@ -33,17 +33,14 @@
 
 A: 受限于 Anime1 网站本身的架构与设计，Anime1 不向用户提供精致的番剧封面。作为第三方客户端开发者，我们对此无能为力。
 
-#### Q: 我在尝试自行编译该项目，但是编译不通过。
+#### Q: 我在尝试自行编译该项目，编译的 windows 版本缺乏搜索优化功能。
 
- A: flutter 项目编译需要良好的网络环境，如果您位于中国大陆，可能需要设置恰当的镜像地址。
+ A: 本项目编译需要良好的网络环境，如果您位于中国大陆，可能需要设置恰当的镜像地址。同时由于 flutter_open_chinese_conventer 库并不支持 windows 平台，我们另外编译了 opencc 项目的动态链接库以解决兼容问题。我们略微裁剪过的 opencc 实现开源在 [这里](https://github.com/Predidit/open_chinese_convert_bridge)， 将由此项目编译得到的 opencc.dll 放在本项目编译产物目录下即可修复搜索优化功能。
 
  #### Q: 本项目使用 webview 技术吗，我不想要套壳浏览器。
 
  A: APP正常运行状态下不会加载 webview， 我们也很讨厌套壳浏览器。
 
-#### Q: Anime1 本身不支持弹幕功能，弹幕来自哪里呢。
-
-A: 弹幕来自 dandanplayer 开放API，集成 Bilibili / 动画疯 弹幕。
 
  ## 致谢
 

@@ -1,7 +1,12 @@
 import 'dart:io';
+import 'dart:ffi';
+import 'package:ffi/ffi.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
+import 'package:oneanime/opencc_generated_bindings.dart';
 import 'package:oneanime/request/list.dart';
 import 'package:oneanime/request/video.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
@@ -15,6 +20,7 @@ part 'popular_controller.g.dart';
 class PopularController = _PopularController with _$PopularController;
 
 abstract class _PopularController with Store {
+  dynamic libopencc = '';
   static Box setting = GStorage.setting;
   List<AnimeInfo> list = GStorage.listCahce.values.toList();
 
@@ -56,8 +62,8 @@ abstract class _PopularController with Store {
 
   Future updateFollow(int link, bool status) async {
     list.asMap().forEach((index, item) {
-      if(item.link == link) {
-        list[index].follow = status; 
+      if (item.link == link) {
+        list[index].follow = status;
         return;
       }
     });
@@ -67,14 +73,14 @@ abstract class _PopularController with Store {
 
   Future updateAnimeProgress(int episode, String title) async {
     list.asMap().forEach((index, item) {
-      if(item.name == title) {
+      if (item.name == title) {
         debugPrint('找到之前的观看记录');
         list[index].progress = episode;
         return;
       }
     });
     updateData();
-  } 
+  }
 
   Future updateData() async {
     await GStorage.listCahce.clear();
@@ -102,13 +108,29 @@ abstract class _PopularController with Store {
 
   void filterList(String keyword) async {
     this.keyword = keyword;
-    if (setting.get(SettingBoxKey.searchEnhanceEnable, defaultValue: true) && (Platform.isAndroid || Platform.isIOS)) {
+    if (setting.get(SettingBoxKey.searchEnhanceEnable, defaultValue: true) &&
+        (Platform.isAndroid || Platform.isIOS)) {
       try {
         debugPrint('开始转换关键词');
         keyword = await ChineseConverter.convert(keyword, S2TWp());
         debugPrint('转换后的关键词为 $keyword');
       } catch (e) {
         debugPrint(e.toString());
+      }
+    }
+    // OpenCC windows库调用
+    if (setting.get(SettingBoxKey.searchEnhanceEnable, defaultValue: true) &&
+        (Platform.isWindows)) {
+      if (libopencc == '') {
+        return;
+      }
+      try {
+        Pointer<Utf8> cString = keyword.toNativeUtf8();
+        Pointer<Utf8> resCString = libopencc.TranS2TW(cString);
+        keyword = resCString.toDartString();
+      } catch (e) {
+        debugPrint(e.toString());
+        debugPrint('发生错误 ${e.toString()}');
       }
     }
     cacheList.clear();

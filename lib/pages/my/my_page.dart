@@ -12,6 +12,7 @@ import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:oneanime/pages/popular/popular_controller.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -26,6 +27,7 @@ class _MyPageState extends State<MyPage> {
   late dynamic defaultDanmakuArea;
   late dynamic defaultThemeMode;
   final _mineController = Modular.get<MyController>();
+  final PopularController popularController = Modular.get<PopularController>();
 
   @override
   void initState() {
@@ -266,7 +268,7 @@ class _MyPageState extends State<MyPage> {
                       .labelMedium!
                       .copyWith(color: Theme.of(context).colorScheme.outline)),
             ),
-            (Platform.isAndroid || Platform.isAndroid)
+            (popularController.libopencc != '')
                 ? const InkWell(
                     child: SetSwitchItem(
                       title: '搜索优化',
