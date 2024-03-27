@@ -6,6 +6,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/bean/anime/anime_card.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter/services.dart';
+import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 
 class PopularPage extends StatefulWidget {
   const PopularPage({super.key});
@@ -99,7 +100,7 @@ class _PopularPageState extends State<PopularPage>
           }
         },
         child: Scaffold(
-          appBar: AppBar(
+          appBar: SysAppBar(
             backgroundColor: Theme.of(context)
                 .colorScheme
                 .primary
@@ -132,8 +133,8 @@ class _PopularPageState extends State<PopularPage>
             shape: Platform.isWindows ? const RoundedRectangleBorder(
               // 添加圆角
               borderRadius: BorderRadius.vertical(
-                top: Radius.circular(30),
-                bottom: Radius.circular(30),
+                top: Radius.circular(5),
+                bottom: Radius.circular(5),
               ),
             ) : null,
           ),

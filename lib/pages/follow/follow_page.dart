@@ -10,6 +10,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:oneanime/pages/menu/menu.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
+import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 
 class FollowPage extends StatefulWidget {
   const FollowPage({super.key});
@@ -72,8 +73,8 @@ class _FollowPageState extends State<FollowPage>
         onBackPressed(context);
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('追番')
+        appBar: const SysAppBar(
+          title: Text('追番')
         ),
         body: Container(child: animeList),
         floatingActionButton: FloatingActionButton(

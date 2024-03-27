@@ -159,3 +159,8 @@ ffigen:
   headers:
     entry-points:
       - 'windows/core/opencc.h'
+    functions:
+      include: 
+        - TranS2TW
+        - TranTW2S
+        - FreeString

@@ -13,6 +13,7 @@ import 'package:hive/hive.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
+import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -88,7 +89,7 @@ class _MyPageState extends State<MyPage> {
         onBackPressed(context);
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('设置')),
+        appBar: const SysAppBar(title: const Text('设置')),
         body: Column(
           children: [
             ListTile(

@@ -14,17 +14,18 @@ void main() async {
   if (Platform.isWindows) {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = const WindowOptions(
-      size: Size(1280, 830),
+      size: Size(1280, 800),
       center: true,
       // backgroundColor: Colors.white,
       skipTaskbar: false,
-      titleBarStyle: TitleBarStyle.normal,
+      titleBarStyle: TitleBarStyle.hidden,
     );
     windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
       await windowManager.focus();
     });
     windowManager.setMaximizable(false);
+    windowManager.setResizable(false);
   }
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   MediaKit.ensureInitialized();

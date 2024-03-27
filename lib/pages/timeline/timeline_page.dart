@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 import 'package:oneanime/pages/timeline/timeline_controller.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
@@ -67,7 +68,8 @@ class _TimelinePageState extends State<TimelinePage>
           onBackPressed(context);
         },
         child: Scaffold(
-          appBar: AppBar(
+          appBar: SysAppBar(
+            toolbarHeight: 104,
             bottom: TabBar(
               controller: controller,
               tabs: tabs,
