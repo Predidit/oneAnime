@@ -58,15 +58,16 @@ class DanmakuRequest {
     Map<String, dynamic> jsonData = res.data;
     List<dynamic> animes = jsonData['animes'];
 
-    int maxAnimeId = 0;
+    // 8692 为 Anime1 上的最早番剧刀剑神域
+    int minAnimeId = 100000;
     for (var anime in animes) {
       int animeId = anime['animeId'];
-      if (animeId > maxAnimeId) {
-        maxAnimeId = animeId;
+      if (animeId < minAnimeId && animeId >= 8692) {
+        minAnimeId = animeId;
       }
     }
     // 这里猜测了弹弹Play的分集命名规则，例如上面的番剧ID为1758，第一集弹幕库ID大概率为17580001，但是此命名规则并没有体现在官方API文档里，保险的做法是请求 Api.dandanInfo
-    return maxAnimeId;
+    return minAnimeId;
   }
 
   static getDanDanmaku(int bangumiID, int episode) async {
