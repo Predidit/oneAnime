@@ -89,7 +89,7 @@ class _MyPageState extends State<MyPage> {
         onBackPressed(context);
       },
       child: Scaffold(
-        appBar: const SysAppBar(title: const Text('设置')),
+        appBar: const SysAppBar(title: Text('设置')),
         body: Column(
           children: [
             ListTile(
@@ -269,7 +269,7 @@ class _MyPageState extends State<MyPage> {
                       .labelMedium!
                       .copyWith(color: Theme.of(context).colorScheme.outline)),
             ),
-            (popularController.libopencc != '')
+            (popularController.libopencc != '' || !Platform.isWindows)
                 ? const InkWell(
                     child: SetSwitchItem(
                       title: '搜索优化',
