@@ -27,6 +27,15 @@ void main() async {
     windowManager.setMaximizable(false);
     windowManager.setResizable(false);
   }
+  if(Platform.isAndroid || Platform.isIOS) {
+    // 小白条、导航栏沉浸
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      statusBarColor: Colors.transparent,
+    ));
+  }
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   MediaKit.ensureInitialized();
   await GStorage.init();

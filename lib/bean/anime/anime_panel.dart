@@ -71,7 +71,7 @@ class _BangumiPanelState extends State<BangumiPanel> {
             ),
           ),
           SizedBox(
-            height: Platform.isWindows ? 72 : 400,
+            height: Platform.isWindows ? 72 : (MediaQuery.of(context).size.height - (MediaQuery.of(context).size.width * 9 /16 ) - 100),
             // width: Platform.isWindows ? 300: null,
             child: GridView.builder(
               controller: listViewScrollCtr,
