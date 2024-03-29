@@ -63,5 +63,6 @@ class SettingBoxKey {
       danmakuBottom = 'danmakuBottom',
       danmakuArea = 'danmakuArea',
       themeMode = 'themeMode',
+      themeColor = 'themeColor',
       autoPlay = 'autoPlay';
 }

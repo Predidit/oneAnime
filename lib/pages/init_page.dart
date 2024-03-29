@@ -9,6 +9,7 @@ import 'package:oneanime/utils/storage.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/opencc_generated_bindings.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
 
 class InitPage extends StatefulWidget {
   const InitPage({super.key});

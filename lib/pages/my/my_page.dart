@@ -14,6 +14,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
+import 'package:oneanime/bean/settings/color_type.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -27,6 +28,7 @@ class _MyPageState extends State<MyPage> {
   Box setting = GStorage.setting;
   late dynamic defaultDanmakuArea;
   late dynamic defaultThemeMode;
+  late dynamic defaultThemeColor;
   final _mineController = Modular.get<MyController>();
   final PopularController popularController = Modular.get<PopularController>();
 
@@ -37,6 +39,8 @@ class _MyPageState extends State<MyPage> {
         setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
     defaultThemeMode =
         setting.get(SettingBoxKey.themeMode, defaultValue: 'system');
+    defaultThemeMode =
+        setting.get(SettingBoxKey.themeColor, defaultValue: 'default');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 在widget构建完成后调用的函数
       navigationBarState = Platform.isWindows
@@ -57,6 +61,36 @@ class _MyPageState extends State<MyPage> {
     setState(() {
       defaultDanmakuArea = i;
     });
+  }
+
+  void setTheme(Color color) {
+    AdaptiveTheme.of(context).setTheme(
+      light: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.light,
+        colorSchemeSeed: color,
+      ),
+      dark: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        colorSchemeSeed: color,
+      ),
+    );
+    setting.put(SettingBoxKey.themeColor, color.value.toRadixString(16));
+  }
+
+  void resetTheme() {
+    AdaptiveTheme.of(context).setTheme(
+      light: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.light,
+      ),
+      dark: ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+      ),
+    );
+    setting.put(SettingBoxKey.themeColor, 'default');
   }
 
   void updateTheme(String theme) async {
@@ -268,6 +302,81 @@ class _MyPageState extends State<MyPage> {
                       .textTheme
                       .labelMedium!
                       .copyWith(color: Theme.of(context).colorScheme.outline)),
+            ),
+            ListTile(
+              onTap: () async {
+                final List<Map<String, dynamic>> colorThemes = colorThemeTypes;
+                SmartDialog.show(
+                    useAnimation: false,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('配色方案'),
+                        content: StatefulBuilder(builder:
+                            (BuildContext context, StateSetter setState) {
+                          return Wrap(
+                            alignment: WrapAlignment.center,
+                            spacing: 22,
+                            runSpacing: 18,
+                            children: [
+                              ...colorThemes.map(
+                                (e) {
+                                  final index = colorThemes.indexOf(e);
+                                  return GestureDetector(
+                                    onTap: () {
+                                      index == 0
+                                          ? resetTheme()
+                                          : setTheme(e['color']);
+                                      SmartDialog.dismiss();
+                                    },
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          width: 46,
+                                          height: 46,
+                                          decoration: BoxDecoration(
+                                            color: e['color'].withOpacity(0.8),
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                            border: Border.all(
+                                              width: 2,
+                                              color:
+                                                  e['color'].withOpacity(0.8),
+                                            ),
+                                          ),
+                                          child: const AnimatedOpacity(
+                                            opacity: 0,
+                                            duration:
+                                                Duration(milliseconds: 200),
+                                            child: Icon(
+                                              Icons.done,
+                                              color: Colors.black,
+                                              size: 20,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          e['label'],
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .outline,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              )
+                            ],
+                          );
+                        }),
+                      );
+                    });
+              },
+              dense: false,
+              title: const Text('配色方案'),
             ),
             (popularController.libopencc != '' || !Platform.isWindows)
                 ? const InkWell(

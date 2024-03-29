@@ -103,12 +103,12 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                         padding: EdgeInsets.symmetric(
                             horizontal: 8.0, vertical: 4.0),
                         decoration: BoxDecoration(
-                          color: Colors.purple,
+                          color: Theme.of(context).colorScheme.secondary,
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: Text(
                           widget.info.episode ?? "77",
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Theme.of(context).colorScheme.surface),
                         ),
                       ),
                       SizedBox(width: 8.0),
@@ -116,13 +116,13 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                         padding: EdgeInsets.symmetric(
                             horizontal: 8.0, vertical: 4.0),
                         decoration: BoxDecoration(
-                          color: Colors.deepPurple,
+                          color: Theme.of(context).colorScheme.primary,
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: Text(
                           (widget.info.year ?? "2077") +
                               (widget.info.season ?? ""),
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Theme.of(context).colorScheme.surface),
                         ),
                       ),
                       SizedBox(width: 8.0),
@@ -132,12 +132,12 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 8.0, vertical: 4.0),
                                   decoration: BoxDecoration(
-                                    color: Colors.deepPurple,
+                                    color: Theme.of(context).colorScheme.primary,
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
                                   child: Text(
                                     widget.info.subtitle ?? "",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: Theme.of(context).colorScheme.surface),
                                   ),
                                 )
                               : Container()
@@ -145,20 +145,20 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 8.0, vertical: 4.0),
                               decoration: BoxDecoration(
-                                color: Colors.deepPurple,
+                                color: Theme.of(context).colorScheme.primary,
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                               child: Text(
                                 "已追 ${widget.info.progress ?? 1} 话",
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: Theme.of(context).colorScheme.surface),
                               ),
                             ),
                     ],
                   ),
                   IconButton(
                     icon: (follow)
-                        ? Icon(Icons.favorite, color: Colors.orange)
-                        : Icon(Icons.favorite_border, color: Colors.orange),
+                        ? Icon(Icons.favorite, color: Theme.of(context).colorScheme.tertiary)
+                        : Icon(Icons.favorite_border, color: Theme.of(context).colorScheme.tertiary),
                     onPressed: () {
                       if (popularController.isLoadingMore == false) {
                         popularController.updateFollow(
@@ -170,7 +170,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                             follow ? '自己追的番要好好看完哦' : '取消追番成功');
                       }
                     },
-                    splashColor: Colors.orange.withOpacity(0.5),
+                    splashColor: Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
                   ),
                 ],
               ),
