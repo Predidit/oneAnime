@@ -13,9 +13,9 @@ abstract class _TimelineController with Store {
   @observable 
   String sessonName = '';
 
-  DateTime? selectedDate;
+  DateTime selectedDate = DateTime.now();
 
   Future getSchedules() async {
-    schedules = await ListRequest.getAnimeScedule(selectedDate ?? DateTime.now());
+    schedules = await ListRequest.getAnimeScedule(selectedDate);
   }
 }

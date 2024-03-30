@@ -119,6 +119,10 @@ abstract class _VideoController with Store {
   }
 
   Future getDanDanmaku(String title, int episode) async {
+    // 极为糟糕的临时措施，但作者现在就要看高达
+    // if (title.contains('鋼彈')) {
+    //   title = title.replaceAll('鋼彈', '高达');
+    // }
     bool danmakuEnhance =
         setting.get(SettingBoxKey.danmakuEnhance, defaultValue: true);
     bangumiID = await DanmakuRequest.getBangumiID(title);

@@ -134,13 +134,13 @@ class _MyPageState extends State<MyPage> {
                     color: Theme.of(context).colorScheme.primary,
                   )),
             ),
-            const InkWell(
-              child: SetSwitchItem(
-                title: '硬件解码',
-                setKey: SettingBoxKey.HAenable,
-                defaultVal: true,
-              ),
-            ),
+            // const InkWell(
+            //   child: SetSwitchItem(
+            //     title: '硬件解码',
+            //     setKey: SettingBoxKey.HAenable,
+            //     defaultVal: true,
+            //   ),
+            // ),
             const InkWell(
               child: SetSwitchItem(
                 title: '自动播放',
@@ -158,8 +158,7 @@ class _MyPageState extends State<MyPage> {
             ),
             const InkWell(
               child: SetSwitchItem(
-                title: '精准匹配', 
-                subTitle: '实验性',
+                title: '精准匹配',
                 setKey: SettingBoxKey.danmakuEnhance,
                 defaultVal: true,
               ),
@@ -226,7 +225,7 @@ class _MyPageState extends State<MyPage> {
               },
               dense: false,
               title: const Text('弹幕区域'),
-              subtitle: Text('当前占据 $defaultDanmakuArea 屏幕',
+              trailing: Text('占据 $defaultDanmakuArea 屏幕',
                   style: Theme.of(context)
                       .textTheme
                       .labelMedium!
@@ -240,77 +239,16 @@ class _MyPageState extends State<MyPage> {
                     color: Theme.of(context).colorScheme.primary,
                   )),
             ),
-            ListTile(
-              onTap: () {
-                SmartDialog.show(
-                    useAnimation: false,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('主题模式'),
-                        content: StatefulBuilder(
-                          builder:
-                              (BuildContext context, StateSetter setState) {
-                            return Wrap(
-                              spacing: 8,
-                              runSpacing: 2,
-                              children: [
-                                defaultThemeMode == 'system'
-                                    ? FilledButton(
-                                        onPressed: () {
-                                          updateTheme('system');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: const Text("跟随系统"))
-                                    : FilledButton.tonal(
-                                        onPressed: () {
-                                          updateTheme('system');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: const Text("跟随系统")),
-                                defaultThemeMode == 'light'
-                                    ? FilledButton(
-                                        onPressed: () {
-                                          updateTheme('light');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: const Text("浅色"))
-                                    : FilledButton.tonal(
-                                        onPressed: () {
-                                          updateTheme('light');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: const Text("浅色")),
-                                defaultThemeMode == 'dark'
-                                    ? FilledButton(
-                                        onPressed: () {
-                                          updateTheme('dark');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: const Text("深色"))
-                                    : FilledButton.tonal(
-                                        onPressed: () {
-                                          updateTheme('dark');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: const Text("深色")),
-                              ],
-                            );
-                          },
-                        ),
-                      );
-                    });
-              },
-              dense: false,
-              title: const Text('主题模式'),
-              subtitle: Text(
-                  defaultThemeMode == 'light'
-                      ? '浅色'
-                      : (defaultThemeMode == 'dark' ? '深色' : '跟随系统'),
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
-            ),
+            (popularController.libopencc != '' || !Platform.isWindows)
+                ? const InkWell(
+                    child: SetSwitchItem(
+                      title: '搜索优化',
+                      subTitle: '自动翻译关键词',
+                      setKey: SettingBoxKey.searchEnhanceEnable,
+                      defaultVal: true,
+                    ),
+                  )
+                : Container(),
             ListTile(
               onTap: () async {
                 final List<Map<String, dynamic>> colorThemes = colorThemeTypes;
@@ -386,23 +324,85 @@ class _MyPageState extends State<MyPage> {
               dense: false,
               title: const Text('配色方案'),
             ),
-            (popularController.libopencc != '' || !Platform.isWindows)
-                ? const InkWell(
-                    child: SetSwitchItem(
-                      title: '搜索优化',
-                      subTitle: '自动翻译关键词',
-                      setKey: SettingBoxKey.searchEnhanceEnable,
-                      defaultVal: true,
-                    ),
-                  )
-                : Container(),
+            ListTile(
+              onTap: () {
+                SmartDialog.show(
+                    useAnimation: false,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('主题模式'),
+                        content: StatefulBuilder(
+                          builder:
+                              (BuildContext context, StateSetter setState) {
+                            return Wrap(
+                              spacing: 8,
+                              runSpacing: 2,
+                              children: [
+                                defaultThemeMode == 'system'
+                                    ? FilledButton(
+                                        onPressed: () {
+                                          updateTheme('system');
+                                          SmartDialog.dismiss();
+                                        },
+                                        child: const Text("跟随系统"))
+                                    : FilledButton.tonal(
+                                        onPressed: () {
+                                          updateTheme('system');
+                                          SmartDialog.dismiss();
+                                        },
+                                        child: const Text("跟随系统")),
+                                defaultThemeMode == 'light'
+                                    ? FilledButton(
+                                        onPressed: () {
+                                          updateTheme('light');
+                                          SmartDialog.dismiss();
+                                        },
+                                        child: const Text("浅色"))
+                                    : FilledButton.tonal(
+                                        onPressed: () {
+                                          updateTheme('light');
+                                          SmartDialog.dismiss();
+                                        },
+                                        child: const Text("浅色")),
+                                defaultThemeMode == 'dark'
+                                    ? FilledButton(
+                                        onPressed: () {
+                                          updateTheme('dark');
+                                          SmartDialog.dismiss();
+                                        },
+                                        child: const Text("深色"))
+                                    : FilledButton.tonal(
+                                        onPressed: () {
+                                          updateTheme('dark');
+                                          SmartDialog.dismiss();
+                                        },
+                                        child: const Text("深色")),
+                              ],
+                            );
+                          },
+                        ),
+                      );
+                    });
+              },
+              dense: false,
+              title: const Text('主题模式'),
+              trailing: Text(
+                  defaultThemeMode == 'light'
+                      ? '浅色'
+                      : (defaultThemeMode == 'dark' ? '深色' : '跟随系统'),
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.outline)),
+            ),
+
             ListTile(
               onTap: () {
                 _mineController.checkUpdata();
               },
               dense: false,
               title: const Text('检查更新'),
-              subtitle: Text('当前版本 ${Api.version}',
+              trailing: Text('当前版本 ${Api.version}',
                   style: Theme.of(context)
                       .textTheme
                       .labelMedium!

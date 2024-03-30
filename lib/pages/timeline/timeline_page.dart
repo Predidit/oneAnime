@@ -52,13 +52,13 @@ class _TimelinePageState extends State<TimelinePage>
   DateTime generateDateTime(int year, String season) {
     switch (season) {
       case '冬':
-        return DateTime(year, 2, 1);
+        return DateTime(year, 1, 1);
       case '春':
-        return DateTime(year, 5, 1);
+        return DateTime(year, 4, 1);
       case '夏':
-        return DateTime(year, 8, 1);
+        return DateTime(year, 7, 1);
       case '秋':
-        return DateTime(year, 11, 1);
+        return DateTime(year, 10, 1);
       default:
         return DateTime.now();
     }
@@ -110,32 +110,54 @@ class _TimelinePageState extends State<TimelinePage>
                                 DateTime.now().year - 2
                               ])
                                 for (final String selectedSeason in [
+                                  '冬',
                                   '春',
                                   '夏',
-                                  '秋',
-                                  '冬'
+                                  '秋'
                                 ])
-                                  FilledButton(
-                                    onPressed: () async {
-                                      if (generateDateTime(i, selectedSeason)
-                                          .isAfter(DateTime.now())) {
-                                        SmartDialog.showToast('这是禁止事项');
-                                      } else {
-                                        if (timelineController.selectedDate !=
-                                            generateDateTime(
-                                                i, selectedSeason)) {
-                                          timelineController.selectedDate =
+                                  DateTime.now().isAfter(
+                                          generateDateTime(i, selectedSeason))
+                                      ? timelineController.selectedDate ==
                                               generateDateTime(
-                                                  i, selectedSeason);
-                                          timelineController.getSchedules();
-                                        }
-                                      }
+                                                  i, selectedSeason)
+                                          ? FilledButton(
+                                              onPressed: () async {
+                                                if (timelineController
+                                                        .selectedDate !=
+                                                    generateDateTime(
+                                                        i, selectedSeason)) {
+                                                  timelineController
+                                                          .selectedDate =
+                                                      generateDateTime(
+                                                          i, selectedSeason);
+                                                  timelineController
+                                                      .getSchedules();
+                                                }
+                                                SmartDialog.dismiss();
+                                              },
+                                              child: Text(i.toString() +
+                                                  selectedSeason.toString()),
+                                            )
+                                          : FilledButton.tonal(
+                                              onPressed: () async {
+                                                if (timelineController
+                                                        .selectedDate !=
+                                                    generateDateTime(
+                                                        i, selectedSeason)) {
+                                                  timelineController
+                                                          .selectedDate =
+                                                      generateDateTime(
+                                                          i, selectedSeason);
+                                                  timelineController
+                                                      .getSchedules();
+                                                }
 
-                                      SmartDialog.dismiss();
-                                    },
-                                    child: Text(i.toString() +
-                                        selectedSeason.toString()),
-                                  ),
+                                                SmartDialog.dismiss();
+                                              },
+                                              child: Text(i.toString() +
+                                                  selectedSeason.toString()),
+                                            )
+                                      : Container(),
                             ],
                           );
                         }),

@@ -636,7 +636,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                 return;
                                               }
                                               SmartDialog.showToast(
-                                                    '跳转到第 ${videoController.episode + 1} 话');
+                                                    '第 ${videoController.episode + 1} 话');
                                               videoController.changeEpisode(
                                                   videoController.episode + 1);
                                             },

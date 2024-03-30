@@ -101,6 +101,7 @@ class DanmakuRequest {
   }
 
   static getBangumiJPName (String title) async {
+    // Bangumi API 文档要求的UA格式
     var httpHeaders = {
       'user-agent':
           'Predidit/oneAnime/1.1.2 (Android) (https://github.com/Predidit/oneAnime)',
