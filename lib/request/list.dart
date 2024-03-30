@@ -98,9 +98,9 @@ class ListRequest {
     return true;
   }
 
-  static Future getAnimeScedule() async {
+  static Future getAnimeScedule(DateTime selectedDate) async {
     List<AnimeSchedule> schedules = [];
-    final season = AnimeSeason(DateTime.now()).toString();
+    final season = AnimeSeason(selectedDate).toString(); 
     final link = Api.domain + season;
 
     final TimelineController timelineController =

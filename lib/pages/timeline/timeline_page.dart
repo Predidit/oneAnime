@@ -49,6 +49,21 @@ class _TimelinePageState extends State<TimelinePage>
     Modular.to.navigate('/tab/popular/');
   }
 
+  DateTime generateDateTime(int year, String season) {
+    switch (season) {
+      case '冬':
+        return DateTime(year, 2, 1);
+      case '春':
+        return DateTime(year, 5, 1);
+      case '夏':
+        return DateTime(year, 8, 1);
+      case '秋':
+        return DateTime(year, 11, 1);
+      default:
+        return DateTime.now();
+    }
+  }
+
   final List<Tab> tabs = const <Tab>[
     Tab(text: '一'),
     Tab(text: '二'),
@@ -75,7 +90,59 @@ class _TimelinePageState extends State<TimelinePage>
               tabs: tabs,
               indicatorColor: Theme.of(context).colorScheme.primary,
             ),
-            title: Text(timelineController.sessonName),
+            title: InkWell(
+              child: Text(timelineController.sessonName),
+              onTap: () {
+                SmartDialog.show(
+                    useAnimation: false,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('时间机器'),
+                        content: StatefulBuilder(builder:
+                            (BuildContext context, StateSetter setState) {
+                          return Wrap(
+                            spacing: 8,
+                            runSpacing: 2,
+                            children: [
+                              for (final int i in [
+                                DateTime.now().year,
+                                DateTime.now().year - 1,
+                                DateTime.now().year - 2
+                              ])
+                                for (final String selectedSeason in [
+                                  '春',
+                                  '夏',
+                                  '秋',
+                                  '冬'
+                                ])
+                                  FilledButton(
+                                    onPressed: () async {
+                                      if (generateDateTime(i, selectedSeason)
+                                          .isAfter(DateTime.now())) {
+                                        SmartDialog.showToast('这是禁止事项');
+                                      } else {
+                                        if (timelineController.selectedDate !=
+                                            generateDateTime(
+                                                i, selectedSeason)) {
+                                          timelineController.selectedDate =
+                                              generateDateTime(
+                                                  i, selectedSeason);
+                                          timelineController.getSchedules();
+                                        }
+                                      }
+
+                                      SmartDialog.dismiss();
+                                    },
+                                    child: Text(i.toString() +
+                                        selectedSeason.toString()),
+                                  ),
+                            ],
+                          );
+                        }),
+                      );
+                    });
+              },
+            ),
           ),
           body: renderBody,
         ),

@@ -104,7 +104,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
       if (videoController.currentPosition.inMicroseconds != 0 &&
           playerController.mediaPlayer.state.playing == true &&
           videoController.danmakuOn == true) {
-        debugPrint('当前播放到 ${videoController.currentPosition.inSeconds}');
+        // debugPrint('当前播放到 ${videoController.currentPosition.inSeconds}');
         videoController.danDanmakus.asMap().forEach((key, value) {
           if (value.p.toInt() == videoController.currentPosition.inSeconds) {
             danmakuController.addItems([DanmakuItem(value.m)]);
