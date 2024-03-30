@@ -156,6 +156,14 @@ class _MyPageState extends State<MyPage> {
                     color: Theme.of(context).colorScheme.primary,
                   )),
             ),
+            const InkWell(
+              child: SetSwitchItem(
+                title: '精准匹配', 
+                subTitle: '实验性',
+                setKey: SettingBoxKey.danmakuEnhance,
+                defaultVal: true,
+              ),
+            ),
             ListTile(
               onTap: () async {
                 final List<double> danAreaList = [

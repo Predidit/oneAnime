@@ -72,6 +72,9 @@ class DanmakuRequest {
 
   static getDanDanmaku(int bangumiID, int episode) async {
     List<Danmaku> danmakus = [];
+    if (bangumiID == 100000) {
+      return danmakus;
+    }
     var httpHeaders = {
       'user-agent':
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_3_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15',
@@ -95,5 +98,39 @@ class DanmakuRequest {
       danmakus.add(danmaku);
     }
     return danmakus;
+  }
+
+  static getBangumiJPName (String title) async {
+    var httpHeaders = {
+      'user-agent':
+          'Predidit/oneAnime/1.1.2 (Android) (https://github.com/Predidit/oneAnime)',
+      'referer': '',
+    };
+    Map<String, String> keywordMap = {
+      'type': '2',
+      'responseGroup': 'small'
+    };
+
+    final res = await Request().get(Api.bangumiSearch + Uri.encodeComponent(title) ,
+        data: keywordMap, options: Options(headers: httpHeaders));
+    Map<String, dynamic> jsonData = res.data;
+    return jsonData['list'][0]['name'];
+  }
+
+  static getBangumiCNName (String title) async {
+    var httpHeaders = {
+      'user-agent':
+          'Predidit/oneAnime/1.1.2 (Android) (https://github.com/Predidit/oneAnime)',
+      'referer': '',
+    };
+    Map<String, String> keywordMap = {
+      'type': '2',
+      'responseGroup': 'small'
+    };
+
+    final res = await Request().get(Api.bangumiSearch + Uri.encodeComponent(title) ,
+        data: keywordMap, options: Options(headers: httpHeaders));
+    Map<String, dynamic> jsonData = res.data;
+    return jsonData['list'][0]['name_cn'];
   }
 }

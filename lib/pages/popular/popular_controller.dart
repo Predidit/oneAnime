@@ -108,8 +108,17 @@ abstract class _PopularController with Store {
 
   void filterList(String keyword) async {
     this.keyword = keyword;
-    if (setting.get(SettingBoxKey.searchEnhanceEnable, defaultValue: true) &&
-        (Platform.isAndroid || Platform.isIOS)) {
+    if (setting.get(SettingBoxKey.searchEnhanceEnable, defaultValue: true)) {
+      keyword = await chineseS2TW(keyword);
+    }
+    cacheList.clear();
+    cacheList.addAll(list.where((e) {
+      return e.contains(keyword);
+    }).toList());
+  }
+
+  Future<String> chineseS2TW(String keyword) async {
+    if ((Platform.isAndroid || Platform.isIOS)) {
       try {
         debugPrint('开始转换关键词');
         keyword = await ChineseConverter.convert(keyword, S2TWp());
@@ -119,10 +128,9 @@ abstract class _PopularController with Store {
       }
     }
     // OpenCC windows库调用
-    if (setting.get(SettingBoxKey.searchEnhanceEnable, defaultValue: true) &&
-        (Platform.isWindows)) {
+    if ((Platform.isWindows)) {
       if (libopencc == '') {
-        return;
+        return keyword;
       }
       try {
         Pointer<Utf8> cString = keyword.toNativeUtf8();
@@ -133,9 +141,33 @@ abstract class _PopularController with Store {
         debugPrint('发生错误 ${e.toString()}');
       }
     }
-    cacheList.clear();
-    cacheList.addAll(list.where((e) {
-      return e.contains(keyword);
-    }).toList());
+    return keyword;
+  }
+
+  Future<String> chineseTW2S(String keyword) async {
+    if ((Platform.isAndroid || Platform.isIOS)) {
+      try {
+        debugPrint('开始转换关键词');
+        keyword = await ChineseConverter.convert(keyword, TW2S());
+        debugPrint('转换后的关键词为 $keyword');
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    }
+    // OpenCC windows库调用
+    if ((Platform.isWindows)) {
+      if (libopencc == '') {
+        return keyword;
+      }
+      try {
+        Pointer<Utf8> cString = keyword.toNativeUtf8();
+        Pointer<Utf8> resCString = libopencc.TranTW2S(cString);
+        keyword = resCString.toDartString();
+      } catch (e) {
+        debugPrint(e.toString());
+        debugPrint('发生错误 ${e.toString()}');
+      }
+    }
+    return keyword;
   }
 }

@@ -8,6 +8,8 @@ import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/request/danmaku.dart';
 import 'package:oneanime/pages/video/danmaku_module.dart';
+import 'package:oneanime/utils/storage.dart';
+import 'package:hive/hive.dart';
 
 part 'video_controller.g.dart';
 
@@ -76,11 +78,13 @@ abstract class _VideoController with Store {
   String title = '';
   String from = '/tab/popular/';
 
+  Box setting = GStorage.setting;
+
   Future setPlaybackSpeed(double playerSpeed) async {
     final PlayerController playerController = Modular.get<PlayerController>();
     try {
       playerController.mediaPlayer.setRate(playerSpeed);
-    } catch(e) {
+    } catch (e) {
       debugPrint(e.toString());
     }
     this.playerSpeed = playerSpeed;
@@ -115,9 +119,50 @@ abstract class _VideoController with Store {
   }
 
   Future getDanDanmaku(String title, int episode) async {
+    bool danmakuEnhance =
+        setting.get(SettingBoxKey.danmakuEnhance, defaultValue: true);
     bangumiID = await DanmakuRequest.getBangumiID(title);
     var res = await DanmakuRequest.getDanDanmaku(bangumiID, episode);
     danDanmakus.addAll(res);
+    if (danmakuEnhance && res.length == 0) {
+      final PopularController popularController =
+          Modular.get<PopularController>();
+      try {
+        title = await popularController.chineseTW2S(title);
+        debugPrint('内部翻译结果 $title');
+      } catch (e) {
+        debugPrint('内部翻译错误 ${e.toString()}');
+      }
+      String titleEnhance = '';
+      try {
+        titleEnhance = await DanmakuRequest.getBangumiCNName(title);
+      } catch (e) {
+        debugPrint("请求Bangumi中文译名错误 ${e.toString()}");
+      }
+      if (titleEnhance != '') {
+        dynamic res = [];
+        if (titleEnhance != title) {
+          bangumiID = await DanmakuRequest.getBangumiID(titleEnhance);
+          res = await DanmakuRequest.getDanDanmaku(bangumiID, episode);
+        } else {
+          debugPrint('中文译名未转换');
+        }
+        if (res.length != 0) {
+          danDanmakus.addAll(res);
+        } else {
+          try {
+            titleEnhance = await DanmakuRequest.getBangumiJPName(title);
+          } catch (e) {
+            debugPrint("请求Bangumi日文译名错误 ${e.toString()}");
+          }
+          if (titleEnhance != '') {
+            bangumiID = await DanmakuRequest.getBangumiID(titleEnhance);
+            var res = await DanmakuRequest.getDanDanmaku(bangumiID, episode);
+            danDanmakus.addAll(res);
+          }
+        }
+      }
+    }
     debugPrint('当前弹幕库 ${danDanmakus.length}');
   }
 }

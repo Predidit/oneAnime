@@ -48,6 +48,8 @@ A: 受限于 Anime1 网站本身的架构与设计，Anime1 不向用户提供�
 
 特别感谢 [DandanPlayer](https://www.dandanplay.com/) 本项目使用了 dandanplayer 开放API 以提供弹幕交互。
 
+特别感谢 [Bangumi](https://bangumi.tv/) 本项目使用了 Bangumi 开放API 以提供番剧元数据。
+
 感谢 [media_kit](https://github.com/media-kit/media-kit) 本项目跨平台媒体播放能力来自 media_kit
 
 感谢 [hive](https://github.com/isar/hive) 本项目持久化储存能力来自 hive
