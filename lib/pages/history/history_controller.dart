@@ -1,0 +1,113 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
+import 'package:mobx/mobx.dart';
+import 'package:oneanime/bean/anime/anime_history.dart';
+import 'package:oneanime/bean/anime/anime_info.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:oneanime/utils/storage.dart';
+import 'package:oneanime/pages/popular/popular_controller.dart';
+
+part 'history_controller.g.dart';
+
+class HistoryController = _HistoryController with _$HistoryController;
+
+abstract class _HistoryController with Store {
+  final PopularController popularController = Modular.get<PopularController>();
+  late List<AnimeInfo> list;
+  List<AnimeHistory> history = GStorage.history.values.toList();
+
+  @observable
+  ObservableList<AnimeInfo> historyList = ObservableList<AnimeInfo>.of([]);
+
+  double scrollOffset = 0.0;
+  bool isLoadingMore = true;
+
+  Future getHistoryList() async {
+    historyList.clear();
+    if (history.length != 0) {
+      list = popularController.list;
+      history.asMap().forEach((key, value) {
+        list.asMap().forEach((index, item) {
+          if (item.link == value.link) {
+            historyList.add(item);
+            return;
+          }
+        });
+      });
+    }
+  }
+
+  Future updateFollow(int link, bool status) async {
+    list.asMap().forEach((index, item) {
+      if (item.link == link) {
+        list[index].follow = status;
+        return;
+      }
+    });
+    updateData();
+  }
+
+  Future updateHistory(int link) async {
+    bool flag = false;
+    AnimeHistory newRecord;
+    int time = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    if (history.length != 0) {
+      history.asMap().forEach((key, value) {
+        if (value.link == link) {
+          history[key].time = time;
+          flag = true;
+          return;
+        }
+      });
+    }
+    if (flag) {
+      await GStorage.history.clear();
+      await GStorage.history.addAll(history);
+    } else {
+      newRecord = AnimeHistory.fromJson({"link": link, "time": time});
+      await GStorage.history.add(newRecord);
+    }
+  }
+
+  Future deleteHistory(int link) async {
+    // if (history.length == 1) {
+    //   historyList.clear();
+    //   await GStorage.history.clear();
+    //   return;
+    // }
+    int? deleteKey;
+    history.asMap().forEach((key, value) {
+      if (value.link == link) {
+        deleteKey = key;
+        return;
+      }
+    });
+    if (deleteKey != null) {
+      debugPrint('找到目标历史记录 ${deleteKey}');
+      history.removeAt(deleteKey!);
+      deleteKey = 0;
+    }
+    historyList.asMap().forEach((key, value) {
+      if (value.link == link) {
+        deleteKey = key;
+        return;
+      }
+    });
+    if (deleteKey != null) {
+      historyList.removeAt(deleteKey!);
+    }
+    await GStorage.history.clear();
+    await GStorage.history.addAll(history);
+  }
+
+  Future clearHistory() async {
+    historyList.clear();
+    GStorage.history.clear();
+  }
+
+  Future updateData() async {
+    await GStorage.listCahce.clear();
+    await GStorage.listCahce.addAll(list);
+  }
+}

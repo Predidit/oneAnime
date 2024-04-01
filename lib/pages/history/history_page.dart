@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:oneanime/pages/follow/follow_controller.dart';
+import 'package:oneanime/pages/history/history_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -9,18 +9,18 @@ import 'package:oneanime/pages/menu/menu.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 
-class FollowPage extends StatefulWidget {
-  const FollowPage({super.key});
+class HistoryPage extends StatefulWidget {
+  const HistoryPage({super.key});
 
   @override
-  State<FollowPage> createState() => _FollowPageState();
+  State<HistoryPage> createState() => _HistoryPageState();
 }
 
-class _FollowPageState extends State<FollowPage>
+class _HistoryPageState extends State<HistoryPage>
     with AutomaticKeepAliveClientMixin {
   dynamic navigationBarState;
   final ScrollController scrollController = ScrollController();
-  final FollowController followController = Modular.get<FollowController>();
+  final HistoryController historyController = Modular.get<HistoryController>();
 
   @override
   bool get wantKeepAlive => true;
@@ -36,34 +36,27 @@ class _FollowPageState extends State<FollowPage>
           : Provider.of<NavigationBarState>(context, listen: false);
       navigationBarState.showNavigate();
     });
-    followController.getFollowList();
+    historyController.getHistoryList();
     scrollController.addListener(() {
-      followController.scrollOffset = scrollController.offset;
+      historyController.scrollOffset = scrollController.offset;
     });
-    debugPrint('Follow 监听器已添加');
+    debugPrint('History 监听器已添加');
   }
 
   @override
   void dispose() {
     scrollController.removeListener(() {});
-    debugPrint('popular 模块已卸载, 监听器移除');
+    debugPrint('history 模块已卸载, 监听器移除');
     super.dispose();
   }
 
   void onBackPressed(BuildContext context) {
-    navigationBarState.showNavigate();
-    navigationBarState.updateSelectedIndex(0);
-    Modular.to.navigate('/tab/popular/');
+    Modular.to.navigate('/tab/my/');
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   debugPrint('尝试恢复状态');
-    //   scrollController.jumpTo(followController.scrollOffset);
-    //   debugPrint('Popular加载完成');
-    // });
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {
@@ -71,15 +64,16 @@ class _FollowPageState extends State<FollowPage>
       },
       child: Scaffold(
         appBar: const SysAppBar(
-          title: Text('追番')
+          title: Text('历史记录')
         ),
         body: Container(child: animeList),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             scrollController.jumpTo(0.0);
-            followController.scrollOffset = 0.0;
+            historyController.scrollOffset = 0.0;
+            historyController.clearHistory();
           },
-          child: const Icon(Icons.arrow_upward),
+          child: const Icon(Icons.clear_all),
         ),
       ),
     );
@@ -90,20 +84,21 @@ class _FollowPageState extends State<FollowPage>
       return ListView.separated(
         controller: scrollController,
         separatorBuilder: (context, index) => const SizedBox(height: 8.0),
-        itemCount: followController.followList.length == 0
+        itemCount: historyController.historyList.length == 0
             ? 1
-            : followController.followList.length,
+            : historyController.historyList.length,
         itemBuilder: (context, index) {
-          return followController.followList.length != 0
+          // 倒序
+          return historyController.historyList.length != 0
               ? AnimeInfoCard(
-                  info: followController.followList[index], index: index, type: 'follow')
+                  info: historyController.historyList[historyController.historyList.length - index -1], index: historyController.historyList.length - index -1, type: 'history')
               : const SizedBox(
                   height: 600,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('啊咧（⊙.⊙） 没有追番的说'),
+                      Text('啊咧（⊙.⊙） 没有观看记录的说'),
                     ],
                   ));
         },

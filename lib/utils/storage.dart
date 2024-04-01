@@ -1,15 +1,18 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
+import 'package:oneanime/bean/anime/anime_history.dart';
 
 class GStorage {
   static late final Box<dynamic> localCache;
   static late final Box<dynamic> userInfo;
   static late final Box<dynamic> setting;
   static late final Box<AnimeInfo> listCahce;
+  static late final Box<AnimeHistory> history;
 
   static Future<void> init() async {
     final Directory dir = await getApplicationSupportDirectory();
@@ -19,6 +22,7 @@ class GStorage {
     regAdapter();
     setting = await Hive.openBox('setting');
     listCahce = await Hive.openBox<AnimeInfo>('anime_info_box');
+    history = await Hive.openBox('history');
 
     // 本地缓存
     localCache = await Hive.openBox(
@@ -33,6 +37,7 @@ class GStorage {
   // Todo 所有者相关
   static void regAdapter() {
     Hive.registerAdapter(AnimeInfoAdapter());
+    Hive.registerAdapter(AnimeHistoryAdapter());
   }
 
   static Future<void> close() async {

@@ -64,6 +64,14 @@ class _MyPageState extends State<MyPage> {
           children: [
             ListTile(
               onTap: () async {
+                Modular.to.pushNamed('/tab/history');
+              },
+              dense: false,
+              title: const Text('历史记录'),
+              trailing: const Icon(Icons.navigate_next),
+            ),
+            ListTile(
+              onTap: () async {
                 Modular.to.pushNamed('/tab/my/player');
               },
               dense: false,

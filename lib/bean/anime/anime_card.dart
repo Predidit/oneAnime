@@ -8,6 +8,7 @@ import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/pages/menu/menu.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
+import 'package:oneanime/pages/history/history_controller.dart';
 import 'package:provider/provider.dart';
 
 /// Takes an AnimeInfo object and render it to a card
@@ -34,6 +35,8 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
     final PopularController popularController =
         Modular.get<PopularController>();
     final VideoController videoController = Modular.get<VideoController>();
+    final HistoryController historyController =
+        Modular.get<HistoryController>();
     dynamic navigationBarState;
 
     return Card(
@@ -46,6 +49,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
       child: InkWell(
         onTap: () async {
           SmartDialog.showLoading(msg: '获取中');
+          historyController.updateHistory(widget.info.link ?? 0);
           try {
             debugPrint(
                 'AnimeButton被按下 对应链接为 https://anime1.me/?cat=${widget.info.link}');
@@ -87,10 +91,10 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                   maxLines: 2,
                   softWrap: true,
                   style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      // color: Colors.black
-                      ),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    // color: Colors.black
+                  ),
                 ),
               ),
               SizedBox(height: 8.0),
@@ -108,7 +112,8 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                         ),
                         child: Text(
                           widget.info.episode ?? "77",
-                          style: TextStyle(color: Theme.of(context).colorScheme.surface),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.surface),
                         ),
                       ),
                       SizedBox(width: 8.0),
@@ -122,7 +127,8 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                         child: Text(
                           (widget.info.year ?? "2077") +
                               (widget.info.season ?? ""),
-                          style: TextStyle(color: Theme.of(context).colorScheme.surface),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.surface),
                         ),
                       ),
                       SizedBox(width: 8.0),
@@ -132,12 +138,16 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 8.0, vertical: 4.0),
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                     borderRadius: BorderRadius.circular(8.0),
                                   ),
                                   child: Text(
                                     widget.info.subtitle ?? "",
-                                    style: TextStyle(color: Theme.of(context).colorScheme.surface),
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surface),
                                   ),
                                 )
                               : Container()
@@ -150,27 +160,52 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                               ),
                               child: Text(
                                 "已追 ${widget.info.progress ?? 1} 话",
-                                style: TextStyle(color: Theme.of(context).colorScheme.surface),
+                                style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.surface),
                               ),
                             ),
                     ],
                   ),
-                  IconButton(
-                    icon: (follow)
-                        ? Icon(Icons.favorite, color: Theme.of(context).colorScheme.tertiary)
-                        : Icon(Icons.favorite_border, color: Theme.of(context).colorScheme.tertiary),
-                    onPressed: () {
-                      if (popularController.isLoadingMore == false) {
-                        popularController.updateFollow(
-                            widget.info.link ?? 19951, !(follow));
-                        setState(() {
-                          follow = !follow;
-                        });
-                        SmartDialog.showToast(
-                            follow ? '自己追的番要好好看完哦' : '取消追番成功');
-                      }
-                    },
-                    splashColor: Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
+                  Row(
+                    children: [
+                      widget.type == 'history'
+                          ? IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                debugPrint('尝试删除观看记录 ${widget.info.link}');
+                                historyController
+                                    .deleteHistory(widget.info.link ?? 0);
+                              },
+                              splashColor: Theme.of(context)
+                                  .colorScheme
+                                  .tertiary
+                                  .withOpacity(0.5),
+                            )
+                          : Container(),
+                      IconButton(
+                        icon: (follow)
+                            ? Icon(Icons.favorite,
+                                color: Theme.of(context).colorScheme.tertiary)
+                            : Icon(Icons.favorite_border,
+                                color: Theme.of(context).colorScheme.tertiary),
+                        onPressed: () {
+                          if (popularController.isLoadingMore == false) {
+                            popularController.updateFollow(
+                                widget.info.link ?? 19951, !(follow));
+                            setState(() {
+                              follow = !follow;
+                            });
+                            SmartDialog.showToast(
+                                follow ? '自己追的番要好好看完哦' : '取消追番成功');
+                          }
+                        },
+                        splashColor: Theme.of(context)
+                            .colorScheme
+                            .tertiary
+                            .withOpacity(0.5),
+                      ),
+                    ],
                   ),
                 ],
               ),

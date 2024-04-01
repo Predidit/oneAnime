@@ -1,15 +1,9 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
-import 'package:oneanime/request/list.dart';
-import 'package:oneanime/request/video.dart';
-import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:hive/hive.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
-import 'package:flutter_open_chinese_convert/flutter_open_chinese_convert.dart';
 
 part 'follow_controller.g.dart';
 
