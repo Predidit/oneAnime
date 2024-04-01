@@ -5,7 +5,8 @@ import 'package:oneanime/request/api.dart';
 import 'package:html/parser.dart' as htmlParser;
 import 'package:html/dom.dart';
 import 'package:flutter/material.dart' as material;
-import 'package:oneanime/pages/video/danmaku_module.dart';
+import 'package:oneanime/bean/danmaku/danmaku_module.dart';
+import 'package:oneanime/bean/anime/anime_bangumi_info.dart';
 
 class DanmakuRequest {
   // 获取动画疯sn集合, 需要进一步处理
@@ -100,7 +101,7 @@ class DanmakuRequest {
     return danmakus;
   }
 
-  static getBangumiJPName (String title) async {
+  static getBangumiName (String title) async {
     // Bangumi API 文档要求的UA格式
     var httpHeaders = {
       'user-agent':
@@ -115,23 +116,7 @@ class DanmakuRequest {
     final res = await Request().get(Api.bangumiSearch + Uri.encodeComponent(title) ,
         data: keywordMap, options: Options(headers: httpHeaders));
     Map<String, dynamic> jsonData = res.data;
-    return jsonData['list'][0]['name'];
-  }
-
-  static getBangumiCNName (String title) async {
-    var httpHeaders = {
-      'user-agent':
-          'Predidit/oneAnime/1.1.2 (Android) (https://github.com/Predidit/oneAnime)',
-      'referer': '',
-    };
-    Map<String, String> keywordMap = {
-      'type': '2',
-      'responseGroup': 'small'
-    };
-
-    final res = await Request().get(Api.bangumiSearch + Uri.encodeComponent(title) ,
-        data: keywordMap, options: Options(headers: httpHeaders));
-    Map<String, dynamic> jsonData = res.data;
-    return jsonData['list'][0]['name_cn'];
+    BangumiInfo bangumiInfo = BangumiInfo.fromJson({"name": jsonData['list'][0]['name'], "name_cn": jsonData['list'][0]['name_cn']});
+    return bangumiInfo;
   }
 }

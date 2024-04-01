@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
+import 'package:oneanime/bean/anime/anime_bangumi_info.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/request/video.dart';
 import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/request/danmaku.dart';
-import 'package:oneanime/pages/video/danmaku_module.dart';
+import 'package:oneanime/bean/danmaku/danmaku_module.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:hive/hive.dart';
 
@@ -138,8 +139,10 @@ abstract class _VideoController with Store {
         debugPrint('内部翻译错误 ${e.toString()}');
       }
       String titleEnhance = '';
+      BangumiInfo? bangumiInfo;
       try {
-        titleEnhance = await DanmakuRequest.getBangumiCNName(title);
+        bangumiInfo = await DanmakuRequest.getBangumiName(title);
+        titleEnhance = bangumiInfo!.nameCN!;
       } catch (e) {
         debugPrint("请求Bangumi中文译名错误 ${e.toString()}");
       }
@@ -155,7 +158,7 @@ abstract class _VideoController with Store {
           danDanmakus.addAll(res);
         } else {
           try {
-            titleEnhance = await DanmakuRequest.getBangumiJPName(title);
+            titleEnhance = bangumiInfo!.name!;
           } catch (e) {
             debugPrint("请求Bangumi日文译名错误 ${e.toString()}");
           }
