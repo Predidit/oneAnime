@@ -7,6 +7,8 @@ import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
+import 'package:hive/hive.dart';
+import 'package:oneanime/utils/storage.dart';
 
 part 'history_controller.g.dart';
 
@@ -15,6 +17,8 @@ class HistoryController = _HistoryController with _$HistoryController;
 abstract class _HistoryController with Store {
   final PopularController popularController = Modular.get<PopularController>();
   late List<AnimeInfo> list;
+  Box setting = GStorage.setting;
+  bool privateMode = false;
   List<AnimeHistory> history = GStorage.history.values.toList();
 
   @observable
@@ -49,25 +53,29 @@ abstract class _HistoryController with Store {
   }
 
   Future updateHistory(int link) async {
-    bool flag = false;
+    privateMode = setting.get(SettingBoxKey.privateMode, defaultValue: false);
+    if (privateMode) {
+      return;
+    }
+    int? deleteKey;
     AnimeHistory newRecord;
     int time = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     if (history.length != 0) {
       history.asMap().forEach((key, value) {
         if (value.link == link) {
-          history[key].time = time;
-          flag = true;
+          // history[key].time = time;
+          deleteKey = key;
           return;
         }
       });
+      if (deleteKey != null) {
+        history.removeAt(deleteKey!);
+        await GStorage.history.clear();
+        await GStorage.history.addAll(history);
+      }
     }
-    if (flag) {
-      await GStorage.history.clear();
-      await GStorage.history.addAll(history);
-    } else {
-      newRecord = AnimeHistory.fromJson({"link": link, "time": time});
-      await GStorage.history.add(newRecord);
-    }
+    newRecord = AnimeHistory.fromJson({"link": link, "time": time});
+    await GStorage.history.add(newRecord);
   }
 
   Future deleteHistory(int link) async {

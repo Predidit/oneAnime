@@ -70,7 +70,7 @@ class _SideMenu extends State<SideMenu> {
                       NavigationRailDestination(
                         selectedIcon: Icon(Icons.settings),
                         icon: Icon(Icons.settings_outlined),
-                        label: Text('设置'),
+                        label: Text('我的'),
                       ),
                     ],
                     selectedIndex: state.selectedIndex,

@@ -76,7 +76,7 @@ class _BottomMenu extends State<BottomMenu> {
                       NavigationDestination(
                         selectedIcon: Icon(Icons.settings),
                         icon: Icon(Icons.settings_outlined),
-                        label: '设置',
+                        label: '我的',
                       ),
                     ],
                     selectedIndex: state.selectedIndex,

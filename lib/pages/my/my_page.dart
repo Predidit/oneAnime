@@ -10,6 +10,7 @@ import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
+import 'package:oneanime/bean/settings/settings.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -59,12 +60,20 @@ class _MyPageState extends State<MyPage> {
         onBackPressed(context);
       },
       child: Scaffold(
-        appBar: const SysAppBar(title: Text('设置')),
+        appBar: const SysAppBar(title: Text('我的')),
         body: Column(
           children: [
+            const InkWell(
+              child: SetSwitchItem(
+                title: '隐身模式',
+                subTitle: '不保留观看记录',
+                setKey: SettingBoxKey.privateMode,
+                defaultVal: false,
+              ),
+            ),
             ListTile(
               onTap: () async {
-                Modular.to.pushNamed('/tab/history');
+                Modular.to.pushNamed('/tab/history/');
               },
               dense: false,
               title: const Text('历史记录'),
