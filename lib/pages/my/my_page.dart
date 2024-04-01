@@ -1,20 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:oneanime/pages/menu/menu.dart';
 import 'package:oneanime/request/api.dart';
-import 'package:oneanime/bean/settings/settings.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:hive/hive.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
-import 'package:oneanime/bean/settings/color_type.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -35,12 +30,6 @@ class _MyPageState extends State<MyPage> {
   @override
   void initState() {
     super.initState();
-    defaultDanmakuArea =
-        setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
-    defaultThemeMode =
-        setting.get(SettingBoxKey.themeMode, defaultValue: 'system');
-    defaultThemeMode =
-        setting.get(SettingBoxKey.themeColor, defaultValue: 'default');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 在widget构建完成后调用的函数
       navigationBarState = Platform.isWindows
@@ -54,59 +43,6 @@ class _MyPageState extends State<MyPage> {
     navigationBarState.showNavigate();
     navigationBarState.updateSelectedIndex(0);
     Modular.to.navigate('/tab/popular/');
-  }
-
-  void updateDanmakuArea(double i) async {
-    await setting.put(SettingBoxKey.danmakuArea, i);
-    setState(() {
-      defaultDanmakuArea = i;
-    });
-  }
-
-  void setTheme(Color color) {
-    AdaptiveTheme.of(context).setTheme(
-      light: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        colorSchemeSeed: color,
-      ),
-      dark: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        colorSchemeSeed: color,
-      ),
-    );
-    setting.put(SettingBoxKey.themeColor, color.value.toRadixString(16));
-  }
-
-  void resetTheme() {
-    AdaptiveTheme.of(context).setTheme(
-      light: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-      ),
-      dark: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-      ),
-    );
-    setting.put(SettingBoxKey.themeColor, 'default');
-  }
-
-  void updateTheme(String theme) async {
-    if (theme == 'dark') {
-      AdaptiveTheme.of(context).setDark();
-    }
-    if (theme == 'light') {
-      AdaptiveTheme.of(context).setLight();
-    }
-    if (theme == 'system') {
-      AdaptiveTheme.of(context).setSystem();
-    }
-    await setting.put(SettingBoxKey.themeMode, theme);
-    setState(() {
-      defaultThemeMode = theme;
-    });
   }
 
   @override
@@ -127,275 +63,37 @@ class _MyPageState extends State<MyPage> {
         body: Column(
           children: [
             ListTile(
-              title: Text('播放设置',
-                  style: TextStyle(
-                    fontSize: 12.0,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  )),
-            ),
-            // const InkWell(
-            //   child: SetSwitchItem(
-            //     title: '硬件解码',
-            //     setKey: SettingBoxKey.HAenable,
-            //     defaultVal: true,
-            //   ),
-            // ),
-            const InkWell(
-              child: SetSwitchItem(
-                title: '自动播放',
-                setKey: SettingBoxKey.autoPlay,
-                defaultVal: true,
-              ),
-            ),
-            ListTile(
-              title: Text('弹幕设置',
-                  style: TextStyle(
-                    fontSize: 12.0,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  )),
-            ),
-            const InkWell(
-              child: SetSwitchItem(
-                title: '精准匹配',
-                setKey: SettingBoxKey.danmakuEnhance,
-                defaultVal: true,
-              ),
+              onTap: () async {
+                Modular.to.pushNamed('/tab/my/player');
+              },
+              dense: false,
+              title: const Text('播放设置'),
+              trailing: const Icon(Icons.navigate_next),
             ),
             ListTile(
               onTap: () async {
-                final List<double> danAreaList = [
-                  0.25,
-                  0.5,
-                  1.0,
-                ];
-                SmartDialog.show(
-                    useAnimation: false,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('弹幕区域'),
-                        content: StatefulBuilder(builder:
-                            (BuildContext context, StateSetter setState) {
-                          return Wrap(
-                            spacing: 8,
-                            runSpacing: 2,
-                            children: [
-                              for (final double i in danAreaList) ...<Widget>[
-                                if (i == defaultDanmakuArea) ...<Widget>[
-                                  FilledButton(
-                                    onPressed: () async {
-                                      updateDanmakuArea(i);
-                                      SmartDialog.dismiss();
-                                    },
-                                    child: Text(i.toString()),
-                                  ),
-                                ] else ...[
-                                  FilledButton.tonal(
-                                    onPressed: () async {
-                                      updateDanmakuArea(i);
-                                      SmartDialog.dismiss();
-                                    },
-                                    child: Text(i.toString()),
-                                  ),
-                                ]
-                              ]
-                            ],
-                          );
-                        }),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => SmartDialog.dismiss(),
-                            child: Text(
-                              '取消',
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.outline),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              updateDanmakuArea(1.0);
-                              SmartDialog.dismiss();
-                            },
-                            child: const Text('默认设置'),
-                          ),
-                        ],
-                      );
-                    });
+                Modular.to.pushNamed('/tab/my/danmaku');
               },
               dense: false,
-              title: const Text('弹幕区域'),
-              trailing: Text('占据 $defaultDanmakuArea 屏幕',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
+              title: const Text('弹幕设置'),
+              trailing: const Icon(Icons.navigate_next),
             ),
-            ListTile(
-              title: Text('其他',
-                  style: TextStyle(
-                    fontSize: 12.0,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  )),
-            ),
-            (popularController.libopencc != '' || !Platform.isWindows)
-                ? const InkWell(
-                    child: SetSwitchItem(
-                      title: '搜索优化',
-                      subTitle: '自动翻译关键词',
-                      setKey: SettingBoxKey.searchEnhanceEnable,
-                      defaultVal: true,
-                    ),
-                  )
-                : Container(),
             ListTile(
               onTap: () async {
-                final List<Map<String, dynamic>> colorThemes = colorThemeTypes;
-                SmartDialog.show(
-                    useAnimation: false,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('配色方案'),
-                        content: StatefulBuilder(builder:
-                            (BuildContext context, StateSetter setState) {
-                          return Wrap(
-                            alignment: WrapAlignment.center,
-                            spacing: 22,
-                            runSpacing: 18,
-                            children: [
-                              ...colorThemes.map(
-                                (e) {
-                                  final index = colorThemes.indexOf(e);
-                                  return GestureDetector(
-                                    onTap: () {
-                                      index == 0
-                                          ? resetTheme()
-                                          : setTheme(e['color']);
-                                      SmartDialog.dismiss();
-                                    },
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          width: 46,
-                                          height: 46,
-                                          decoration: BoxDecoration(
-                                            color: e['color'].withOpacity(0.8),
-                                            borderRadius:
-                                                BorderRadius.circular(50),
-                                            border: Border.all(
-                                              width: 2,
-                                              color:
-                                                  e['color'].withOpacity(0.8),
-                                            ),
-                                          ),
-                                          child: const AnimatedOpacity(
-                                            opacity: 0,
-                                            duration:
-                                                Duration(milliseconds: 200),
-                                            child: Icon(
-                                              Icons.done,
-                                              color: Colors.black,
-                                              size: 20,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 3),
-                                        Text(
-                                          e['label'],
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .outline,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              )
-                            ],
-                          );
-                        }),
-                      );
-                    });
+                Modular.to.pushNamed('/tab/my/theme');
               },
               dense: false,
-              title: const Text('配色方案'),
+              title: const Text('外观设置'),
+              trailing: const Icon(Icons.navigate_next),
             ),
             ListTile(
-              onTap: () {
-                SmartDialog.show(
-                    useAnimation: false,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('主题模式'),
-                        content: StatefulBuilder(
-                          builder:
-                              (BuildContext context, StateSetter setState) {
-                            return Wrap(
-                              spacing: 8,
-                              runSpacing: 2,
-                              children: [
-                                defaultThemeMode == 'system'
-                                    ? FilledButton(
-                                        onPressed: () {
-                                          updateTheme('system');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: const Text("跟随系统"))
-                                    : FilledButton.tonal(
-                                        onPressed: () {
-                                          updateTheme('system');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: const Text("跟随系统")),
-                                defaultThemeMode == 'light'
-                                    ? FilledButton(
-                                        onPressed: () {
-                                          updateTheme('light');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: const Text("浅色"))
-                                    : FilledButton.tonal(
-                                        onPressed: () {
-                                          updateTheme('light');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: const Text("浅色")),
-                                defaultThemeMode == 'dark'
-                                    ? FilledButton(
-                                        onPressed: () {
-                                          updateTheme('dark');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: const Text("深色"))
-                                    : FilledButton.tonal(
-                                        onPressed: () {
-                                          updateTheme('dark');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: const Text("深色")),
-                              ],
-                            );
-                          },
-                        ),
-                      );
-                    });
+              onTap: () async {
+                Modular.to.pushNamed('/tab/my/other');
               },
               dense: false,
-              title: const Text('主题模式'),
-              trailing: Text(
-                  defaultThemeMode == 'light'
-                      ? '浅色'
-                      : (defaultThemeMode == 'dark' ? '深色' : '跟随系统'),
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
+              title: const Text('其他设置'),
+              trailing: const Icon(Icons.navigate_next),
             ),
-
             ListTile(
               onTap: () {
                 _mineController.checkUpdata();
