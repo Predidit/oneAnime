@@ -53,13 +53,13 @@ class _TimelinePageState extends State<TimelinePage>
   DateTime generateDateTime(int year, String season) {
     switch (season) {
       case '冬':
-        return DateTime(year, 1, 7);
+        return DateTime(year, 1, 2);
       case '春':
-        return DateTime(year, 4, 7);
+        return DateTime(year, 4, 2);
       case '夏':
-        return DateTime(year, 7, 7);
+        return DateTime(year, 7, 2);
       case '秋':
-        return DateTime(year, 10, 7);
+        return DateTime(year, 10, 2);
       default:
         return DateTime.now();
     }

@@ -142,11 +142,24 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     }
     debugPrint('当前播放器非全屏');
     navigationBarState.showNavigate();
-    videoController.from == '/tab/popular/'
-        ? navigationBarState.updateSelectedIndex(0)
-        : (videoController.from == '/tab/follow/'
-            ? navigationBarState.updateSelectedIndex(2)
-            : navigationBarState.updateSelectedIndex(1));
+    switch(videoController.from) {
+      case '/tab/timeline/': {
+        navigationBarState.updateSelectedIndex(1);
+      }
+      break;
+      case '/tab/follow/': {
+        navigationBarState.updateSelectedIndex(2);
+      }
+      break;
+      case '/tab/history/': {
+        navigationBarState.updateSelectedIndex(3);
+      }
+      break;
+      default: {
+        navigationBarState.updateSelectedIndex(0);
+      }
+      break;
+    }
     Modular.to.navigate(videoController.from);
   }
 
