@@ -37,13 +37,14 @@ class AnimeSeason {
   List<int> _getYearAndSeason(DateTime dt) {
     int year = dt.year;
     int month = dt.month;
+    int day = dt.day;
 
     int season;
-    if (month < 4)
+    if ((month == 1 && day >=7) || (month == 2) || (month == 3) || (month == 4 && day < 7))
       season = 0;
-    else if (month < 7)
+    else if ((month == 4 && day >=7) || (month == 5) || (month == 6) || (month == 7 && day < 7))
       season = 1;
-    else if (month < 10)
+    else if ((month == 7 && day >=7) || (month == 8) || (month == 9) || (month == 10 && day < 7))
       season = 2;
     else
       season = 3;

@@ -77,7 +77,7 @@ class _MyPageState extends State<MyPage> {
               },
               dense: false,
               title: const Text('历史记录'),
-              trailing: const Icon(Icons.navigate_next),
+              // trailing: const Icon(Icons.navigate_next),
             ),
             ListTile(
               onTap: () async {
@@ -85,7 +85,7 @@ class _MyPageState extends State<MyPage> {
               },
               dense: false,
               title: const Text('播放设置'),
-              trailing: const Icon(Icons.navigate_next),
+              // trailing: const Icon(Icons.navigate_next),
             ),
             ListTile(
               onTap: () async {
@@ -93,7 +93,7 @@ class _MyPageState extends State<MyPage> {
               },
               dense: false,
               title: const Text('弹幕设置'),
-              trailing: const Icon(Icons.navigate_next),
+              // trailing: const Icon(Icons.navigate_next),
             ),
             ListTile(
               onTap: () async {
@@ -101,7 +101,7 @@ class _MyPageState extends State<MyPage> {
               },
               dense: false,
               title: const Text('外观设置'),
-              trailing: const Icon(Icons.navigate_next),
+              // trailing: const Icon(Icons.navigate_next),
             ),
             ListTile(
               onTap: () async {
@@ -109,7 +109,7 @@ class _MyPageState extends State<MyPage> {
               },
               dense: false,
               title: const Text('其他设置'),
-              trailing: const Icon(Icons.navigate_next),
+              // trailing: const Icon(Icons.navigate_next),
             ),
             ListTile(
               onTap: () {

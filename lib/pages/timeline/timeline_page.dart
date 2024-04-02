@@ -11,6 +11,7 @@ import 'package:oneanime/pages/menu/menu.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
+import 'package:oneanime/bean/anime/anime_sesson.dart';
 
 class TimelinePage extends StatefulWidget {
   const TimelinePage({super.key});
@@ -52,13 +53,13 @@ class _TimelinePageState extends State<TimelinePage>
   DateTime generateDateTime(int year, String season) {
     switch (season) {
       case '冬':
-        return DateTime(year, 1, 1);
+        return DateTime(year, 1, 7);
       case '春':
-        return DateTime(year, 4, 1);
+        return DateTime(year, 4, 7);
       case '夏':
-        return DateTime(year, 7, 1);
+        return DateTime(year, 7, 7);
       case '秋':
-        return DateTime(year, 10, 1);
+        return DateTime(year, 10, 7);
       default:
         return DateTime.now();
     }
@@ -110,10 +111,10 @@ class _TimelinePageState extends State<TimelinePage>
                                 DateTime.now().year - 2
                               ])
                                 for (final String selectedSeason in [
-                                  '冬',
-                                  '春',
+                                  '秋',
                                   '夏',
-                                  '秋'
+                                  '春',
+                                  '冬'
                                 ])
                                   DateTime.now().isAfter(
                                           generateDateTime(i, selectedSeason))

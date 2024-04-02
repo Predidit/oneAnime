@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:oneanime/pages/history/history_page.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/history/history_controller.dart';
@@ -10,6 +11,6 @@ class HistoryModule extends Module {
 
   @override
   void routes(r) {
-    r.child("/", child: (_) => const HistoryPage());
+    r.child("/", child: (_) => const HistoryPage(), transition: Platform.isWindows ? TransitionType.noTransition : TransitionType.leftToRight);
   }
 }
