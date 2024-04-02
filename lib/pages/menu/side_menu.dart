@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/router.dart';
 import 'package:provider/provider.dart';
+import 'package:oneanime/pages/my/my_controller.dart';
 
 class SideMenu extends StatefulWidget {
   //const SideMenu({Key? key}) : super(key: key);
@@ -36,6 +37,7 @@ class SideNavigationBarState extends ChangeNotifier {
 
 class _SideMenu extends State<SideMenu> {
   final PageController _page = PageController();
+  final _mineController = Modular.get<MyController>();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,17 @@ class _SideMenu extends State<SideMenu> {
                 child: Visibility(
                   visible: state.isRailVisible,
                   child: NavigationRail(
-                    extended: true,
+                    // extended: true,
+                    groupAlignment: 1.0,
+                    labelType: NavigationRailLabelType.selected,
+                    leading: FloatingActionButton(
+                      elevation: 0,
+                      onPressed: () {
+                        _mineController.checkUpdata();
+                      },
+                      child: const Icon(Icons.cloud_outlined),
+                    ),
+
                     destinations: const <NavigationRailDestination>[
                       NavigationRailDestination(
                         selectedIcon: Icon(Icons.home),
