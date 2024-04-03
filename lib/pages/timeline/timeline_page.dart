@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 import 'package:oneanime/pages/timeline/timeline_controller.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
@@ -12,6 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:oneanime/bean/anime/anime_sesson.dart';
+import 'package:oneanime/bean/anime/anime_history.dart';
+import 'package:oneanime/pages/history/history_controller.dart';
 
 class TimelinePage extends StatefulWidget {
   const TimelinePage({super.key});
@@ -26,6 +29,7 @@ class _TimelinePageState extends State<TimelinePage>
       Modular.get<TimelineController>();
   final VideoController videoController = Modular.get<VideoController>();
   final PopularController popularController = Modular.get<PopularController>();
+  final HistoryController historyController = Modular.get<HistoryController>();
   dynamic navigationBarState;
   TabController? controller;
 
@@ -202,6 +206,24 @@ class _TimelinePageState extends State<TimelinePage>
                   // It might be null
                   if (item.link != null) {
                     SmartDialog.showLoading(msg: '获取中');
+                    try {
+                      AnimeInfo? animeInfo =
+                          popularController.lookupAnime(item.name ?? "");
+                      videoController.link = animeInfo?.link ?? 0;
+                      AnimeHistory? history =
+                          historyController.lookupHistory(animeInfo?.link ?? 0);
+                      if (history == null) {
+                        historyController.updateHistory(
+                            animeInfo?.link ?? 0, 0);
+                      } else {
+                        historyController.updateHistory(
+                            animeInfo?.link ?? 0, history.offset ?? 0);
+                        videoController.offset = history.offset ?? 0;
+                      }
+                    } catch (e) {
+                      debugPrint(e.toString());
+                      SmartDialog.dismiss();
+                    }
                     try {
                       await popularController.getVideoLink(item.link ?? '');
                     } catch (e) {

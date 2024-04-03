@@ -13,7 +13,7 @@ class AnimeInfo extends HiveObject {
   String? year;
   @HiveField(4)
   String? season;
-  @HiveField(5) 
+  @HiveField(5)
   String? subtitle;
   @HiveField(6)
   bool? follow;
@@ -30,7 +30,6 @@ class AnimeInfo extends HiveObject {
     this.follow,
     this.progress,
   });
-
 
   bool contains(String t) {
     // emm, any better way of writing this?
@@ -53,7 +52,7 @@ class AnimeInfo extends HiveObject {
     }
   }
 
-  AnimeInfo.fromList(List list) { 
+  AnimeInfo.fromList(List list) {
     // The ID is the link
     // this.link = 'https://anime1.me/?cat=${list[0]}';
     this.link = list[0];
@@ -113,4 +112,3 @@ class AnimeInfoAdapter extends TypeAdapter<AnimeInfo> {
     writer.writeInt(obj.progress ?? 1);
   }
 }
-

@@ -117,6 +117,16 @@ abstract class _PopularController with Store {
     }).toList());
   }
 
+  AnimeInfo? lookupAnime(String name) {
+    AnimeInfo? ret;
+    list.asMap().forEach((key, value) {
+      if (value.name == name) {
+        ret = value;
+      }
+    });
+    return ret;
+  }
+
   Future<String> chineseS2TW(String keyword) async {
     if ((Platform.isAndroid || Platform.isIOS)) {
       try {
