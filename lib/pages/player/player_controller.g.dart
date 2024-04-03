@@ -33,8 +33,8 @@ mixin _$PlayerController on _PlayerController, Store {
       AsyncAction('_PlayerController.init', context: context);
 
   @override
-  Future<dynamic> init() {
-    return _$initAsyncAction.run(() => super.init());
+  Future<dynamic> init(int offset) {
+    return _$initAsyncAction.run(() => super.init(offset));
   }
 
   @override

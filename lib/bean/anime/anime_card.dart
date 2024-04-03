@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:oneanime/bean/anime/anime_history.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
+import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/pages/menu/menu.dart';
@@ -49,7 +51,12 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
       child: InkWell(
         onTap: () async {
           SmartDialog.showLoading(msg: '获取中');
-          historyController.updateHistory(widget.info.link ?? 0);
+          AnimeHistory? history = historyController.lookupHistory(widget.info.link ?? 0);
+          if (history == null) {
+            historyController.updateHistory(widget.info.link ?? 0, 0);
+          } else {
+            historyController.updateHistory(widget.info.link ?? 0, history.offset ?? 0);
+          }
           try {
             debugPrint(
                 'AnimeButton被按下 对应链接为 https://anime1.me/?cat=${widget.info.link}');
@@ -73,6 +80,8 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
             SmartDialog.showToast('上次观看到第 ${widget.info.progress} 话');
           }
           videoController.from = '/tab/' + widget.type + '/';
+          videoController.link = widget.info.link!;
+          videoController.offset = history?.offset ?? 0;
           navigationBarState = Platform.isWindows
               ? Provider.of<SideNavigationBarState>(context, listen: false)
               : Provider.of<NavigationBarState>(context, listen: false);

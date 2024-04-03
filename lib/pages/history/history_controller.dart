@@ -52,7 +52,7 @@ abstract class _HistoryController with Store {
     updateData();
   }
 
-  Future updateHistory(int link) async {
+  Future updateHistory(int link, int offset) async {
     privateMode = setting.get(SettingBoxKey.privateMode, defaultValue: false);
     if (privateMode) {
       return;
@@ -74,8 +74,10 @@ abstract class _HistoryController with Store {
         await GStorage.history.addAll(history);
       }
     }
-    newRecord = AnimeHistory.fromJson({"link": link, "time": time});
+    newRecord = AnimeHistory.fromJson({"link": link, "time": time, "offset": offset});
+    debugPrint('更新历史记录：link: ${link}, time: ${time}, offset: ${offset}');
     await GStorage.history.add(newRecord);
+    history = GStorage.history.values.toList();
   }
 
   Future deleteHistory(int link) async {
@@ -107,6 +109,16 @@ abstract class _HistoryController with Store {
     }
     await GStorage.history.clear();
     await GStorage.history.addAll(history);
+  }
+
+  AnimeHistory? lookupHistory(int link) {
+    AnimeHistory? ret;
+    history.asMap().forEach((key, value) {
+      if (value.link == link) {
+        ret = value;
+      }
+    });
+    return ret;
   }
 
   Future clearHistory() async {

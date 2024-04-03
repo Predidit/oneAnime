@@ -29,7 +29,7 @@ abstract class _PlayerController with Store {
   late String dataStatus;
 
   @action
-  Future init() async {
+  Future init(int offset) async {
     dataStatus = 'loading';
     try {
       mediaPlayer.dispose();
@@ -39,6 +39,18 @@ abstract class _PlayerController with Store {
     }
     debugPrint('VideoURL开始初始化');
     mediaPlayer = await createVideoController();
+    if (offset != 0) {
+      var sub = mediaPlayer.stream.buffer.listen(null);
+      sub.onData((event) async {
+        if (event.inSeconds > 0) {
+          // This is a workaround for unable to await for `mediaPlayer.stream.buffer.first`
+          // It seems that when the `buffer.first` is fired, the media is not fully loaded 
+          // and the player will not seek properlly.
+          await sub.cancel();
+          await mediaPlayer.seek(Duration(seconds: offset));
+        }
+      });
+    }
     debugPrint('VideoURL初始化完成');
     dataStatus = 'loaded';
   }

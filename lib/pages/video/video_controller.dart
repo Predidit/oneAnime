@@ -78,6 +78,8 @@ abstract class _VideoController with Store {
   String videoCookie = '';
   String title = '';
   String from = '/tab/popular/';
+  int link = 0;
+  int offset = 0;
 
   Box setting = GStorage.setting;
 
@@ -112,7 +114,7 @@ abstract class _VideoController with Store {
       debugPrint(e.toString());
     }
     playerSpeed = 1.0;
-    await playerController.init();
+    await playerController.init(0);
   }
 
   Future getAniDanmakuList(String title) async {
