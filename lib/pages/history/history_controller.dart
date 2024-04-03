@@ -94,7 +94,7 @@ abstract class _HistoryController with Store {
     if (deleteKey != null) {
       debugPrint('找到目标历史记录 ${deleteKey}');
       history.removeAt(deleteKey!);
-      deleteKey = 0;
+      deleteKey = null;
     }
     historyList.asMap().forEach((key, value) {
       if (value.link == link) {
