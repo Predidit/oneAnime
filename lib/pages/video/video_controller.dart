@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oneanime/bean/anime/anime_bangumi_info.dart';
@@ -24,7 +25,7 @@ abstract class _VideoController with Store {
   List<String> aniDanmakuToken = [];
 
   @observable
-  List<Danmaku> danDanmakus = [];
+  Map<int, List<Danmaku>> danDanmakus = {};
 
   @observable
   bool playing = false;
@@ -121,6 +122,14 @@ abstract class _VideoController with Store {
     aniDanmakuToken = await DanmakuRequest.getAniDanmakuList(title);
   }
 
+  void addDanmakus(List<Danmaku> danmakus) {
+    for (var element in danmakus) {
+      var danmakuList = danDanmakus[element.p.toInt()] ?? List.empty(growable: true);
+      danmakuList.add(element);
+      danDanmakus[element.p.toInt()] = danmakuList;
+    }
+  }
+
   Future getDanDanmaku(String title, int episode) async {
     // 极为糟糕的临时措施，但作者现在就要看高达
     // if (title.contains('鋼彈')) {
@@ -130,7 +139,7 @@ abstract class _VideoController with Store {
         setting.get(SettingBoxKey.danmakuEnhance, defaultValue: true);
     bangumiID = await DanmakuRequest.getBangumiID(title);
     var res = await DanmakuRequest.getDanDanmaku(bangumiID, episode);
-    danDanmakus.addAll(res);
+    addDanmakus(res);
     if (danmakuEnhance && res.length == 0) {
       final PopularController popularController =
           Modular.get<PopularController>();
@@ -157,7 +166,7 @@ abstract class _VideoController with Store {
           debugPrint('中文译名未转换');
         }
         if (res.length != 0) {
-          danDanmakus.addAll(res);
+          addDanmakus(res);
         } else {
           try {
             titleEnhance = bangumiInfo!.name!;
@@ -167,7 +176,7 @@ abstract class _VideoController with Store {
           if (titleEnhance != '') {
             bangumiID = await DanmakuRequest.getBangumiID(titleEnhance);
             var res = await DanmakuRequest.getDanDanmaku(bangumiID, episode);
-            danDanmakus.addAll(res);
+            addDanmakus(res);
           }
         }
       }

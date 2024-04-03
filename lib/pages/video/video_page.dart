@@ -68,21 +68,25 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNode);
     });
+    init();
+  }
+
+  void init() async {
     videoController.playerSpeed = 1.0;
     playerController.videoUrl = videoController.videoUrl;
     playerController.videoCookie = videoController.videoCookie;
-    playerController.init(videoController.offset);
+    await playerController.init(videoController.offset);
     videoController.offset = 0;
     try {
       videoController.danDanmakus.clear();
-      videoController.getDanDanmaku(
+      await videoController.getDanDanmaku(
           videoController.title, videoController.episode);
     } catch (e) {
       debugPrint(e.toString());
     }
     playerTimer = getPlayerTimer();
     try {
-      playerController.mediaPlayer.setRate(videoController.playerSpeed);
+      await playerController.mediaPlayer.setRate(videoController.playerSpeed);
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -115,11 +119,11 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
           playerController.mediaPlayer.state.playing == true &&
           videoController.danmakuOn == true) {
         // debugPrint('当前播放到 ${videoController.currentPosition.inSeconds}');
-        videoController.danDanmakus.asMap().forEach((key, value) {
-          if (value.p.toInt() == videoController.currentPosition.inSeconds) {
-            danmakuController.addItems([DanmakuItem(value.m)]);
-            return;
-          }
+        videoController.danDanmakus[videoController.currentPosition.inSeconds]?.asMap().forEach((idx, danmaku) async {
+          await Future.delayed(
+            Duration(milliseconds: idx * 1000 ~/ videoController.danDanmakus[videoController.currentPosition.inSeconds]!.length), 
+            () => mounted ? danmakuController.addItems([DanmakuItem(danmaku.m)]) : null
+          );
         });
       }
       if (playerController.mediaPlayer.state.completed == true &&
