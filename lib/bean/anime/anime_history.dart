@@ -7,16 +7,20 @@ class AnimeHistory extends HiveObject {
   int? link;
   @HiveField(1)
   int? time;
+  @HiveField(2)
+  int? offset;
 
   AnimeHistory({
     this.link,
     this.time,
+    this.offset,
   });
 
   AnimeHistory.fromJson(Map<String, dynamic>? json) {
     if (json == null) return;
     link = json['link'];
     time = json['time'];
+    offset = json['offset'];
   }
 }
 
@@ -26,15 +30,20 @@ class AnimeHistoryAdapter extends TypeAdapter<AnimeHistory> {
 
   @override
   AnimeHistory read(BinaryReader reader) {
-    return AnimeHistory(
+    var history = AnimeHistory(
       link: reader.readInt(),
       time: reader.readInt(),
     );
+    if (reader.availableBytes > 0) {
+      history.offset = reader.readInt();
+    }
+    return history;
   }
 
   @override
   void write(BinaryWriter writer, AnimeHistory obj) {
     writer.writeInt(obj.link ?? 19951);
     writer.writeInt(obj.time ?? 0);
+    writer.writeInt(obj.offset ?? 0);
   }
 }

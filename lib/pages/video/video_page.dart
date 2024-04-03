@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:oneanime/pages/history/history_controller.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:oneanime/pages/player/player_item.dart';
@@ -36,6 +37,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
   final FocusNode _focusNode = FocusNode();
   final VideoController videoController = Modular.get<VideoController>();
   final PlayerController playerController = Modular.get<PlayerController>();
+  final HistoryController historyController = Modular.get<HistoryController>();
 
   // 弹幕
   final _danmuKey = GlobalKey();
@@ -69,7 +71,8 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     videoController.playerSpeed = 1.0;
     playerController.videoUrl = videoController.videoUrl;
     playerController.videoCookie = videoController.videoCookie;
-    playerController.init();
+    playerController.init(videoController.offset);
+    videoController.offset = 0;
     try {
       videoController.danDanmakus.clear();
       videoController.getDanDanmaku(
@@ -93,6 +96,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     } catch (e) {
       debugPrint(e.toString());
     }
+    historyController.updateHistory(videoController.link, videoController.currentPosition.inSeconds);
     windowManager.removeListener(this);
     playerController.dispose();
     super.dispose();
