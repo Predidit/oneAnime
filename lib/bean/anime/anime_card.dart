@@ -66,7 +66,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                   episode: widget.info.progress ?? 1);
             } else {
               await popularController
-                  .getVideoLink('https://anime1.me/?cat=${widget.info.link}');
+                  .getVideoLink('https://anime1.me/?cat=${widget.info.link}'); 
             }
             debugPrint('链接解析成功 ${videoController.videoUrl}');
             await popularController.getPageTitle(widget.info.name ?? '');

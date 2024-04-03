@@ -20,6 +20,7 @@ class PlayerController = _PlayerController with _$PlayerController;
 abstract class _PlayerController with Store {
   String videoUrl = '';
   String videoCookie = '';
+  bool playResume = false;
   Box setting = GStorage.setting;
   late Player mediaPlayer;
   late VideoController videoController;
@@ -31,6 +32,7 @@ abstract class _PlayerController with Store {
   @action
   Future init(int offset) async {
     dataStatus = 'loading';
+    playResume = setting.get(SettingBoxKey.playResume, defaultValue: false);
     try {
       mediaPlayer.dispose();
       debugPrint('找到逃掉的 player');
@@ -39,7 +41,7 @@ abstract class _PlayerController with Store {
     }
     debugPrint('VideoURL开始初始化');
     mediaPlayer = await createVideoController();
-    if (offset != 0) {
+    if (offset != 0 && playResume) {
       var sub = mediaPlayer.stream.buffer.listen(null);
       sub.onData((event) async {
         if (event.inSeconds > 0) {

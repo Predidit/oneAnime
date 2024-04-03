@@ -74,5 +74,6 @@ class SettingBoxKey {
       themeMode = 'themeMode',
       themeColor = 'themeColor',
       privateMode = 'privateMode',
-      autoPlay = 'autoPlay';
+      autoPlay = 'autoPlay',
+      playResume = 'playResume';
 }
