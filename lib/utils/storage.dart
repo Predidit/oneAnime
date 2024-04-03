@@ -60,10 +60,13 @@ class LocalCacheKey {
 
 class SettingBoxKey {
   static const String HAenable = 'HAenable',
-      searchEnhanceEnable = 'searchEnhanceEnable',
+      searchEnhanceEnable = 'searchEnhanceEnable', 
       // Todo 检查更新
       autoUpdate = '',
       danmakuEnhance = 'danmakuEnhance',
+      danmakuBorder = 'danmakuBorder',
+      danmakuOpacity = 'danmakuOpacity',
+      danmakuFontSize = 'danmakuFontSize',
       danmakuTop = 'danmakuTop',
       danmakuScroll = 'danmakuScroll',
       danmakuBottom = 'danmakuBottom',

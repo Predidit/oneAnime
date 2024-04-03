@@ -20,6 +20,8 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
   dynamic navigationBarState;
   Box setting = GStorage.setting;
   late dynamic defaultDanmakuArea;
+  late dynamic defaultDanmakuOpacity;
+  late dynamic defaultDanmakuFontSize;
   final PopularController popularController = Modular.get<PopularController>();
 
   @override
@@ -27,6 +29,8 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
     super.initState();
     defaultDanmakuArea =
         setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
+    defaultDanmakuOpacity = setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
+    defaultDanmakuFontSize = setting.get(SettingBoxKey.danmakuFontSize, defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16 : 25);
   }
 
   void onBackPressed(BuildContext context) {
@@ -37,6 +41,20 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
     await setting.put(SettingBoxKey.danmakuArea, i);
     setState(() {
       defaultDanmakuArea = i;
+    });
+  }
+
+  void updateDanmakuOpacity(double i) async {
+    await setting.put(SettingBoxKey.danmakuOpacity, i);
+    setState(() {
+      defaultDanmakuOpacity = i;
+    });
+  }
+
+  void updateDanmakuFontSize(double i) async {
+    await setting.put(SettingBoxKey.danmakuFontSize, i);
+    setState(() {
+      defaultDanmakuFontSize = i;
     });
   }
 
@@ -63,6 +81,176 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                 setKey: SettingBoxKey.danmakuEnhance,
                 defaultVal: true,
               ),
+            ),
+            const InkWell(
+              child: SetSwitchItem(
+                title: '弹幕描边',
+                setKey: SettingBoxKey.danmakuBorder,
+                defaultVal: true,
+              ),
+            ),
+            ListTile(
+              onTap: () async {
+                final List<double> danFontList = [
+                  10.0,
+                  11.0,
+                  12.0,
+                  13.0,
+                  14.0,
+                  15.0,
+                  16.0,
+                  17.0,
+                  18.0,
+                  19.0,
+                  20.0,
+                  21.0,
+                  22.0,
+                  23.0,
+                  24.0,
+                  25.0,
+                  26.0,
+                  27.0,
+                  28.0,
+                  29.0,
+                  30.0,
+                  31.0,
+                  32.0,
+                ];
+                SmartDialog.show(
+                    useAnimation: false,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('字体大小'),
+                        content: StatefulBuilder(builder:
+                            (BuildContext context, StateSetter setState) {
+                          return Wrap(
+                            spacing: 8,
+                            runSpacing: 2,
+                            children: [
+                              for (final double i in danFontList) ...<Widget>[
+                                if (i == defaultDanmakuFontSize) ...<Widget>[
+                                  FilledButton(
+                                    onPressed: () async {
+                                      updateDanmakuFontSize(i);
+                                      SmartDialog.dismiss();
+                                    },
+                                    child: Text(i.toString()),
+                                  ),
+                                ] else ...[
+                                  FilledButton.tonal(
+                                    onPressed: () async {
+                                      updateDanmakuFontSize(i);
+                                      SmartDialog.dismiss();
+                                    },
+                                    child: Text(i.toString()),
+                                  ),
+                                ]
+                              ]
+                            ],
+                          );
+                        }),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => SmartDialog.dismiss(),
+                            child: Text(
+                              '取消',
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.outline),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              updateDanmakuFontSize((Platform.isIOS || Platform.isAndroid) ? 16 : 25);
+                              SmartDialog.dismiss();
+                            },
+                            child: const Text('默认设置'),
+                          ),
+                        ],
+                      );
+                    });
+              },
+              dense: false,
+              title: const Text('字体大小'),
+              subtitle: Text('$defaultDanmakuFontSize',
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.outline)),
+            ),
+            ListTile(
+              onTap: () async {
+                final List<double> danOpacityList = [
+                  0.1,
+                  0.2,
+                  0.3,
+                  0.4,
+                  0.5,
+                  0.6,
+                  0.7,
+                  0.8,
+                  0.9,
+                  1.0,
+                ];
+                SmartDialog.show(
+                    useAnimation: false,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('弹幕不透明度'),
+                        content: StatefulBuilder(builder:
+                            (BuildContext context, StateSetter setState) {
+                          return Wrap(
+                            spacing: 8,
+                            runSpacing: 2,
+                            children: [
+                              for (final double i in danOpacityList) ...<Widget>[
+                                if (i == defaultDanmakuOpacity) ...<Widget>[
+                                  FilledButton(
+                                    onPressed: () async {
+                                      updateDanmakuOpacity(i);
+                                      SmartDialog.dismiss();
+                                    },
+                                    child: Text(i.toString()),
+                                  ),
+                                ] else ...[
+                                  FilledButton.tonal(
+                                    onPressed: () async {
+                                      updateDanmakuOpacity(i);
+                                      SmartDialog.dismiss();
+                                    },
+                                    child: Text(i.toString()),
+                                  ),
+                                ]
+                              ]
+                            ],
+                          );
+                        }),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => SmartDialog.dismiss(),
+                            child: Text(
+                              '取消',
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.outline),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              updateDanmakuOpacity(1.0);
+                              SmartDialog.dismiss();
+                            },
+                            child: const Text('默认设置'),
+                          ),
+                        ],
+                      );
+                    });
+              },
+              dense: false,
+              title: const Text('弹幕不透明度'),
+              subtitle: Text('$defaultDanmakuOpacity',
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.outline)),
             ),
             ListTile(
               onTap: () async {

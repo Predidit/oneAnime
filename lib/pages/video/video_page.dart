@@ -314,10 +314,10 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
 
     // 弹幕设置
     // bool _running = true;
-    bool _border = true;
-    double _opacity = 1.0;
+    bool _border = setting.get(SettingBoxKey.danmakuBorder, defaultValue: true);
+    double _opacity = setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
     double _duration = 8;
-    double _fontSize = (Platform.isIOS || Platform.isAndroid) ? 16 : 25;
+    double _fontSize = setting.get(SettingBoxKey.danmakuFontSize, defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16 : 25);
     double danmakuArea =
         setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
     bool _hideTop = !setting.get(SettingBoxKey.danmakuTop, defaultValue: true);
