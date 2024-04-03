@@ -30,7 +30,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
     defaultDanmakuArea =
         setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
     defaultDanmakuOpacity = setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
-    defaultDanmakuFontSize = setting.get(SettingBoxKey.danmakuFontSize, defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16 : 25);
+    defaultDanmakuFontSize = setting.get(SettingBoxKey.danmakuFontSize, defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
   }
 
   void onBackPressed(BuildContext context) {
@@ -160,7 +160,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                           ),
                           TextButton(
                             onPressed: () async {
-                              updateDanmakuFontSize((Platform.isIOS || Platform.isAndroid) ? 16 : 25);
+                              updateDanmakuFontSize((Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
                               SmartDialog.dismiss();
                             },
                             child: const Text('默认设置'),
