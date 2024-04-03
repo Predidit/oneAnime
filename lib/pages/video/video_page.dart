@@ -317,7 +317,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     bool _border = setting.get(SettingBoxKey.danmakuBorder, defaultValue: true);
     double _opacity = setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
     double _duration = 8;
-    double _fontSize = setting.get(SettingBoxKey.danmakuFontSize, defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16 : 25);
+    double _fontSize = setting.get(SettingBoxKey.danmakuFontSize, defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
     double danmakuArea =
         setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
     bool _hideTop = !setting.get(SettingBoxKey.danmakuTop, defaultValue: true);
