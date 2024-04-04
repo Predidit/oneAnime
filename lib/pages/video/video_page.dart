@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:ns_danmaku/danmaku_controller.dart';
 import 'package:oneanime/pages/history/history_controller.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/player/player_controller.dart';
@@ -86,7 +87,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     }
     playerTimer = getPlayerTimer();
     try {
-      await playerController.mediaPlayer.setRate(videoController.playerSpeed);
+      await playerController.setRate(videoController.playerSpeed);
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -100,6 +101,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     } catch (e) {
       debugPrint(e.toString());
     }
+    debugPrint('ID hash in video page: ${identityHashCode(historyController)}');
     historyController.updateHistory(videoController.link, videoController.currentPosition.inSeconds);
     windowManager.removeListener(this);
     playerController.dispose();
@@ -108,25 +110,25 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
 
   getPlayerTimer() {
     return Timer.periodic(const Duration(seconds: 1), (timer) {
-      videoController.playing = playerController.mediaPlayer.state.playing;
+      videoController.playing = playerController.playing;
       videoController.isBuffering =
-          playerController.mediaPlayer.state.buffering;
+          playerController.buffering;
       videoController.currentPosition =
-          playerController.mediaPlayer.state.position;
-      videoController.buffer = playerController.mediaPlayer.state.buffer;
-      videoController.duration = playerController.mediaPlayer.state.duration;
+          playerController.position;
+      videoController.buffer = playerController.buffer;
+      videoController.duration = playerController.duration;
       if (videoController.currentPosition.inMicroseconds != 0 &&
-          playerController.mediaPlayer.state.playing == true &&
+          playerController.playing == true &&
           videoController.danmakuOn == true) {
         // debugPrint('当前播放到 ${videoController.currentPosition.inSeconds}');
         videoController.danDanmakus[videoController.currentPosition.inSeconds]?.asMap().forEach((idx, danmaku) async {
           await Future.delayed(
             Duration(milliseconds: idx * 1000 ~/ videoController.danDanmakus[videoController.currentPosition.inSeconds]!.length), 
-            () => mounted && playerController.mediaPlayer.state.playing ? danmakuController.addItems([DanmakuItem(danmaku.m)]) : null
+            () => mounted && playerController.playing ? danmakuController.addItems([DanmakuItem(danmaku.m)]) : null
           );
         });
       }
-      if (playerController.mediaPlayer.state.completed == true &&
+      if (playerController.completed == true &&
           videoController.episode < videoController.token.length) {
         videoController.changeEpisode(videoController.episode + 1);
       }
@@ -365,8 +367,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                   LogicalKeyboardKey.space) {
                                 debugPrint('空格键被按下');
                                 try {
-                                  playerController.mediaPlayer.state.playing? danmakuController.pause() : danmakuController.resume();
-                                  playerController.mediaPlayer.playOrPause();
+                                  playerController.playOrPause();
                                 } catch (e) {
                                   debugPrint(e.toString());
                                 }
@@ -384,7 +385,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                       seconds: videoController
                                               .currentPosition.inSeconds +
                                           10);
-                                  playerController.mediaPlayer
+                                  playerController
                                       .seek(videoController.currentPosition);
                                   playerTimer = getPlayerTimer();
                                 } catch (e) {
@@ -405,7 +406,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                         seconds: videoController
                                                 .currentPosition.inSeconds -
                                             10);
-                                    playerController.mediaPlayer
+                                    playerController
                                         .seek(videoController.currentPosition);
                                     playerTimer = getPlayerTimer();
                                   } catch (e) {
@@ -464,7 +465,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                       // debugPrint('检测到拖动, 定时器取消');
                                       playerTimer!.cancel();
                                     }
-                                    playerController.mediaPlayer.pause();
+                                    playerController.pause();
                                     final double scale = 180000 /
                                         MediaQuery.sizeOf(context).width;
                                     videoController.currentPosition = Duration(
@@ -474,9 +475,9 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                             (details.delta.dx * scale).round());
                                   }, onHorizontalDragEnd:
                                       (DragEndDetails details) {
-                                    playerController.mediaPlayer
+                                    playerController
                                         .seek(videoController.currentPosition);
-                                    playerController.mediaPlayer.play();
+                                    playerController.play();
                                     playerTimer = getPlayerTimer();
                                     videoController.showPosition = false;
                                   }, onVerticalDragUpdate:
@@ -636,6 +637,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                   key: _danmuKey,
                                   createdController: (DanmakuController e) {
                                     danmakuController = e;
+                                    playerController.danmakuController = e;
                                     debugPrint('弹幕控制器创建成功');
                                   },
                                   option: DanmakuOption(
@@ -737,13 +739,11 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                 : Icons.play_arrow),
                                             onPressed: () {
                                               if (videoController.playing) {
-                                                playerController.mediaPlayer
+                                                playerController
                                                     .pause();
-                                                danmakuController.pause();
                                               } else {
-                                                playerController.mediaPlayer
+                                                playerController
                                                     .play();
-                                                danmakuController.resume();
                                               }
                                             },
                                           ),
@@ -781,7 +781,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                               buffered: videoController.buffer,
                                               total: videoController.duration,
                                               onSeek: (duration) {
-                                                playerController.mediaPlayer
+                                                playerController
                                                     .seek(duration);
                                               },
                                             ),
@@ -819,6 +819,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                     '当前剧集没有找到弹幕的说');
                                                 return;
                                               }
+                                              danmakuController.clear();
                                               videoController.danmakuOn =
                                                   !videoController.danmakuOn;
                                               debugPrint(

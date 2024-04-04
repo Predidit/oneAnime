@@ -87,7 +87,7 @@ abstract class _VideoController with Store {
   Future setPlaybackSpeed(double playerSpeed) async {
     final PlayerController playerController = Modular.get<PlayerController>();
     try {
-      playerController.mediaPlayer.setRate(playerSpeed);
+      playerController.setRate(playerSpeed);
     } catch (e) {
       debugPrint(e.toString());
     }
