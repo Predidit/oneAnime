@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:ns_danmaku/danmaku_controller.dart';
+import 'package:ns_danmaku/ns_danmaku.dart';
 import 'package:oneanime/utils/constans.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
@@ -24,6 +26,7 @@ abstract class _PlayerController with Store {
   Box setting = GStorage.setting;
   late Player mediaPlayer;
   late VideoController videoController;
+  late DanmakuController danmakuController;
 
   // 当前播放器状态
   @observable
@@ -53,6 +56,7 @@ abstract class _PlayerController with Store {
         }
       });
     }
+    danmakuController.clear();
     debugPrint('VideoURL初始化完成');
     dataStatus = 'loaded';
   }
@@ -197,5 +201,53 @@ abstract class _PlayerController with Store {
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+  }
+
+  Function get setRate {
+    return mediaPlayer.setRate;
+  }
+
+  bool get playing {
+    return mediaPlayer.state.playing;
+  }
+
+  bool get buffering {
+    return mediaPlayer.state.buffering;
+  }
+
+  Duration get position {
+    return mediaPlayer.state.position;
+  }
+
+  Duration get buffer {
+    return mediaPlayer.state.buffer;
+  }
+
+  Duration get duration {
+    return mediaPlayer.state.duration;
+  }
+
+  bool get completed {
+    return mediaPlayer.state.completed;
+  }
+
+  Future playOrPause() async {
+    mediaPlayer.state.playing ? danmakuController.pause() : danmakuController.resume();
+    await mediaPlayer.playOrPause();
+  }
+
+  Future seek(Duration duration) async {
+    danmakuController.clear();
+    await mediaPlayer.seek(duration);
+  }
+
+  Future pause() async {
+    danmakuController.pause();
+    await mediaPlayer.pause();
+  }
+
+  Future play() async {
+    danmakuController.resume();
+    await mediaPlayer.play();
   }
 }
