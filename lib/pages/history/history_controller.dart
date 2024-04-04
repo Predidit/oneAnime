@@ -57,6 +57,7 @@ abstract class _HistoryController with Store {
     if (privateMode) {
       return;
     }
+    history = GStorage.history.values.toList();
     int? deleteKey;
     AnimeHistory newRecord;
     int time = DateTime.now().millisecondsSinceEpoch ~/ 1000;
@@ -77,7 +78,7 @@ abstract class _HistoryController with Store {
     newRecord = AnimeHistory.fromJson({"link": link, "time": time, "offset": offset});
     debugPrint('更新历史记录：link: ${link}, time: ${time}, offset: ${offset}');
     await GStorage.history.add(newRecord);
-    history = GStorage.history.values.toList();
+    history.add(newRecord);
   }
 
   Future deleteHistory(int link) async {
@@ -86,6 +87,7 @@ abstract class _HistoryController with Store {
     //   await GStorage.history.clear();
     //   return;
     // }
+    history = GStorage.history.values.toList();
     int? deleteKey;
     history.asMap().forEach((key, value) {
       if (value.link == link) {
@@ -113,6 +115,7 @@ abstract class _HistoryController with Store {
 
   AnimeHistory? lookupHistory(int link) {
     AnimeHistory? ret;
+    history = GStorage.history.values.toList();
     history.asMap().forEach((key, value) {
       if (value.link == link) {
         ret = value;
