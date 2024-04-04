@@ -242,7 +242,7 @@ class _TimelinePageState extends State<TimelinePage>
                     videoController.from = '/tab/timeline/';
                     Modular.to.navigate('/tab/video/');
                   } else {
-                    SmartDialog.showToast('動畫還沒有更新第一集 >_<');
+                    SmartDialog.showToast('動畫還沒有更新第一集 >_<', displayType: SmartToastType.last);
                   }
                 },
                 child: Align(

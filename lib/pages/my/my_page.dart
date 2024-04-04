@@ -11,6 +11,7 @@ import 'package:hive/hive.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 import 'package:oneanime/bean/settings/settings.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -113,15 +114,10 @@ class _MyPageState extends State<MyPage> {
             ),
             ListTile(
               onTap: () {
-                _mineController.checkUpdata();
+                Modular.to.pushNamed('/tab/my/about');
               },
               dense: false,
-              title: const Text('检查更新'),
-              trailing: Text('当前版本 ${Api.version}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
+              title: const Text('关于'),
             ),
           ],
         ),

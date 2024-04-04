@@ -66,7 +66,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).requestFocus(_focusNode);
+      FocusScope.of(context).requestFocus(_focusNode); 
     });
     videoController.playerSpeed = 1.0;
     playerController.videoUrl = videoController.videoUrl;
@@ -752,7 +752,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                         videoController
                                                             .token.length) {
                                                       SmartDialog.showToast(
-                                                          '已经是最新一集');
+                                                          '已经是最新一集', displayType: SmartToastType.last);
                                                       return;
                                                     }
                                                     SmartDialog.showToast(
@@ -792,7 +792,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                             .length ==
                                                         0) {
                                                       SmartDialog.showToast(
-                                                          '当前剧集不支持弹幕发送的说');
+                                                          '当前剧集不支持弹幕发送的说', displayType: SmartToastType.last);
                                                       return;
                                                     }
                                                     showShootDanmakuSheet();
@@ -809,7 +809,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                       .danDanmakus.length ==
                                                   0) {
                                                 SmartDialog.showToast(
-                                                    '当前剧集没有找到弹幕的说');
+                                                    '当前剧集没有找到弹幕的说', displayType: SmartToastType.last);
                                                 return;
                                               }
                                               videoController.danmakuOn =

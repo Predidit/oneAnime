@@ -206,7 +206,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                               follow = !follow;
                             });
                             SmartDialog.showToast(
-                                follow ? '自己追的番要好好看完哦' : '取消追番成功');
+                                follow ? '自己追的番要好好看完哦' : '取消追番成功', displayType: SmartToastType.last);
                           }
                         },
                         splashColor: Theme.of(context)
