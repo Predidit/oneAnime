@@ -122,7 +122,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
         videoController.danDanmakus[videoController.currentPosition.inSeconds]?.asMap().forEach((idx, danmaku) async {
           await Future.delayed(
             Duration(milliseconds: idx * 1000 ~/ videoController.danDanmakus[videoController.currentPosition.inSeconds]!.length), 
-            () => mounted ? danmakuController.addItems([DanmakuItem(danmaku.m)]) : null
+            () => mounted && playerController.mediaPlayer.state.playing ? danmakuController.addItems([DanmakuItem(danmaku.m)]) : null
           );
         });
       }
@@ -365,6 +365,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                   LogicalKeyboardKey.space) {
                                 debugPrint('空格键被按下');
                                 try {
+                                  playerController.mediaPlayer.state.playing? danmakuController.pause() : danmakuController.resume();
                                   playerController.mediaPlayer.playOrPause();
                                 } catch (e) {
                                   debugPrint(e.toString());
@@ -738,9 +739,11 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                               if (videoController.playing) {
                                                 playerController.mediaPlayer
                                                     .pause();
+                                                danmakuController.pause();
                                               } else {
                                                 playerController.mediaPlayer
                                                     .play();
+                                                danmakuController.resume();
                                               }
                                             },
                                           ),
