@@ -125,6 +125,7 @@ abstract class _HistoryController with Store {
   }
 
   Future clearHistory() async {
+    history.clear();
     historyList.clear();
     GStorage.history.clear();
   }

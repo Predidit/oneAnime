@@ -82,6 +82,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
           videoController.from = '/tab/' + widget.type + '/';
           videoController.link = widget.info.link!;
           videoController.offset = history?.offset ?? 0;
+          videoController.follow = widget.info.follow ?? false;
           navigationBarState = Platform.isWindows
               ? Provider.of<SideNavigationBarState>(context, listen: false)
               : Provider.of<NavigationBarState>(context, listen: false);

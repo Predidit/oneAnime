@@ -7,6 +7,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/pages/history/history_controller.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
+import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:oneanime/pages/player/player_item.dart';
 import 'package:oneanime/pages/menu/menu.dart';
@@ -36,6 +37,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
   late DanmakuController danmakuController;
   final FocusNode _focusNode = FocusNode();
   final VideoController videoController = Modular.get<VideoController>();
+  final PopularController popularController = Modular.get<PopularController>();
   final PlayerController playerController = Modular.get<PlayerController>();
   final HistoryController historyController = Modular.get<HistoryController>();
 
@@ -66,7 +68,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).requestFocus(_focusNode); 
+      FocusScope.of(context).requestFocus(_focusNode);
     });
     videoController.playerSpeed = 1.0;
     playerController.videoUrl = videoController.videoUrl;
@@ -96,7 +98,8 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     } catch (e) {
       debugPrint(e.toString());
     }
-    historyController.updateHistory(videoController.link, videoController.currentPosition.inSeconds);
+    historyController.updateHistory(
+        videoController.link, videoController.currentPosition.inSeconds);
     windowManager.removeListener(this);
     playerController.dispose();
     super.dispose();
@@ -146,23 +149,27 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     }
     debugPrint('当前播放器非全屏');
     navigationBarState.showNavigate();
-    switch(videoController.from) {
-      case '/tab/timeline/': {
-        navigationBarState.updateSelectedIndex(1);
-      }
-      break;
-      case '/tab/follow/': {
-        navigationBarState.updateSelectedIndex(2);
-      }
-      break;
-      case '/tab/history/': {
-        navigationBarState.updateSelectedIndex(3);
-      }
-      break;
-      default: {
-        navigationBarState.updateSelectedIndex(0);
-      }
-      break;
+    switch (videoController.from) {
+      case '/tab/timeline/':
+        {
+          navigationBarState.updateSelectedIndex(1);
+        }
+        break;
+      case '/tab/follow/':
+        {
+          navigationBarState.updateSelectedIndex(2);
+        }
+        break;
+      case '/tab/history/':
+        {
+          navigationBarState.updateSelectedIndex(3);
+        }
+        break;
+      default:
+        {
+          navigationBarState.updateSelectedIndex(0);
+        }
+        break;
     }
     Modular.to.navigate(videoController.from);
   }
@@ -319,9 +326,11 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     // 弹幕设置
     // bool _running = true;
     bool _border = setting.get(SettingBoxKey.danmakuBorder, defaultValue: true);
-    double _opacity = setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
+    double _opacity =
+        setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
     double _duration = 8;
-    double _fontSize = setting.get(SettingBoxKey.danmakuFontSize, defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
+    double _fontSize = setting.get(SettingBoxKey.danmakuFontSize,
+        defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
     double danmakuArea =
         setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
     bool _hideTop = !setting.get(SettingBoxKey.danmakuTop, defaultValue: true);
@@ -681,7 +690,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                     )
                                   : Container(),
 
-                              // 倍速和发送弹幕
+                              // 倍速和追番
                               (videoController.showPositioned ||
                                       !playerController
                                           .mediaPlayer.state.playing)
@@ -709,6 +718,30 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                 ),
                                               ),
                                             ),
+                                          ),
+                                          IconButton(
+                                            icon: (videoController.follow)
+                                                ? Icon(Icons.favorite,
+                                                    color: Colors.white)
+                                                : Icon(Icons.favorite_border,
+                                                    color: Colors.white),
+                                            onPressed: () {
+                                              popularController.updateFollow(
+                                                  videoController.link,
+                                                  !(videoController.follow));
+                                                videoController.follow =
+                                                    !videoController.follow;
+                                              SmartDialog.showToast(
+                                                  videoController.follow
+                                                      ? '自己追的番要好好看完哦'
+                                                      : '取消追番成功',
+                                                  displayType:
+                                                      SmartToastType.last);
+                                            },
+                                            splashColor: Theme.of(context)
+                                                .colorScheme
+                                                .tertiary
+                                                .withOpacity(0.5),
                                           ),
                                         ],
                                       ),
@@ -752,7 +785,10 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                         videoController
                                                             .token.length) {
                                                       SmartDialog.showToast(
-                                                          '已经是最新一集', displayType: SmartToastType.last);
+                                                          '已经是最新一集',
+                                                          displayType:
+                                                              SmartToastType
+                                                                  .last);
                                                       return;
                                                     }
                                                     SmartDialog.showToast(
@@ -792,7 +828,10 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                             .length ==
                                                         0) {
                                                       SmartDialog.showToast(
-                                                          '当前剧集不支持弹幕发送的说', displayType: SmartToastType.last);
+                                                          '当前剧集不支持弹幕发送的说',
+                                                          displayType:
+                                                              SmartToastType
+                                                                  .last);
                                                       return;
                                                     }
                                                     showShootDanmakuSheet();
@@ -809,7 +848,9 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                       .danDanmakus.length ==
                                                   0) {
                                                 SmartDialog.showToast(
-                                                    '当前剧集没有找到弹幕的说', displayType: SmartToastType.last);
+                                                    '当前剧集没有找到弹幕的说',
+                                                    displayType:
+                                                        SmartToastType.last);
                                                 return;
                                               }
                                               videoController.danmakuOn =

@@ -81,6 +81,9 @@ abstract class _VideoController with Store {
   int link = 0;
   int offset = 0;
 
+  @observable
+  bool follow = false;
+
   Box setting = GStorage.setting;
 
   Future setPlaybackSpeed(double playerSpeed) async {

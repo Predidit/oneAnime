@@ -281,6 +281,22 @@ mixin _$VideoController on _VideoController, Store {
     });
   }
 
+  late final _$followAtom =
+      Atom(name: '_VideoController.follow', context: context);
+
+  @override
+  bool get follow {
+    _$followAtom.reportRead();
+    return super.follow;
+  }
+
+  @override
+  set follow(bool value) {
+    _$followAtom.reportWrite(value, super.follow, () {
+      super.follow = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
@@ -300,7 +316,8 @@ showVolume: ${showVolume},
 volume: ${volume},
 brightness: ${brightness},
 playerSpeed: ${playerSpeed},
-androidFullscreen: ${androidFullscreen}
+androidFullscreen: ${androidFullscreen},
+follow: ${follow}
     ''';
   }
 }

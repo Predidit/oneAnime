@@ -210,6 +210,7 @@ class _TimelinePageState extends State<TimelinePage>
                       AnimeInfo? animeInfo =
                           popularController.lookupAnime(item.name ?? "");
                       videoController.link = animeInfo?.link ?? 0;
+                      videoController.follow = animeInfo?.follow ?? false;
                       AnimeHistory? history =
                           historyController.lookupHistory(animeInfo?.link ?? 0);
                       if (history == null) {
