@@ -29,13 +29,13 @@ mixin _$VideoController on _VideoController, Store {
       Atom(name: '_VideoController.danDanmakus', context: context);
 
   @override
-  List<Danmaku> get danDanmakus {
+  Map<int, List<Danmaku>> get danDanmakus {
     _$danDanmakusAtom.reportRead();
     return super.danDanmakus;
   }
 
   @override
-  set danDanmakus(List<Danmaku> value) {
+  set danDanmakus(Map<int, List<Danmaku>> value) {
     _$danDanmakusAtom.reportWrite(value, super.danDanmakus, () {
       super.danDanmakus = value;
     });
