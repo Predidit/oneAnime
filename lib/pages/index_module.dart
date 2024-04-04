@@ -7,8 +7,7 @@ import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/timeline/timeline_controller.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
-import 'package:oneanime/pages/follow/follow_controller.dart';
-import 'package:oneanime/pages/video/video_module.dart';
+import 'package:oneanime/pages/history/history_controller.dart';
 
 
 class IndexModule extends Module {
@@ -21,7 +20,7 @@ class IndexModule extends Module {
     i.addSingleton(VideoController.new);
     i.addSingleton(TimelineController.new);
     i.addSingleton(MyController.new);
-    // i.addSingleton(FollowController.new);
+    i.addSingleton(HistoryController.new);
   }
 
   @override
