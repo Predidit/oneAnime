@@ -16,7 +16,8 @@ class PlayerItem extends StatefulWidget {
 
 class _PlayerItemState extends State<PlayerItem> {
   final PlayerController playerController = Modular.get<PlayerController>();
-  final videoPage.VideoController videoPageController = Modular.get<videoPage.VideoController>();
+  final videoPage.VideoController videoPageController =
+      Modular.get<videoPage.VideoController>();
 
   @override
   void initState() {
@@ -38,16 +39,14 @@ class _PlayerItemState extends State<PlayerItem> {
         // const Text('Video Player Test'),
         Observer(builder: (context) {
           return SizedBox(
-            width: Platform.isWindows
-                ? MediaQuery.of(context).size.width
-                : ((!videoPageController.androidFullscreen) ? MediaQuery.of(context).size.width : (MediaQuery.of(context).size.height * 16.0 / 9.0)),
-            height: Platform.isWindows
-                ? (MediaQuery.of(context).size.width * 9.0 / (16.0))
-                : ((!videoPageController.androidFullscreen) ? MediaQuery.of(context).size.width * 9.0 / 16.0 : MediaQuery.of(context).size.height),
+            width: MediaQuery.of(context).size.width,
+            height: videoPageController.androidFullscreen
+                ? (MediaQuery.of(context).size.height)
+                : (MediaQuery.of(context).size.width * 9.0 / (16.0)),
             child: playerController.dataStatus == 'loaded'
                 ? Video(
                     controller: playerController.videoController,
-                    controls:  NoVideoControls,
+                    controls: NoVideoControls,
                     subtitleViewConfiguration: SubtitleViewConfiguration(
                       style: TextStyle(
                         color: Colors.pink, // 深粉色字体
