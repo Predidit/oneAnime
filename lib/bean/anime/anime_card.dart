@@ -51,7 +51,6 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
       child: InkWell(
         onTap: () async {
           SmartDialog.showLoading(msg: '获取中');
-          debugPrint('ID hash in anime card: ${identityHashCode(historyController)}');
           AnimeHistory? history = historyController.lookupHistory(widget.info.link ?? 0);
           if (history == null) {
             historyController.updateHistory(widget.info.link ?? 0, 0);
