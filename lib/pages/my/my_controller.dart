@@ -6,10 +6,12 @@ import 'package:oneanime/request/api.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyController {
-  Future<bool> checkUpdata() async {
+  Future<bool> checkUpdata({String type = 'manual'}) async {
     Utils.latest().then((value) {
       if (Api.version == value) {
-        SmartDialog.showToast('当前已经是最新版本！');
+        if (type == 'manual') {
+          SmartDialog.showToast('当前已经是最新版本！');
+        }
       } else {
         SmartDialog.show(
           animationType: SmartAnimationType.centerFade_otherSlide,
@@ -37,7 +39,9 @@ class MyController {
       }
     }).catchError((err) {
       debugPrint(err.toString());
-      SmartDialog.showToast('当前是最新版本！');
+      if (type == 'manual') {
+        SmartDialog.showToast('当前是最新版本！');
+      }
       return false;
     });
     return true;

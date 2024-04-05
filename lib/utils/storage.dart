@@ -62,7 +62,7 @@ class SettingBoxKey {
   static const String HAenable = 'HAenable',
       searchEnhanceEnable = 'searchEnhanceEnable', 
       // Todo 检查更新
-      autoUpdate = '',
+      autoUpdate = 'autoUpdate',
       danmakuEnhance = 'danmakuEnhance',
       danmakuBorder = 'danmakuBorder',
       danmakuOpacity = 'danmakuOpacity',

@@ -5,6 +5,7 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:hive/hive.dart';
+import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/opencc_generated_bindings.dart';
@@ -20,6 +21,8 @@ class InitPage extends StatefulWidget {
 
 class _InitPageState extends State<InitPage> {
   Box setting = GStorage.setting;
+  late bool autoUpdate;
+  final MyController _mineController = Modular.get<MyController>();
 
   @override
   void initState() {
@@ -29,6 +32,11 @@ class _InitPageState extends State<InitPage> {
 
   _init() {
     openccInit();
+    autoUpdate =
+        setting.get(SettingBoxKey.autoUpdate, defaultValue: false);
+    if (autoUpdate) {
+      update();
+    }
     Modular.to.navigate('/tab/popular/');
   }
 
@@ -47,6 +55,10 @@ class _InitPageState extends State<InitPage> {
         }
       }
     }
+  }
+
+  void update() {
+    _mineController.checkUpdata(type: 'auto');
   }
 
   @override

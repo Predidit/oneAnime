@@ -65,6 +65,13 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
                     ),
                   )
                 : Container(),
+            const InkWell(
+              child: SetSwitchItem(
+                title: '自动更新',
+                setKey: SettingBoxKey.autoUpdate,
+                defaultVal: false,
+              ),
+            )
           ],
         ),
       ),
