@@ -117,7 +117,6 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     } catch (e) {
       debugPrint(e.toString());
     }
-    debugPrint('ID hash in video page: ${identityHashCode(historyController)}');
     historyController.updateHistory(
         videoController.link, videoController.currentPosition.inSeconds);
     windowManager.removeListener(this);
