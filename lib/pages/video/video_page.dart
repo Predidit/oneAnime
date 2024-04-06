@@ -391,8 +391,8 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                               _handleMouseScroller();
                               final scrollDelta = pointerSignal.scrollDelta;
                               debugPrint('滚轮滑动距离: ${scrollDelta.dy}');
-                              final double volume =
-                                  videoController.volume - scrollDelta.dy / 6000;
+                              final double volume = videoController.volume -
+                                  scrollDelta.dy / 6000;
                               final double result = volume.clamp(0.0, 1.0);
                               setVolume(result);
                               videoController.volume = result;
@@ -415,7 +415,6 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                   }
                                 }
                                 // 右方向键被按下
-                                _handleTap();
                                 if (event.logicalKey ==
                                     LogicalKeyboardKey.arrowRight) {
                                   debugPrint('右方向键被按下');
@@ -435,7 +434,6 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                   }
                                 }
                                 // 左方向键被按下
-                                _handleTap();
                                 if (event.logicalKey ==
                                     LogicalKeyboardKey.arrowLeft) {
                                   if (videoController
@@ -457,6 +455,18 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                     } catch (e) {
                                       debugPrint(e.toString());
                                     }
+                                  }
+                                }
+                                // Esc键被按下
+                                if (event.logicalKey ==
+                                    LogicalKeyboardKey.escape) {
+                                  if (videoController.androidFullscreen) {
+                                    try {
+                                      danmakuController.onClear();
+                                    } catch (_) {}
+                                    playerController.exitFullScreen();
+                                    videoController.androidFullscreen =
+                                        !videoController.androidFullscreen;
                                   }
                                 }
                               }

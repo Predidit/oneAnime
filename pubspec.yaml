@@ -64,7 +64,7 @@ dependencies:
 
   ns_danmaku: 
     git: 
-        url: https://github.com/songbirdzz/flutter_ns_danmaku.git
+        url: https://github.com/songbirdzz/flutter_ns_danmaku
         ref: master
 
   auto_orientation: ^2.3.1
