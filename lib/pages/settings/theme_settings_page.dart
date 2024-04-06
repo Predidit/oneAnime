@@ -8,6 +8,8 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 import 'package:oneanime/bean/settings/color_type.dart';
+import 'package:oneanime/bean/settings/settings.dart';
+import 'package:oneanime/utils/utils.dart';
 
 class ThemeSettingsPage extends StatefulWidget {
   const ThemeSettingsPage({super.key});
@@ -22,6 +24,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
   late dynamic defaultDanmakuArea;
   late dynamic defaultThemeMode;
   late dynamic defaultThemeColor;
+  late bool oledEnhance;
   final PopularController popularController = Modular.get<PopularController>();
 
   @override
@@ -31,39 +34,46 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
         setting.get(SettingBoxKey.themeMode, defaultValue: 'system');
     defaultThemeColor =
         setting.get(SettingBoxKey.themeColor, defaultValue: 'default');
+    oledEnhance = setting.get(SettingBoxKey.oledEnhance, defaultValue: false);
   }
 
   void onBackPressed(BuildContext context) {
     Modular.to.navigate('/tab/my/');
   }
 
-  void setTheme(Color color) {
+  void setTheme(Color? color) {
+    var defaultDarkTheme = ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorSchemeSeed: color,
+    );
+    var oledDarkTheme = Utils.oledDarkTheme(defaultDarkTheme);
     AdaptiveTheme.of(context).setTheme(
       light: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
         colorSchemeSeed: color,
       ),
-      dark: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        colorSchemeSeed: color,
-      ),
+      dark: oledEnhance ? oledDarkTheme : defaultDarkTheme,
     );
-    setting.put(SettingBoxKey.themeColor, color.value.toRadixString(16));
+    defaultThemeColor = color?.value.toRadixString(16) ?? 'default';
+    setting.put(SettingBoxKey.themeColor, defaultThemeColor);
   }
 
   void resetTheme() {
+    var defaultDarkTheme = ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+      );
+    var oledDarkTheme = Utils.oledDarkTheme(defaultDarkTheme);
     AdaptiveTheme.of(context).setTheme(
       light: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
       ),
-      dark: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-      ),
+      dark: oledEnhance ? oledDarkTheme : defaultDarkTheme,
     );
+    defaultThemeColor = 'default';
     setting.put(SettingBoxKey.themeColor, 'default');
   }
 
@@ -81,6 +91,17 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
     setState(() {
       defaultThemeMode = theme;
     });
+  }
+
+  void updateOledEnhance() {
+    dynamic color;
+    oledEnhance = setting.get(SettingBoxKey.oledEnhance, defaultValue: false);
+    if (defaultThemeColor == 'default') {
+      color = null;
+    } else {
+      color = Color(int.parse(defaultThemeColor, radix: 16));
+    }
+    setTheme(color);
   }
 
   @override
@@ -245,6 +266,15 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                       .textTheme
                       .labelMedium!
                       .copyWith(color: Theme.of(context).colorScheme.outline)),
+            ),
+            InkWell(
+              child: SetSwitchItem(
+                title: 'OLED优化',
+                subTitle: '深色模式下使用纯黑背景',
+                setKey: SettingBoxKey.oledEnhance,
+                callFn: (_) => {updateOledEnhance()},
+                defaultVal: false,
+              ),
             ),
           ],
         ),

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:oneanime/request/api.dart';
-
 
 class Utils {
   static videoCookieC(List<String> baseCookies) {
@@ -13,7 +13,8 @@ class Utils {
             cookieParts[0] == 'p' ||
             cookieParts[0] == 'h' ||
             cookieParts[0].startsWith('_ga')) {
-          finalCookie = finalCookie + cookieParts[0] + '=' + cookieParts[1] + '; ';
+          finalCookie =
+              finalCookie + cookieParts[0] + '=' + cookieParts[1] + '; ';
         }
       }
     });
@@ -21,14 +22,28 @@ class Utils {
     return finalCookie;
   }
 
+  static oledDarkTheme(ThemeData defaultDarkTheme) {
+    return defaultDarkTheme.copyWith(
+      scaffoldBackgroundColor: Colors.black,
+      colorScheme: defaultDarkTheme.colorScheme.copyWith(
+        onPrimary: Colors.black,
+        onSecondary: Colors.black,
+        background: Colors.black,
+        onBackground: Colors.black,
+        surface: Colors.black,
+        onSurface: Colors.white,
+      ),
+    );
+  }
+
   static Future<String> latest() async {
     try {
       var resp = await Dio().get<Map<String, dynamic>>(Api.latestApp);
-    if (resp.data?.containsKey("tag_name") ?? false) {
-      return resp.data!["tag_name"];
-    } else {
-      throw resp.data?["message"];
-    }
+      if (resp.data?.containsKey("tag_name") ?? false) {
+        return resp.data!["tag_name"];
+      } else {
+        throw resp.data?["message"];
+      }
     } catch (e) {
       return Api.version;
     }
