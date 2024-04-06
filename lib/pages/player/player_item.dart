@@ -38,11 +38,7 @@ class _PlayerItemState extends State<PlayerItem> {
       children: [
         // const Text('Video Player Test'),
         Observer(builder: (context) {
-          return SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: videoPageController.androidFullscreen
-                ? (MediaQuery.of(context).size.height)
-                : (MediaQuery.of(context).size.width * 9.0 / (16.0)),
+          return Expanded(
             child: playerController.dataStatus == 'loaded'
                 ? Video(
                     controller: playerController.videoController,
@@ -72,17 +68,7 @@ class _PlayerItemState extends State<PlayerItem> {
                       padding: const EdgeInsets.all(24.0),
                     ),
                   )
-                : SizedBox(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    height: Platform.isWindows
-                        ? MediaQuery.of(context).size.width * 9.0 / 32.0
-                        : MediaQuery.of(context).size.width * 9.0 / 16.0,
-                    width: Platform.isWindows
-                        ? MediaQuery.of(context).size.width / 2
-                        : MediaQuery.of(context).size.width,
-                  ),
+                : const CircularProgressIndicator(),
           );
         }),
       ],
