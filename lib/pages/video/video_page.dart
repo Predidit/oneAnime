@@ -74,6 +74,13 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     });
   }
 
+  String _durationToString(Duration duration) {
+    String pad(int n) => n.toString().padLeft(2, '0');
+    var minutes = pad(duration.inMinutes % 60);
+    var seconds = pad(duration.inSeconds % 60);
+    return "$minutes:$seconds";
+  }
+
   @override
   void onWindowRestore() {
     danmakuController.onClear();
@@ -871,6 +878,14 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                   playerController
                                                       .seek(duration);
                                                 },
+                                              ),
+                                            ),
+                                            Text(
+                                              _durationToString(videoController.currentPosition) + " / " + 
+                                                  _durationToString(playerController.duration),
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12.0,
                                               ),
                                             ),
                                             (videoController.androidFullscreen ==
