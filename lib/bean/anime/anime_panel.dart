@@ -30,48 +30,104 @@ class _BangumiPanelState extends State<BangumiPanel> {
     return Observer(builder: (context) {
       return Column(
         children: [
-          Platform.isWindows ? Column(
-            children: [
-              const SizedBox(height: 7),
-              SizedBox(height: 0, child: Text(' 正在播放：${videoController.title}'))
-            ],
-          ) : Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 6),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('合集 '),
-                Expanded(
-                  child: Text(
-                    ' 正在播放：${videoController.title}',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                SizedBox(
-                  height: 34,
-                  child: TextButton(
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all(EdgeInsets.zero),
-                    ),
+          Platform.isWindows
+              ? Column(
+                  children: [
+                    const SizedBox(height: 7),
+                    SizedBox(
+                        height: 0,
+                        child: Text(' 正在播放：${videoController.title}'))
+                  ],
+                )
+              : Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('合集 '),
+                      Expanded(
+                        child: Text(
+                          ' 正在播放：${videoController.title}',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      SizedBox(
+                        height: 34,
+                        child: TextButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(EdgeInsets.zero),
+                          ),
 
-                    // Todo 展示更多
-                    onPressed: () => {},
-                    child: Text(
-                      '全${videoController.token.length}话',
-                      style: const TextStyle(fontSize: 13),
-                    ),
+                          // Todo 展示更多
+                          onPressed: () {
+                            if (MediaQuery.sizeOf(context).height <
+                                MediaQuery.sizeOf(context).width) {
+                              SmartDialog.show(
+                                  useAnimation: false,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text('切换选集'),
+                                      content: StatefulBuilder(builder:
+                                          (BuildContext context,
+                                              StateSetter setState) {
+                                        return Wrap(
+                                          spacing: 8,
+                                          runSpacing: 2,
+                                          children: [
+                                            for (int i = 1;
+                                                i <=
+                                                    videoController
+                                                        .token.length;
+                                                i++) ...<Widget>[
+                                              if (i ==
+                                                  videoController
+                                                      .episode) ...<Widget>[
+                                                FilledButton(
+                                                  onPressed: () async {
+                                                    SmartDialog.dismiss();
+                                                  },
+                                                  child:
+                                                      Text('第${i.toString()}话'),
+                                                ),
+                                              ] else ...[
+                                                FilledButton.tonal(
+                                                  onPressed: () async {
+                                                    videoController
+                                                        .changeEpisode(i);
+                                                    SmartDialog.dismiss();
+                                                  },
+                                                  child:
+                                                      Text('第${i.toString()}话'),
+                                                ),
+                                              ]
+                                            ]
+                                          ],
+                                        );
+                                      }),
+                                    );
+                                  });
+                            }
+                          },
+                          child: Text(
+                            '全${videoController.token.length}话',
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
           SizedBox(
-            height: Platform.isWindows ? 72 : (MediaQuery.of(context).size.height - (MediaQuery.of(context).size.width * 9 /16 ) - 100),
+            height: Platform.isWindows
+                ? 72
+                : (MediaQuery.of(context).size.height -
+                    (MediaQuery.of(context).size.width * 9 / 16) -
+                    100),
             // width: Platform.isWindows ? 300: null,
             child: GridView.builder(
               controller: listViewScrollCtr,
@@ -93,7 +149,7 @@ class _BangumiPanelState extends State<BangumiPanel> {
                     clipBehavior: Clip.hardEdge,
                     child: InkWell(
                       onTap: () {
-                        changeFucCall(i + 1); 
+                        changeFucCall(i + 1);
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
