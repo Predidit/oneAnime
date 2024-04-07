@@ -24,6 +24,7 @@ import 'package:screen_brightness/screen_brightness.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:oneanime/utils/storage.dart';
+import 'package:oneanime/utils/utils.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -72,13 +73,6 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
       videoController.showVolume = false;
       mouseScrollerTimer = null;
     });
-  }
-
-  String _durationToString(Duration duration) {
-    String pad(int n) => n.toString().padLeft(2, '0');
-    var minutes = pad(duration.inMinutes % 60);
-    var seconds = pad(duration.inSeconds % 60);
-    return "$minutes:$seconds";
   }
 
   @override
@@ -612,8 +606,8 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                       BorderRadius.circular(
                                                           8.0), // 圆角
                                                 ),
-                                                child: Text(
-                                                  '${videoController.currentPosition.inMinutes}:${(videoController.currentPosition.inSeconds) % 60}/${videoController.duration.inMinutes}:${(videoController.duration.inSeconds) % 60}',
+                                                child: Text( videoController.currentPosition.compareTo(playerController.position) > 0 ?
+                                                  '快进 ${videoController.currentPosition.inSeconds - playerController.position.inSeconds} 秒' : '快退 ${playerController.position.inSeconds - videoController.currentPosition.inSeconds} 秒',
                                                   style: const TextStyle(
                                                     color: Colors.white,
                                                   ),
@@ -880,12 +874,15 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                 },
                                               ),
                                             ),
-                                            Text(
-                                              _durationToString(videoController.currentPosition) + " / " + 
-                                                  _durationToString(playerController.duration),
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 12.0,
+                                            ((Platform.isAndroid || Platform.isIOS) && !videoController.androidFullscreen) ? Container() : Container(
+                                              padding: const EdgeInsets.only(left: 10.0),
+                                              child: Text(
+                                                Utils.durationToString(videoController.currentPosition) + " / " + 
+                                                    Utils.durationToString(playerController.duration),
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12.0,
+                                                ),
                                               ),
                                             ),
                                             (videoController.androidFullscreen ==
