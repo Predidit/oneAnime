@@ -879,9 +879,9 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                               child: Text(
                                                 Utils.durationToString(videoController.currentPosition) + " / " + 
                                                     Utils.durationToString(playerController.duration),
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   color: Colors.white,
-                                                  fontSize: 12.0,
+                                                  fontSize: Platform.isWindows ? 16.0 : 12.0,
                                                 ),
                                               ),
                                             ),
