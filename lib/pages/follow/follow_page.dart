@@ -59,11 +59,6 @@ class _FollowPageState extends State<FollowPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   debugPrint('尝试恢复状态');
-    //   scrollController.jumpTo(followController.scrollOffset);
-    //   debugPrint('Popular加载完成');
-    // });
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {

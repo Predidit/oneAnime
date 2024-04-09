@@ -18,6 +18,7 @@ class PopularPage extends StatefulWidget {
 class _PopularPageState extends State<PopularPage>
     with AutomaticKeepAliveClientMixin {
   DateTime? _lastPressedAt;
+  bool showArrowUp = false;
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _controller = TextEditingController();
   final ScrollController scrollController = ScrollController();
@@ -44,6 +45,16 @@ class _PopularPageState extends State<PopularPage>
         debugPrint('Popular 正在加载更多');
         popularController.isLoadingMore = true;
         popularController.onLoad();
+      }
+      if (scrollController.position.pixels >= 800 && showArrowUp == false) {
+        setState(() {
+          showArrowUp = true;
+        });
+      }
+      if (scrollController.position.pixels < 800 && showArrowUp == true) {
+        setState(() {
+          showArrowUp = false;
+        });
       }
     });
     debugPrint('Popular 监听器已添加');
@@ -142,24 +153,28 @@ class _PopularPageState extends State<PopularPage>
           floatingActionButton: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              FloatingActionButton(
-                onPressed: () async {
-                  popularController.isLoadingMore == true;
-                  await popularController.getAnimeList();
-                  popularController.isLoadingMore == false;
-                },
-                child: const Icon(Icons.refresh),
+              Visibility(
+                visible: showArrowUp,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    scrollController.jumpTo(0.0);
+                    popularController.scrollOffset = 0.0;
+                  },
+                  child: const Icon(Icons.arrow_upward),
+                ),
               ),
               const Padding(
                 padding: EdgeInsets.only(left: 10.0), // Adjust padding as needed
               ),
-              FloatingActionButton(
-                onPressed: () {
-                  scrollController.jumpTo(0.0);
-                  popularController.scrollOffset = 0.0;
+              Platform.isWindows ? FloatingActionButton(
+                onPressed: () async {
+                  popularController.isLoadingMore == true;
+                  await popularController.getAnimeList();
+                  popularController.isLoadingMore == false;
+                  SmartDialog.showToast('列表更新完成');
                 },
-                child: const Icon(Icons.arrow_upward),
-              ),
+                child: const Icon(Icons.refresh),
+              ) : Container(),
             ],
           ),
         ),

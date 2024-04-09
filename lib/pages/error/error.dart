@@ -1,5 +1,6 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 
 class ErrorPage extends StatelessWidget {
   final String errorMessage;
@@ -9,11 +10,22 @@ class ErrorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const SysAppBar(
-        title: Text('内部错误'),
+      appBar: AppBar(
+        title: const Text('内部错误'),
       ),
       body: Center(
-        child: Text(errorMessage),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(errorMessage),
+            TextButton(
+                onPressed: () {
+                  exit(0);
+                },
+                child: const Text('退出程序'))
+          ],
+        ),
       ),
     );
   }
