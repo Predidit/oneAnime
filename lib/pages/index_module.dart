@@ -8,6 +8,7 @@ import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/timeline/timeline_controller.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:oneanime/pages/history/history_controller.dart';
+import 'package:oneanime/pages/error/error.dart';
 
 
 class IndexModule extends Module {
@@ -30,10 +31,7 @@ class IndexModule extends Module {
         children: [
           ChildRoute(
             "/error",
-            child: (_) => Scaffold(
-              appBar: AppBar (title: const Text("oneAnime")),
-              body: const Center(child: Text("初始化失败")),
-            ),
+            child: (_) => ErrorPage('未知错误')
           ),
         ],
         transition: TransitionType.noTransition);

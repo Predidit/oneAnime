@@ -8,6 +8,7 @@ import 'package:oneanime/request/request.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:flutter/services.dart';
+import 'package:oneanime/pages/error/error.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +28,7 @@ void main() async {
     windowManager.setMaximizable(false);
     windowManager.setResizable(false);
   }
-  if(Platform.isAndroid || Platform.isIOS) {
+  if (Platform.isAndroid || Platform.isIOS) {
     // 小白条、导航栏沉浸
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -38,7 +39,16 @@ void main() async {
   }
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   MediaKit.ensureInitialized();
-  await GStorage.init();
+  try {
+    await GStorage.init();
+  } catch (e) {
+    runApp(MaterialApp(
+        title: '初始化失败',
+        builder: (context, child) {
+          return ErrorPage(e.toString());
+        }));
+    return;
+  }
   Request();
   await Request.setCookie();
   runApp(ModularApp(
