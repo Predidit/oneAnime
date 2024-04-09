@@ -139,12 +139,28 @@ class _PopularPageState extends State<PopularPage>
             ) : null,
           ),
           body: Container(child: animeList),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              scrollController.jumpTo(0.0);
-              popularController.scrollOffset = 0.0;
-            },
-            child: const Icon(Icons.arrow_upward),
+          floatingActionButton: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FloatingActionButton(
+                onPressed: () async {
+                  popularController.isLoadingMore == true;
+                  await popularController.getAnimeList();
+                  popularController.isLoadingMore == false;
+                },
+                child: const Icon(Icons.refresh),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(left: 10.0), // Adjust padding as needed
+              ),
+              FloatingActionButton(
+                onPressed: () {
+                  scrollController.jumpTo(0.0);
+                  popularController.scrollOffset = 0.0;
+                },
+                child: const Icon(Icons.arrow_upward),
+              ),
+            ],
           ),
         ),
       ),

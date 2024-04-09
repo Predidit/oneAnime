@@ -30,7 +30,6 @@ class ListRequest {
     } else {
       debugPrint('非法的Json ${res.toString()}');
     }
-    list.sort((a, b) => b.link!.compareTo(a.link!));
     final PopularController popularController =
         Modular.get<PopularController>();
 
