@@ -51,7 +51,6 @@ void main() async {
   }
   Request();
   await Request.setCookie();
-  debugPrint('主程序执行');
   runApp(ModularApp(
     module: AppModule(),
     child: const AppWidget(),

@@ -46,15 +46,8 @@ class _PopularPageState extends State<PopularPage>
         popularController.isLoadingMore = true;
         popularController.onLoad();
       }
-      if (scrollController.position.pixels >= 800 && showArrowUp == false) {
-        setState(() {
-          showArrowUp = true;
-        });
-      }
-      if (scrollController.position.pixels < 800 && showArrowUp == true) {
-        setState(() {
-          showArrowUp = false;
-        });
+      if (Platform.isWindows) {
+        checkArrowUp();
       }
     });
     debugPrint('Popular 监听器已添加');
@@ -89,6 +82,19 @@ class _PopularPageState extends State<PopularPage>
     SystemNavigator.pop(); // 退出应用
   }
 
+  void checkArrowUp() {
+    if (scrollController.position.pixels >= 800 && showArrowUp == false) {
+      setState(() {
+        showArrowUp = true;
+      });
+    }
+    if (scrollController.position.pixels < 800 && showArrowUp == true) {
+      setState(() {
+        showArrowUp = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -104,7 +110,8 @@ class _PopularPageState extends State<PopularPage>
       },
       child: RefreshIndicator(
         onRefresh: () async {
-          if (popularController.keyword == '' && popularController.isLoadingMore == false) {
+          if (popularController.keyword == '' &&
+              popularController.isLoadingMore == false) {
             popularController.isLoadingMore == true;
             await popularController.getAnimeList();
             popularController.isLoadingMore == false;
@@ -141,42 +148,53 @@ class _PopularPageState extends State<PopularPage>
               },
             ),
             elevation: 0, // 移除阴影效果
-            shape: Platform.isWindows ? const RoundedRectangleBorder(
-              // 添加圆角
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(5),
-                bottom: Radius.circular(5),
-              ),
-            ) : null,
+            shape: Platform.isWindows
+                ? const RoundedRectangleBorder(
+                    // 添加圆角
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(5),
+                      bottom: Radius.circular(5),
+                    ),
+                  )
+                : null,
           ),
           body: Container(child: animeList),
-          floatingActionButton: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Visibility(
-                visible: showArrowUp,
-                child: FloatingActionButton(
+          floatingActionButton: Platform.isWindows
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Visibility(
+                      visible: showArrowUp,
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          scrollController.jumpTo(0.0);
+                          popularController.scrollOffset = 0.0;
+                        },
+                        child: const Icon(Icons.arrow_upward),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(
+                          left: 10.0), // Adjust padding as needed
+                    ),
+                    FloatingActionButton(
+                      onPressed: () async {
+                        popularController.isLoadingMore == true;
+                        await popularController.getAnimeList();
+                        popularController.isLoadingMore == false;
+                        SmartDialog.showToast('列表更新完成');
+                      },
+                      child: const Icon(Icons.refresh),
+                    ),
+                  ],
+                )
+              : FloatingActionButton(
                   onPressed: () {
                     scrollController.jumpTo(0.0);
                     popularController.scrollOffset = 0.0;
                   },
                   child: const Icon(Icons.arrow_upward),
                 ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 10.0), // Adjust padding as needed
-              ),
-              Platform.isWindows ? FloatingActionButton(
-                onPressed: () async {
-                  popularController.isLoadingMore == true;
-                  await popularController.getAnimeList();
-                  popularController.isLoadingMore == false;
-                  SmartDialog.showToast('列表更新完成');
-                },
-                child: const Icon(Icons.refresh),
-              ) : Container(),
-            ],
-          ),
         ),
       ),
     );
