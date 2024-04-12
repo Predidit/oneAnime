@@ -30,55 +30,25 @@ class ListRequest {
     } else {
       debugPrint('非法的Json ${res.toString()}');
     }
-    list.sort((a, b) => b.link!.compareTo(a.link!));
+    
     final PopularController popularController =
         Modular.get<PopularController>();
 
-    // fix bug below 1.0.2
-    if (!isSorted(popularController.list)) {
-      debugPrint('缓存结构错误, 尝试重置');
-      popularController.list.clear();
-    }
-
     if (list.length != 0) {
       List<AnimeInfo> oldlist = popularController.list;
-      debugPrint('老缓存列表长度为 ${oldlist.length}');
-      debugPrint('新缓存列表长度为 ${list.length}');
-      if (popularController.list.length > list.length) {
-        needFix == true;
-      }
-      if (needFix == false) {
-        newList.addAll(list.getRange(0, list.length - oldlist.length));
-        newList.addAll(oldlist);
-        newList.asMap().forEach((index, item) {
-          if (item.episode!.startsWith('連載中')) {
-            if (newList[index].link == list[index].link) {
-              newList[index].episode = list[index].episode;
-            } else {
-              needFix = true;
-            }
-          }
-        });
-      }
 
-      // 在 Anime01 目录发生变动时进行深拷贝
-      if (isSorted(newList) && !needFix) {
-        debugPrint('新缓存符合规范');
-      } else {
-        debugPrint('检测到远方番剧数据库变动');
-        newList.clear();
-        newList.addAll(list);
-        for (var oldAnime in oldlist) {
-          if (oldAnime.follow == true) {
-            var index = newList
-                .indexWhere((newAnime) => newAnime.name == oldAnime.name);
-            if (index != -1) {
-              newList[index].follow = oldAnime.follow;
-              newList[index].progress = oldAnime.progress;
-            }
+      debugPrint('检测到远方番剧数据库变动');
+      newList.clear();
+      newList.addAll(list);
+      for (var oldAnime in oldlist) {
+        if (oldAnime.follow == true) {
+          var index = newList
+              .indexWhere((newAnime) => newAnime.name == oldAnime.name);
+          if (index != -1) {
+            newList[index].follow = oldAnime.follow;
+            newList[index].progress = oldAnime.progress;
           }
         }
-        ;
       }
       await GStorage.listCahce.clear();
       await GStorage.listCahce.addAll(newList);
