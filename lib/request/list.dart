@@ -41,13 +41,11 @@ class ListRequest {
       newList.clear();
       newList.addAll(list);
       for (var oldAnime in oldlist) {
-        if (oldAnime.follow == true) {
-          var index = newList
-              .indexWhere((newAnime) => newAnime.name == oldAnime.name);
-          if (index != -1) {
-            newList[index].follow = oldAnime.follow;
-            newList[index].progress = oldAnime.progress;
-          }
+        var index = newList
+            .indexWhere((newAnime) => newAnime.name == oldAnime.name);
+        if (index != -1) {
+          newList[index].follow = oldAnime.follow;
+          newList[index].progress = oldAnime.progress;
         }
       }
       await GStorage.listCahce.clear();
