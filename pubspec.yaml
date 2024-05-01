@@ -72,6 +72,7 @@ dependencies:
   screen_brightness: ^0.2.2+1
   wakelock_plus: ^1.1.1
   adaptive_theme: ^3.6.0
+  flutter_displaymode: ^0.6.0
   ffi: ^2.1.0
 
 dev_dependencies:

@@ -76,5 +76,6 @@ class SettingBoxKey {
       privateMode = 'privateMode',
       autoPlay = 'autoPlay',
       playResume = 'playResume',
-      oledEnhance = 'oledEnhance';
+      oledEnhance = 'oledEnhance',
+      displayMode = 'displayMode';
 }

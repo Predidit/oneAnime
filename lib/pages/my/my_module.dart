@@ -6,6 +6,7 @@ import 'package:oneanime/pages/settings/player_settings_page.dart';
 import 'package:oneanime/pages/settings/danmaku_settings.dart';
 import 'package:oneanime/pages/settings/theme_settings_page.dart';
 import 'package:oneanime/pages/settings/other_settings_page.dart';
+import 'package:oneanime/pages/settings/displaymode_settings.dart';
 
 class MyModule extends Module {
   @override
@@ -26,6 +27,9 @@ class MyModule extends Module {
         transition: Platform.isWindows
             ? TransitionType.noTransition
             : TransitionType.leftToRight);
+    r.child("/theme/display",
+        child: (_) => const SetDiaplayMode(),
+        transition: TransitionType.leftToRight);
     r.child("/other",
         child: (_) => const OtherSettingsPage(),
         transition: Platform.isWindows
