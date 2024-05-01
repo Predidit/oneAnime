@@ -23,6 +23,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
 import 'package:hive/hive.dart';
+import 'package:oneanime/bean/appbar/drag_to_move_bar.dart' as dtb;
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/utils/utils.dart';
 
@@ -514,7 +515,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                     top: 25,
                                     right: 15,
                                     bottom: 15,
-                                    child: GestureDetector(
+                                    child: Platform.isWindows ? Container() : GestureDetector(
                                         onHorizontalDragUpdate:
                                             (DragUpdateDetails details) {
                                       videoController.showPosition = true;
@@ -606,8 +607,15 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                       BorderRadius.circular(
                                                           8.0), // 圆角
                                                 ),
-                                                child: Text( videoController.currentPosition.compareTo(playerController.position) > 0 ?
-                                                  '快进 ${videoController.currentPosition.inSeconds - playerController.position.inSeconds} 秒' : '快退 ${playerController.position.inSeconds - videoController.currentPosition.inSeconds} 秒',
+                                                child: Text(
+                                                  videoController
+                                                              .currentPosition
+                                                              .compareTo(
+                                                                  playerController
+                                                                      .position) >
+                                                          0
+                                                      ? '快进 ${videoController.currentPosition.inSeconds - playerController.position.inSeconds} 秒'
+                                                      : '快退 ${playerController.position.inSeconds - videoController.currentPosition.inSeconds} 秒',
                                                   style: const TextStyle(
                                                     color: Colors.white,
                                                   ),
@@ -712,56 +720,54 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                     statusChanged: (e) {},
                                   ),
                                 ),
+
+                                // 自定义顶部组件
                                 (videoController.showPositioned ||
                                         !playerController
                                             .mediaPlayer.state.playing)
                                     ? Positioned(
                                         top: 0,
                                         left: 0,
-                                        child: IconButton(
-                                          color: Colors.white,
-                                          icon: const Icon(Icons.arrow_back),
-                                          onPressed: () {
-                                            if (videoController
-                                                    .androidFullscreen ==
-                                                true) {
-                                              playerController.exitFullScreen();
-                                              videoController
-                                                  .androidFullscreen = false;
-                                              return;
-                                            }
-                                            navigationBarState.showNavigate();
-                                            videoController.from ==
-                                                    '/tab/popular/'
-                                                ? navigationBarState
-                                                    .updateSelectedIndex(0)
-                                                : (videoController.from ==
-                                                        '/tab/follow/'
-                                                    ? navigationBarState
-                                                        .updateSelectedIndex(2)
-                                                    : navigationBarState
-                                                        .updateSelectedIndex(
-                                                            1));
-                                            Modular.to
-                                                .navigate(videoController.from);
-                                          },
-                                        ),
-                                      )
-                                    : Container(),
-
-                                // 倍速和追番
-                                (videoController.showPositioned ||
-                                        !playerController
-                                            .mediaPlayer.state.playing)
-                                    ? Positioned(
-                                        top: 0,
                                         right: 0,
                                         child: Row(
                                           children: [
-                                            SizedBox(
-                                              width: 45,
-                                              height: 34,
-                                              child: TextButton(
+                                            IconButton(
+                                              color: Colors.white,
+                                              icon:
+                                                  const Icon(Icons.arrow_back),
+                                              onPressed: () {
+                                                if (videoController
+                                                        .androidFullscreen ==
+                                                    true) {
+                                                  playerController
+                                                      .exitFullScreen();
+                                                  videoController
+                                                          .androidFullscreen =
+                                                      false;
+                                                  return;
+                                                }
+                                                navigationBarState
+                                                    .showNavigate();
+                                                videoController.from ==
+                                                        '/tab/popular/'
+                                                    ? navigationBarState
+                                                        .updateSelectedIndex(0)
+                                                    : (videoController.from ==
+                                                            '/tab/follow/'
+                                                        ? navigationBarState
+                                                            .updateSelectedIndex(
+                                                                2)
+                                                        : navigationBarState
+                                                            .updateSelectedIndex(
+                                                                1));
+                                                Modular.to.navigate(
+                                                    videoController.from);
+                                              },
+                                            ),
+                                            const Expanded(
+                                              child: dtb.DragToMoveArea(child: SizedBox(height: 40)),
+                                            ),
+                                            TextButton(
                                                 style: ButtonStyle(
                                                   padding:
                                                       MaterialStateProperty.all(
@@ -777,7 +783,6 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                   ),
                                                 ),
                                               ),
-                                            ),
                                             IconButton(
                                               icon: (videoController.follow)
                                                   ? Icon(Icons.favorite,
@@ -874,17 +879,32 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                 },
                                               ),
                                             ),
-                                            ((Platform.isAndroid || Platform.isIOS) && !videoController.androidFullscreen) ? Container() : Container(
-                                              padding: const EdgeInsets.only(left: 10.0),
-                                              child: Text(
-                                                Utils.durationToString(videoController.currentPosition) + " / " + 
-                                                    Utils.durationToString(playerController.duration),
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: Platform.isWindows ? 16.0 : 12.0,
-                                                ),
-                                              ),
-                                            ),
+                                            ((Platform.isAndroid ||
+                                                        Platform.isIOS) &&
+                                                    !videoController
+                                                        .androidFullscreen)
+                                                ? Container()
+                                                : Container(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10.0),
+                                                    child: Text(
+                                                      Utils.durationToString(
+                                                              videoController
+                                                                  .currentPosition) +
+                                                          " / " +
+                                                          Utils.durationToString(
+                                                              playerController
+                                                                  .duration),
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize:
+                                                            Platform.isWindows
+                                                                ? 16.0
+                                                                : 12.0,
+                                                      ),
+                                                    ),
+                                                  ),
                                             (videoController.androidFullscreen ==
                                                         true &&
                                                     videoController.danmakuOn ==
