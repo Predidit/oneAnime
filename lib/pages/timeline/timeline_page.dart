@@ -227,9 +227,9 @@ class _TimelinePageState extends State<TimelinePage>
                     }
                     try {
                       await popularController.getVideoLink(item.link ?? '');
-                    } catch (e) {
+                    } catch (_) {
                       SmartDialog.dismiss();
-                      SmartDialog.showToast(e.toString());
+                      SmartDialog.showToast('获取剧集失败 errcode: 404');
                       return;
                     }
                     videoController.title = item.name ?? '';

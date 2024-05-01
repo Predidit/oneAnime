@@ -196,6 +196,14 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
               dense: false,
               title: const Text('配色方案'),
             ),
+            Platform.isAndroid ? ListTile(
+              onTap: () async {
+                Modular.to.pushNamed('/tab/my/theme/display');
+              },
+              dense: false,
+              title: const Text('屏幕帧率'),
+              // trailing: const Icon(Icons.navigate_next),
+            ) : Container(),
             ListTile(
               onTap: () {
                 SmartDialog.show(
@@ -267,14 +275,6 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                       .labelMedium!
                       .copyWith(color: Theme.of(context).colorScheme.outline)),
             ),
-            Platform.isAndroid ? ListTile(
-              onTap: () async {
-                Modular.to.pushNamed('/tab/my/theme/display');
-              },
-              dense: false,
-              title: const Text('屏幕帧率'),
-              // trailing: const Icon(Icons.navigate_next),
-            ) : Container(),
             InkWell(
               child: SetSwitchItem(
                 title: 'OLED优化',
