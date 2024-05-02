@@ -34,14 +34,6 @@ class DragToMoveArea extends StatelessWidget {
       onPanStart: (details) {
         windowManager.startDragging();
       },
-      onDoubleTap: () async {
-        bool isMaximized = await windowManager.isMaximized();
-        if (!isMaximized) {
-          windowManager.maximize();
-        } else {
-          windowManager.unmaximize();
-        }
-      },
       child: child,
     );
   }
