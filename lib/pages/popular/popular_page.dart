@@ -7,6 +7,7 @@ import 'package:oneanime/bean/anime/anime_card.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
+import 'package:window_manager/window_manager.dart';
 
 class PopularPage extends StatefulWidget {
   const PopularPage({super.key});
@@ -123,29 +124,40 @@ class _PopularPageState extends State<PopularPage>
                 .colorScheme
                 .primary
                 .withOpacity(0.5), // 调整背景颜色的透明度以使其更柔和
-            title: TextField(
-              focusNode: _focusNode,
-              controller: _controller,
-              style: const TextStyle(color: Colors.white, fontSize: 20),
-              decoration: const InputDecoration(
-                hintText: '快速搜索',
-                hintStyle: TextStyle(color: Colors.white, fontSize: 20),
-                border: InputBorder.none,
-                prefixIcon: Icon(Icons.search, color: Colors.white),
-              ),
-              autocorrect: false,
-              autofocus: false,
-              onTap: () {
-                setState(() {
-                  _focusNode.requestFocus();
-                  // 添加动效
-                  _controller.clear(); // 如果需要清空文本字段内容
-                });
-              },
-              onChanged: (t) {
-                scrollController.jumpTo(0.0);
-                popularController.filterList(t);
-              },
+            title: Stack(
+              children: [
+                TextField(
+                  focusNode: _focusNode,
+                  controller: _controller,
+                  style: const TextStyle(color: Colors.white, fontSize: 20),
+                  decoration: const InputDecoration(
+                    hintText: '快速搜索',
+                    hintStyle: TextStyle(color: Colors.white, fontSize: 20),
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.search, color: Colors.white),
+                  ),
+                  autocorrect: false,
+                  autofocus: false,
+                  onTap: () {
+                    setState(() {
+                      _focusNode.requestFocus();
+                      // 添加动效
+                      _controller.clear(); // 如果需要清空文本字段内容
+                    });
+                  },
+                  onChanged: (t) {
+                    scrollController.jumpTo(0.0);
+                    popularController.filterList(t);
+                  },
+                ),
+                Positioned.fill(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onPanStart: (_) => windowManager.startDragging(),
+                    child: Container(),
+                  ),
+                ),
+              ],
             ),
             elevation: 0, // 移除阴影效果
             shape: Platform.isWindows

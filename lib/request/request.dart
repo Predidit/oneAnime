@@ -81,7 +81,7 @@ class Request {
     if (enableSystemProxy) {
       setProxy();
       debugPrint('系统代理启用');
-    } 
+    }
 
     // 拦截器
     dio.interceptors.add(ApiInterceptor());
