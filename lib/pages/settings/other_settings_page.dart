@@ -47,7 +47,7 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
 
     SmartDialog.show(
       useSystem: true,
-      animationType: SmartAnimationType.centerFade_otherSlide,
+      useAnimation: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('设置代理'),
