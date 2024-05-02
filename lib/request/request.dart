@@ -14,8 +14,6 @@ class Request {
   Box setting = GStorage.setting;
   static Box localCache = GStorage.localCache;
   late bool enableSystemProxy;
-  late String systemProxyHost;
-  late String systemProxyPort;
   factory Request() => _instance;
 
   // 初始化 （一般只在应用启动时调用）
@@ -26,6 +24,39 @@ class Request {
   // 设置请求头
   static setOptionsHeaders() {
     dio.options.headers['referer'] = 'https://anime1.me/';
+  }
+
+  // 设置代理
+  static setProxy() {
+    var systemProxyHost =
+        localCache.get(LocalCacheKey.systemProxyHost, defaultValue: '');
+    var systemProxyPort =
+        localCache.get(LocalCacheKey.systemProxyPort, defaultValue: '');
+    dio.httpClientAdapter = IOHttpClientAdapter(
+        createHttpClient: () {
+          final HttpClient client = HttpClient();
+          // Config the client.
+          client.findProxy = (Uri uri) {
+            // return 'PROXY host:port';
+            return 'PROXY $systemProxyHost:$systemProxyPort';
+          };
+          client.badCertificateCallback =
+              (X509Certificate cert, String host, int port) => true;
+          return client;
+        },
+      );
+    debugPrint('代理设置更新成功');
+  }
+
+  // 禁用代理
+  static disableProxy() {
+    dio.httpClientAdapter = IOHttpClientAdapter(
+        createHttpClient: () {
+          final HttpClient client = HttpClient();
+          return client;
+        },
+      );
+    debugPrint('代理禁用');
   }
 
   Request._internal() {
@@ -47,21 +78,9 @@ class Request {
     dio = Dio(options);
     debugPrint('Dio 初始化完成');
     
-    // 设置代理
     if (enableSystemProxy) {
-      dio.httpClientAdapter = IOHttpClientAdapter(
-        createHttpClient: () {
-          final HttpClient client = HttpClient();
-          // Config the client.
-          client.findProxy = (Uri uri) {
-            // return 'PROXY host:port';
-            return 'PROXY $systemProxyHost:$systemProxyPort';
-          };
-          client.badCertificateCallback =
-              (X509Certificate cert, String host, int port) => true;
-          return client;
-        },
-      );
+      setProxy();
+      debugPrint('系统代理启用');
     } 
 
     // 拦截器

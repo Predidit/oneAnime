@@ -7,6 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
+import 'package:oneanime/request/request.dart';
 
 class OtherSettingsPage extends StatefulWidget {
   const OtherSettingsPage({super.key});
@@ -19,7 +20,7 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
   dynamic navigationBarState;
   Box setting = GStorage.setting;
   static Box localCache = GStorage.localCache;
-  late dynamic enableSystemProxy;
+  late bool enableSystemProxy;
   late String defaultSystemProxyHost;
   late String defaultSystemProxyPort;
   final PopularController popularController = Modular.get<PopularController>();
@@ -46,7 +47,6 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
         localCache.get(LocalCacheKey.systemProxyPort, defaultValue: '');
 
     SmartDialog.show(
-      useSystem: true,
       useAnimation: false,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -101,10 +101,20 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
             ),
             TextButton(
               onPressed: () async {
-                localCache.put(LocalCacheKey.systemProxyHost, systemProxyHost == '' ? defaultSystemProxyHost : systemProxyHost);
-                localCache.put(LocalCacheKey.systemProxyPort, systemProxyPort == '' ? defaultSystemProxyPort : systemProxyPort);
+                localCache.put(
+                    LocalCacheKey.systemProxyHost,
+                    systemProxyHost == ''
+                        ? defaultSystemProxyHost
+                        : systemProxyHost);
+                localCache.put(
+                    LocalCacheKey.systemProxyPort,
+                    systemProxyPort == ''
+                        ? defaultSystemProxyPort
+                        : systemProxyPort);
                 SmartDialog.dismiss();
-                // Request.dio;
+                if (enableSystemProxy) {
+                  Request.setProxy();
+                }
               },
               child: const Text('确认'),
             )
@@ -150,9 +160,17 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
                 scale: 0.8,
               ),
             ),
-            const InkWell(
+            InkWell(
               child: SetSwitchItem(
                 title: '启用代理',
+                callFn: (_) {
+                  enableSystemProxy = !enableSystemProxy;
+                  if (enableSystemProxy) {
+                    Request.setProxy();
+                  } else {
+                    Request.disableProxy();
+                  }
+                },
                 setKey: SettingBoxKey.enableSystemProxy,
                 defaultVal: false,
               ),
