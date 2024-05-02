@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:window_manager/src/window_manager.dart';
+import 'package:window_manager/window_manager.dart';
 
 /// A widget for drag to move window.
 ///

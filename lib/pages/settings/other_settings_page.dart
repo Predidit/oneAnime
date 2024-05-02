@@ -5,6 +5,7 @@ import 'package:oneanime/bean/settings/settings.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:hive/hive.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 
 class OtherSettingsPage extends StatefulWidget {
@@ -17,25 +18,100 @@ class OtherSettingsPage extends StatefulWidget {
 class _OtherSettingsPageState extends State<OtherSettingsPage> {
   dynamic navigationBarState;
   Box setting = GStorage.setting;
-  late dynamic defaultDanmakuArea;
-  late dynamic defaultThemeMode;
-  late dynamic defaultThemeColor;
+  static Box localCache = GStorage.localCache;
+  late dynamic enableSystemProxy;
+  late String defaultSystemProxyHost;
+  late String defaultSystemProxyPort;
   final PopularController popularController = Modular.get<PopularController>();
 
   @override
   void initState() {
     super.initState();
+    enableSystemProxy =
+        setting.get(SettingBoxKey.enableSystemProxy, defaultValue: false);
   }
 
   void onBackPressed(BuildContext context) {
     Modular.to.navigate('/tab/my/');
   }
 
-  void updateDanmakuArea(double i) async {
-    await setting.put(SettingBoxKey.danmakuArea, i);
-    setState(() {
-      defaultDanmakuArea = i;
-    });
+  // 设置代理
+  void twoFADialog() {
+    var systemProxyHost = '';
+    var systemProxyPort = '';
+
+    defaultSystemProxyHost =
+        localCache.get(LocalCacheKey.systemProxyHost, defaultValue: '');
+    defaultSystemProxyPort =
+        localCache.get(LocalCacheKey.systemProxyPort, defaultValue: '');
+
+    SmartDialog.show(
+      useSystem: true,
+      animationType: SmartAnimationType.centerFade_otherSlide,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('设置代理'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 6),
+              TextField(
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: defaultSystemProxyHost != ''
+                      ? defaultSystemProxyHost
+                      : '请输入Host, 使用 . 分割',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.0),
+                  ),
+                  hintText: defaultSystemProxyHost,
+                ),
+                onChanged: (e) {
+                  systemProxyHost = e;
+                },
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  isDense: true,
+                  labelText: defaultSystemProxyPort != ''
+                      ? defaultSystemProxyPort
+                      : '请输入Port',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6.0),
+                  ),
+                  hintText: defaultSystemProxyPort,
+                ),
+                onChanged: (e) {
+                  systemProxyPort = e;
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                SmartDialog.dismiss();
+              },
+              child: Text(
+                '取消',
+                style: TextStyle(color: Theme.of(context).colorScheme.outline),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                localCache.put(LocalCacheKey.systemProxyHost, systemProxyHost == '' ? defaultSystemProxyHost : systemProxyHost);
+                localCache.put(LocalCacheKey.systemProxyPort, systemProxyPort == '' ? defaultSystemProxyPort : systemProxyPort);
+                SmartDialog.dismiss();
+                // Request.dio;
+              },
+              child: const Text('确认'),
+            )
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -65,6 +141,22 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
                     ),
                   )
                 : Container(),
+            ListTile(
+              enableFeedback: true,
+              onTap: () => twoFADialog(),
+              title: const Text('配置代理'),
+              trailing: Transform.scale(
+                alignment: Alignment.centerRight,
+                scale: 0.8,
+              ),
+            ),
+            const InkWell(
+              child: SetSwitchItem(
+                title: '启用代理',
+                setKey: SettingBoxKey.enableSystemProxy,
+                defaultVal: false,
+              ),
+            ),
             const InkWell(
               child: SetSwitchItem(
                 title: '自动更新',

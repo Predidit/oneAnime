@@ -1,13 +1,21 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/utils/constans.dart';
 import 'package:oneanime/request/interceptor.dart';
 
 class Request {
   static final Request _instance = Request._internal();
   static late final Dio dio;
+  Box setting = GStorage.setting;
+  static Box localCache = GStorage.localCache;
+  late bool enableSystemProxy;
+  late String systemProxyHost;
+  late String systemProxyPort;
   factory Request() => _instance;
 
   // 初始化 （一般只在应用启动时调用）
@@ -33,10 +41,28 @@ class Request {
       headers: {},
     );
 
+    enableSystemProxy = setting.get(SettingBoxKey.enableSystemProxy,
+        defaultValue: false) as bool;
+
     dio = Dio(options);
     debugPrint('Dio 初始化完成');
     
-    //Todo 设置代理 
+    // 设置代理
+    if (enableSystemProxy) {
+      dio.httpClientAdapter = IOHttpClientAdapter(
+        createHttpClient: () {
+          final HttpClient client = HttpClient();
+          // Config the client.
+          client.findProxy = (Uri uri) {
+            // return 'PROXY host:port';
+            return 'PROXY $systemProxyHost:$systemProxyPort';
+          };
+          client.badCertificateCallback =
+              (X509Certificate cert, String host, int port) => true;
+          return client;
+        },
+      );
+    } 
 
     // 拦截器
     dio.interceptors.add(ApiInterceptor());

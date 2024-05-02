@@ -77,5 +77,6 @@ class SettingBoxKey {
       autoPlay = 'autoPlay',
       playResume = 'playResume',
       oledEnhance = 'oledEnhance',
-      displayMode = 'displayMode';
+      displayMode = 'displayMode',
+      enableSystemProxy = 'enableSystemProxy';
 }
