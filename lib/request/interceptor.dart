@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ApiInterceptor extends Interceptor {
@@ -15,6 +16,14 @@ class ApiInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
+    String url = err.requestOptions.uri.toString();
+    if (!url.contains('heartBeat')) {
+      SmartDialog.showToast(
+        await dioError(err),
+        displayType: SmartToastType.onlyRefresh,
+      );
+    }
+    super.onError(err, handler);
     super.onError(err, handler);
   }
 

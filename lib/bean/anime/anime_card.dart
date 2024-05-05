@@ -72,7 +72,6 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
             await popularController.getPageTitle(widget.info.name ?? '');
           } catch (e) {
             SmartDialog.dismiss();
-            SmartDialog.showToast(e.toString());
             return;
           }
           SmartDialog.dismiss();
