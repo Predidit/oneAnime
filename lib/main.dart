@@ -25,8 +25,8 @@ void main() async {
       await windowManager.show();
       await windowManager.focus();
     });
-    windowManager.setMaximizable(false);
-    windowManager.setResizable(false);
+    // windowManager.setMaximizable(false);
+    // windowManager.setResizable(false);
   }
   if (Platform.isAndroid || Platform.isIOS) {
     // 小白条、导航栏沉浸
