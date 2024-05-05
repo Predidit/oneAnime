@@ -94,7 +94,7 @@
               file: 'opencc_windows.zip'
               token: ${{ secrets.GITHUB_TOKEN }}
           - run: Expand-Archive -LiteralPath opencc_windows.zip -DestinationPath build/windows/x64/runner/Release
-          - run: Compress-Archive build/windows/x64/runner/Release oneAnime_windows_${env:tag}.zip
+          - run: Compress-Archive build/windows/x64/runner/Release/* oneAnime_windows_${env:tag}.zip
           - name: Upload windows outputs
             uses: actions/upload-artifact@v4
             with:
@@ -140,7 +140,7 @@
               token: ${{ secrets.GITHUB_TOKEN }}
           - run: unzip opencc_linux.zip -d build/linux/x64/release/bundle/lib
           - name: Package linux build output
-            run: tar -zcvf oneAnime_linux_${{ env.tag }}.tar.gz build/linux/x64/release/bundle/*
+            run: tar -zcvf oneAnime_linux_${{ env.tag }}.tar.gz -C build/linux/x64/release/bundle .
             shell: bash
 
           - name: Upload linux outputs
