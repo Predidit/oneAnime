@@ -141,7 +141,7 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
         appBar: const SysAppBar(title: Text('设置')),
         body: Column(
           children: [
-            (popularController.libopencc != '' || !Platform.isWindows)
+            (popularController.libopencc != '' || Platform.isAndroid || Platform.isIOS)
                 ? const InkWell(
                     child: SetSwitchItem(
                       title: '搜索优化',

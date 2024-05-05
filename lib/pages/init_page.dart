@@ -55,6 +55,20 @@ class _InitPageState extends State<InitPage> {
         }
       }
     }
+    if (Platform.isLinux) {
+      final PopularController popularController = Modular.get<PopularController>();
+      if (popularController.libopencc == '') {
+        String fullPath = "lib/opencc.so";
+        try {
+          final lib = DynamicLibrary.open(fullPath);
+          popularController.libopencc = opencc(lib);
+          debugPrint('动态库加载成功');
+        } catch (e) {
+          setting.put(SettingBoxKey.searchEnhanceEnable, false);
+          debugPrint('动态库加载失败 ${e.toString()}');
+        }
+      }
+    }
   }
 
   void update() {
