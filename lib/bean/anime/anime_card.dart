@@ -83,7 +83,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
           videoController.link = widget.info.link!;
           videoController.offset = history?.offset ?? 0;
           videoController.follow = widget.info.follow ?? false;
-          navigationBarState = Platform.isWindows
+          navigationBarState = Platform.isWindows || Platform.isLinux || Platform.isMacOS
               ? Provider.of<SideNavigationBarState>(context, listen: false)
               : Provider.of<NavigationBarState>(context, listen: false);
           navigationBarState.hideNavigate();
@@ -95,7 +95,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               SizedBox(
-                width: Platform.isWindows ? 800 : 200,
+                width: Platform.isWindows || Platform.isLinux || Platform.isMacOS ? 800 : 200,
                 child: Text(
                   widget.info.name ?? '',
                   maxLines: 2,

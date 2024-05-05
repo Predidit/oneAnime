@@ -47,7 +47,7 @@ class _PopularPageState extends State<PopularPage>
         popularController.isLoadingMore = true;
         popularController.onLoad();
       }
-      if (Platform.isWindows) {
+      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
         checkArrowUp();
       }
     });
@@ -160,7 +160,7 @@ class _PopularPageState extends State<PopularPage>
               ],
             ),
             elevation: 0, // 移除阴影效果
-            shape: Platform.isWindows
+            shape: Platform.isWindows || Platform.isLinux || Platform.isMacOS
                 ? const RoundedRectangleBorder(
                     // 添加圆角
                     borderRadius: BorderRadius.vertical(
@@ -171,7 +171,7 @@ class _PopularPageState extends State<PopularPage>
                 : null,
           ),
           body: Container(child: animeList),
-          floatingActionButton: Platform.isWindows
+          floatingActionButton: Platform.isWindows || Platform.isLinux || Platform.isMacOS
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

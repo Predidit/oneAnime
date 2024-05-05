@@ -347,7 +347,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
-    navigationBarState = Platform.isWindows
+    navigationBarState = Platform.isWindows || Platform.isLinux || Platform.isMacOS
         ? Provider.of<SideNavigationBarState>(context, listen: false)
         : Provider.of<NavigationBarState>(context, listen: false);
 
@@ -515,7 +515,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                     top: 25,
                                     right: 15,
                                     bottom: 15,
-                                    child: Platform.isWindows ? Container() : GestureDetector(
+                                    child: Platform.isWindows || Platform.isLinux || Platform.isMacOS ? Container() : GestureDetector(
                                         onHorizontalDragUpdate:
                                             (DragUpdateDetails details) {
                                       videoController.showPosition = true;
@@ -899,7 +899,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize:
-                                                            Platform.isWindows
+                                                            Platform.isWindows || Platform.isLinux || Platform.isMacOS
                                                                 ? 16.0
                                                                 : 12.0,
                                                       ),

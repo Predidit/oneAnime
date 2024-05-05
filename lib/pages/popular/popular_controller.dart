@@ -138,7 +138,7 @@ abstract class _PopularController with Store {
       }
     }
     // OpenCC windows库调用
-    if ((Platform.isWindows)) {
+    if ((Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
       if (libopencc == '') {
         return keyword;
       }
@@ -165,7 +165,7 @@ abstract class _PopularController with Store {
       }
     }
     // OpenCC windows库调用
-    if ((Platform.isWindows)) {
+    if ((Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
       if (libopencc == '') {
         return keyword;
       }

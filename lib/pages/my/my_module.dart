@@ -14,17 +14,17 @@ class MyModule extends Module {
     r.child("/", child: (_) => const MyPage());
     r.child("/player",
         child: (_) => const PlayerSettingsPage(),
-        transition: Platform.isWindows
+        transition: Platform.isWindows || Platform.isLinux || Platform.isMacOS
             ? TransitionType.noTransition
             : TransitionType.leftToRight);
     r.child("/danmaku",
         child: (_) => const DanmakuSettingsPage(),
-        transition: Platform.isWindows
+        transition: Platform.isWindows || Platform.isLinux || Platform.isMacOS
             ? TransitionType.noTransition
             : TransitionType.leftToRight);
     r.child("/theme",
         child: (_) => const ThemeSettingsPage(),
-        transition: Platform.isWindows
+        transition: Platform.isWindows || Platform.isLinux || Platform.isMacOS
             ? TransitionType.noTransition
             : TransitionType.leftToRight);
     r.child("/theme/display",
@@ -32,7 +32,7 @@ class MyModule extends Module {
         transition: TransitionType.leftToRight);
     r.child("/other",
         child: (_) => const OtherSettingsPage(),
-        transition: Platform.isWindows
+        transition: Platform.isWindows || Platform.isLinux || Platform.isMacOS
             ? TransitionType.noTransition
             : TransitionType.leftToRight);
     r.module("/about", module: AboutModule());

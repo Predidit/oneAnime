@@ -118,7 +118,7 @@ abstract class _PlayerController with Store {
   }
 
   Future<void> enterFullScreen() async {
-    if (Platform.isWindows) {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       await windowManager.setFullScreen(true);
       return;
     }
@@ -134,7 +134,7 @@ abstract class _PlayerController with Store {
   //退出全屏显示
   Future<void> exitFullScreen() async {
     debugPrint('退出全屏模式');
-    if (Platform.isWindows) {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       await windowManager.setFullScreen(false);
     }
     dynamic document;

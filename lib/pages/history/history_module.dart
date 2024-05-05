@@ -11,6 +11,6 @@ class HistoryModule extends Module {
 
   @override
   void routes(r) {
-    r.child("/", child: (_) => const HistoryPage(), transition: Platform.isWindows ? TransitionType.noTransition : TransitionType.leftToRight);
+    r.child("/", child: (_) => const HistoryPage(), transition: Platform.isWindows || Platform.isLinux || Platform.isMacOS ? TransitionType.noTransition : TransitionType.leftToRight);
   }
 }

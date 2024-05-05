@@ -19,7 +19,7 @@ class AboutModule extends Module {
               applicationVersion: Api.version,
               applicationLegalese: '开源许可证',
             ),
-        transition: Platform.isWindows
+        transition: Platform.isWindows || Platform.isLinux || Platform.isMacOS
             ? TransitionType.noTransition
             : TransitionType.leftToRight);
   }

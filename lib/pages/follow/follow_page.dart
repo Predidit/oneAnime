@@ -31,7 +31,7 @@ class _FollowPageState extends State<FollowPage>
     debugPrint('Popular 开始初始化');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 在widget构建完成后调用的函数
-      navigationBarState = Platform.isWindows
+      navigationBarState = Platform.isWindows || Platform.isLinux || Platform.isMacOS
           ? Provider.of<SideNavigationBarState>(context, listen: false)
           : Provider.of<NavigationBarState>(context, listen: false);
       navigationBarState.showNavigate();

@@ -38,6 +38,6 @@ class _IndexPageState extends State<IndexPage> with  WidgetsBindingObserver {
     //     ),
     //   )
     // ]);
-    return Platform.isWindows ? const SideMenu() : const BottomMenu();
+    return Platform.isWindows || Platform.isLinux || Platform.isMacOS ? const SideMenu() : const BottomMenu();
   }
 }

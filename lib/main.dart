@@ -12,7 +12,7 @@ import 'package:oneanime/pages/error/error.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isWindows) {
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await windowManager.ensureInitialized();
     WindowOptions windowOptions = const WindowOptions(
       size: Size(1280, 800),

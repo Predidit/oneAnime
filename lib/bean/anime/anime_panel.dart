@@ -30,7 +30,7 @@ class _BangumiPanelState extends State<BangumiPanel> {
     return Observer(builder: (context) {
       return Column(
         children: [
-          Platform.isWindows
+          Platform.isWindows || Platform.isLinux || Platform.isMacOS
               ? Column(
                   children: [
                     const SizedBox(height: 7),
@@ -123,7 +123,7 @@ class _BangumiPanelState extends State<BangumiPanel> {
                   ),
                 ),
           SizedBox(
-            height: Platform.isWindows
+            height: Platform.isWindows || Platform.isLinux || Platform.isMacOS
                 ? 72
                 : (MediaQuery.of(context).size.height -
                     (MediaQuery.of(context).size.width * 9 / 16) -
@@ -133,7 +133,7 @@ class _BangumiPanelState extends State<BangumiPanel> {
               controller: listViewScrollCtr,
               scrollDirection: Axis.vertical, // 将滚动方向改为竖直
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: Platform.isWindows ? 10 : 3,
+                crossAxisCount: Platform.isWindows || Platform.isLinux || Platform.isMacOS ? 10 : 3,
                 crossAxisSpacing: 10, // 间距
                 mainAxisSpacing: 5, // 间距
                 childAspectRatio: 1.7, // 子项宽高比
