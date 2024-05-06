@@ -6,6 +6,7 @@
 
 - Android 10 and Above
 - Windows 10 1806 and Above
+- Linux
 
 ## 功能 / 开发计划
 
