@@ -87,6 +87,10 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNode);
     });
+    bool alwaysOntop = setting.get(SettingBoxKey.alwaysOntop, defaultValue: true);
+    if (alwaysOntop) {
+      windowManager.setAlwaysOnTop(true);
+    }
     init();
   }
 
@@ -121,6 +125,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     }
     historyController.updateHistory(
         videoController.link, videoController.currentPosition.inSeconds);
+    windowManager.setAlwaysOnTop(false);
     windowManager.removeListener(this);
     playerController.dispose();
     super.dispose();

@@ -63,6 +63,7 @@ class SettingBoxKey {
       searchEnhanceEnable = 'searchEnhanceEnable', 
       // Todo 检查更新
       autoUpdate = 'autoUpdate',
+      alwaysOntop = 'alwaysOntop',
       danmakuEnhance = 'danmakuEnhance',
       danmakuBorder = 'danmakuBorder',
       danmakuOpacity = 'danmakuOpacity',

@@ -62,9 +62,9 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
 
   void resetTheme() {
     var defaultDarkTheme = ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-      );
+      useMaterial3: true,
+      brightness: Brightness.dark,
+    );
     var oledDarkTheme = Utils.oledDarkTheme(defaultDarkTheme);
     AdaptiveTheme.of(context).setTheme(
       light: ThemeData(
@@ -196,14 +196,16 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
               dense: false,
               title: const Text('配色方案'),
             ),
-            Platform.isAndroid ? ListTile(
-              onTap: () async {
-                Modular.to.pushNamed('/tab/my/theme/display');
-              },
-              dense: false,
-              title: const Text('屏幕帧率'),
-              // trailing: const Icon(Icons.navigate_next),
-            ) : Container(),
+            Platform.isAndroid
+                ? ListTile(
+                    onTap: () async {
+                      Modular.to.pushNamed('/tab/my/theme/display');
+                    },
+                    dense: false,
+                    title: const Text('屏幕帧率'),
+                    // trailing: const Icon(Icons.navigate_next),
+                  )
+                : Container(),
             ListTile(
               onTap: () {
                 SmartDialog.show(
@@ -284,6 +286,16 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                 defaultVal: false,
               ),
             ),
+            (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
+                ? const InkWell(
+                    child: SetSwitchItem(
+                      title: '窗口置顶',
+                      subTitle: '播放时始终保持在其他窗口上方',
+                      setKey: SettingBoxKey.alwaysOntop,
+                      defaultVal: false,
+                    ),
+                  )
+                : Container(),
           ],
         ),
       ),
