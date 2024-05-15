@@ -720,7 +720,6 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                       opacity: _opacity,
                                       fontSize: _fontSize,
                                       duration: _duration,
-                                      borderText: _border,
                                     ),
                                     statusChanged: (e) {},
                                   ),
