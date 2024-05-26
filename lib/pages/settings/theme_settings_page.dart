@@ -292,7 +292,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                       title: '窗口置顶',
                       subTitle: '播放时始终保持在其他窗口上方',
                       setKey: SettingBoxKey.alwaysOntop,
-                      defaultVal: false,
+                      defaultVal: true,
                     ),
                   )
                 : Container(),

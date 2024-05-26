@@ -770,7 +770,7 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: "3caac264792c10a260272a95fc3ee64cc7a83467"
+      resolved-ref: "7c0fa8e2a5bc8b76d917b54211a0af2d11b8a4cb"
       url: "https://github.com/Predidit/flutter_ns_danmaku"
     source: git
     version: "0.0.6"
