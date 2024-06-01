@@ -24,7 +24,7 @@ class ApiInterceptor extends Interceptor {
       );
     }
     super.onError(err, handler);
-    super.onError(err, handler);
+    // super.onError(err, handler);
   }
 
   static Future<String> dioError(DioException error) async {

@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'dart:async';
 
+import 'package:canvas_danmaku/models/danmaku_content_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:ns_danmaku/danmaku_controller.dart';
 import 'package:oneanime/pages/history/history_controller.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
@@ -17,7 +17,8 @@ import 'package:provider/provider.dart';
 import 'package:oneanime/bean/anime/anime_panel.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
-import 'package:ns_danmaku/ns_danmaku.dart';
+import 'package:canvas_danmaku/canvas_danmaku.dart';
+import 'package:canvas_danmaku/models/danmaku_option.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:screen_brightness/screen_brightness.dart';
@@ -154,7 +155,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                               videoController.currentPosition.inSeconds]!
                           .length),
               () => mounted && playerController.playing
-                  ? danmakuController.addItems([DanmakuItem(danmaku.m)])
+                  ? danmakuController.addDanmaku(DanmakuContentItem(danmaku.m))
                   : null);
         });
       }
@@ -334,12 +335,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                             isSending = false; // 发送结束，更新状态
                           });
                           SmartDialog.showToast('发送成功');
-                          danmakuController.addItems([
-                            DanmakuItem(
-                              msg,
-                              // color: Colors.purple,
-                            )
-                          ]);
+                          danmakuController.addDanmaku(DanmakuContentItem(msg));
                           SmartDialog.dismiss();
                         },
                   child: Text(isSending ? '发送中...' : '发送'),
@@ -358,19 +354,14 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
 
     // 弹幕设置
     // bool _running = true;
-    bool _border = setting.get(SettingBoxKey.danmakuBorder, defaultValue: true);
+    bool _showStroke = setting.get(SettingBoxKey.danmakuBorder, defaultValue: true);
     double _opacity =
         setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
-    double _duration = 8;
+    int _duration = 8;
     double _fontSize = setting.get(SettingBoxKey.danmakuFontSize,
         defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
     double danmakuArea =
         setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
-    bool _hideTop = !setting.get(SettingBoxKey.danmakuTop, defaultValue: true);
-    bool _hideBottom =
-        !setting.get(SettingBoxKey.danmakuBottom, defaultValue: true);
-    bool _hideScroll =
-        !setting.get(SettingBoxKey.danmakuScroll, defaultValue: true);
 
     return PopScope(
       // key: _key,
@@ -706,7 +697,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                           9 /
                                           16 *
                                           danmakuArea),
-                                  child: DanmakuView(
+                                  child: DanmakuScreen(
                                     key: _danmuKey,
                                     createdController: (DanmakuController e) {
                                       danmakuController = e;
@@ -714,14 +705,11 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                       debugPrint('弹幕控制器创建成功');
                                     },
                                     option: DanmakuOption(
-                                      hideTop: _hideTop,
-                                      hideScroll: _hideScroll,
-                                      hideBottom: _hideBottom,
-                                      opacity: _opacity,
                                       fontSize: _fontSize,
                                       duration: _duration,
+                                      opacity: _opacity,
+                                      showStroke: _showStroke
                                     ),
-                                    statusChanged: (e) {},
                                   ),
                                 ),
 
