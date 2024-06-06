@@ -77,6 +77,15 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
           children: [
             const InkWell(
               child: SetSwitchItem(
+                title: '默认开启',
+                subTitle: '默认是否随视频播放弹幕',
+                setKey: SettingBoxKey.danmakuEnabledByDefault,
+                defaultVal: false,
+                needReboot: true,
+              ),
+            ),
+            const InkWell(
+              child: SetSwitchItem(
                 title: '精准匹配',
                 setKey: SettingBoxKey.danmakuEnhance,
                 defaultVal: true,

@@ -49,7 +49,8 @@ abstract class _VideoController with Store {
 
   // 弹幕开关
   @observable
-  bool danmakuOn = false;
+  bool danmakuOn = GStorage.setting
+      .get(SettingBoxKey.danmakuEnabledByDefault, defaultValue: false);
 
   // 界面管理
   @observable
