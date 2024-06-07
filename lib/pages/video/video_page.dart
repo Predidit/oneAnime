@@ -98,6 +98,8 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
 
   void init() async {
     videoController.playerSpeed = 1.0;
+    videoController.danmakuOn =
+        setting.get(SettingBoxKey.danmakuEnabledByDefault, defaultValue: false);
     playerController.videoUrl = videoController.videoUrl;
     playerController.videoCookie = videoController.videoCookie;
     await playerController.init(videoController.offset);
