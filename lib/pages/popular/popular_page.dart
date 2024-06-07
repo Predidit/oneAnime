@@ -31,7 +31,6 @@ class _PopularPageState extends State<PopularPage>
   @override
   void initState() {
     super.initState();
-    debugPrint('Popular 开始初始化');
     if (popularController.cacheList.length == 0) {
       debugPrint('页面列表尝试重新加载');
       popularController.getAnimeList();
@@ -51,7 +50,6 @@ class _PopularPageState extends State<PopularPage>
         checkArrowUp();
       }
     });
-    debugPrint('Popular 监听器已添加');
   }
 
   @override
@@ -61,7 +59,6 @@ class _PopularPageState extends State<PopularPage>
       popularController.filterList('');
       popularController.scrollOffset = 0.0;
     }
-    debugPrint('popular 模块已卸载, 监听器移除');
     super.dispose();
   }
 
@@ -100,9 +97,7 @@ class _PopularPageState extends State<PopularPage>
   Widget build(BuildContext context) {
     super.build(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      debugPrint('尝试恢复状态');
       scrollController.jumpTo(popularController.scrollOffset);
-      debugPrint('Popular加载完成');
     });
     return PopScope(
       canPop: false,

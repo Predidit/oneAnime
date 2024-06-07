@@ -94,8 +94,9 @@ class Request {
     ));
 
     dio.transformer = BackgroundTransformer();
+    // 临时措施， anime1 现在请求不存在的分页数时会返回404而不是惯例的200
     dio.options.validateStatus = (int? status) {
-      return status! >= 200 && status < 300;
+      return (status! >= 200 && status < 300) || status == 404;
     };
   }
 

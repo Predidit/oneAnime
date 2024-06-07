@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:async';
 
-import 'package:canvas_danmaku/models/danmaku_content_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
@@ -18,7 +17,6 @@ import 'package:oneanime/bean/anime/anime_panel.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:canvas_danmaku/canvas_danmaku.dart';
-import 'package:canvas_danmaku/models/danmaku_option.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:screen_brightness/screen_brightness.dart';
@@ -88,6 +86,8 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNode);
     });
+    videoController.danmakuOn =
+        setting.get(SettingBoxKey.danmakuEnabledByDefault, defaultValue: false);
     bool alwaysOntop =
         setting.get(SettingBoxKey.alwaysOntop, defaultValue: true);
     if (alwaysOntop) {
@@ -98,8 +98,6 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
 
   void init() async {
     videoController.playerSpeed = 1.0;
-    videoController.danmakuOn =
-        setting.get(SettingBoxKey.danmakuEnabledByDefault, defaultValue: false);
     playerController.videoUrl = videoController.videoUrl;
     playerController.videoCookie = videoController.videoCookie;
     await playerController.init(videoController.offset);
