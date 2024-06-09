@@ -13,6 +13,7 @@ import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:oneanime/pages/player/player_item.dart';
 import 'package:oneanime/pages/menu/menu.dart';
 import 'package:provider/provider.dart';
+import 'package:oneanime/bean/danmaku/danmaku_module.dart';
 import 'package:oneanime/bean/anime/anime_panel.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
@@ -90,7 +91,8 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
         setting.get(SettingBoxKey.danmakuEnabledByDefault, defaultValue: false);
     bool alwaysOntop =
         setting.get(SettingBoxKey.alwaysOntop, defaultValue: true);
-    if (alwaysOntop) {
+    if (alwaysOntop &&
+        (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
       windowManager.setAlwaysOnTop(true);
     }
     init();
@@ -127,8 +129,10 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     }
     historyController.updateHistory(
         videoController.link, videoController.currentPosition.inSeconds);
-    windowManager.setAlwaysOnTop(false);
-    windowManager.removeListener(this);
+    if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+      windowManager.setAlwaysOnTop(false);
+      windowManager.removeListener(this);
+    }
     playerController.dispose();
     super.dispose();
   }
@@ -140,31 +144,35 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
       videoController.currentPosition = playerController.position;
       videoController.buffer = playerController.buffer;
       videoController.duration = playerController.duration;
+
       if (videoController.currentPosition.inMicroseconds != 0 &&
           playerController.playing == true &&
           videoController.danmakuOn == true) {
-        // debugPrint('当前播放到 ${videoController.currentPosition.inSeconds}');
-        videoController.danDanmakus[videoController.currentPosition.inSeconds]
-            ?.asMap()
-            .forEach((idx, danmaku) async {
-          await Future.delayed(
-              Duration(
-                  milliseconds: idx *
-                      1000 ~/
-                      videoController
-                          .danDanmakus[
-                              videoController.currentPosition.inSeconds]!
-                          .length),
-              () => mounted && playerController.playing
-                  ? danmakuController.addDanmaku(DanmakuContentItem(danmaku.m))
-                  : null);
-        });
+        // 获取当前时间段的弹幕
+        List<Danmaku>? danmakus = videoController
+            .danDanmakus[videoController.currentPosition.inSeconds];
+        if (danmakus != null) {
+          for (int idx = 0; idx < danmakus.length; idx++) {
+            Future.delayed(
+                    Duration(milliseconds: idx * 1000 ~/ danmakus.length))
+                .then((_) {
+              if (mounted && playerController.playing) {
+                danmakuController
+                    .addDanmaku(DanmakuContentItem(danmakus[idx].m));
+              }
+            });
+          }
+        }
       }
+
       if (playerController.completed == true &&
           videoController.episode < videoController.token.length) {
         videoController.changeEpisode(videoController.episode + 1);
       }
-      windowManager.addListener(this);
+
+      if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+        windowManager.addListener(this);
+      }
     });
   }
 
@@ -225,41 +233,41 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
   // 切换选集
   void showChangeChapter() {
     SmartDialog.show(
-      useAnimation: false,
-      builder: (context) {
-      return AlertDialog(
-        title: const Text('切换选集'),
-        content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-          return Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: [
-              for (int i = 1;
-                  i <= videoController.token.length;
-                  i++) ...<Widget>[
-                if (i == videoController.episode) ...<Widget>[
-                  FilledButton(
-                    onPressed: () async {
-                      SmartDialog.dismiss();
-                    },
-                    child: Text('第${i.toString()}话'),
-                  ),
-                ] else ...[
-                  FilledButton.tonal(
-                    onPressed: () async {
-                      videoController.changeEpisode(i);
-                      SmartDialog.dismiss();
-                    },
-                    child: Text('第${i.toString()}话'),
-                  ),
-                ]
-              ]
-            ],
+        useAnimation: false,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('切换选集'),
+            content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: [
+                  for (int i = 1;
+                      i <= videoController.token.length;
+                      i++) ...<Widget>[
+                    if (i == videoController.episode) ...<Widget>[
+                      FilledButton(
+                        onPressed: () async {
+                          SmartDialog.dismiss();
+                        },
+                        child: Text('第${i.toString()}话'),
+                      ),
+                    ] else ...[
+                      FilledButton.tonal(
+                        onPressed: () async {
+                          videoController.changeEpisode(i);
+                          SmartDialog.dismiss();
+                        },
+                        child: Text('第${i.toString()}话'),
+                      ),
+                    ]
+                  ]
+                ],
+              );
+            }),
           );
-        }),
-      );
-    });
+        });
   }
 
   // 选择倍速
@@ -985,12 +993,13 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                             //         },
                                             //       )
                                             //     : Container(),
-                                            (videoController.androidFullscreen ==
-                                                        true)
+                                            (videoController
+                                                        .androidFullscreen ==
+                                                    true)
                                                 ? IconButton(
                                                     color: Colors.white,
-                                                    icon:
-                                                        const Icon(Icons.filter_none),
+                                                    icon: const Icon(
+                                                        Icons.filter_none),
                                                     onPressed: () {
                                                       showChangeChapter();
                                                     },

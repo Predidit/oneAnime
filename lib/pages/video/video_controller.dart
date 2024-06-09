@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oneanime/bean/anime/anime_bangumi_info.dart';
-import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/request/video.dart';
 import 'package:oneanime/pages/player/player_controller.dart';
