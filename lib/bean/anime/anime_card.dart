@@ -110,71 +110,78 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 4.0),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondary,
-                          borderRadius: BorderRadius.circular(8.0),
+                  Expanded(
+                    flex: 1,
+                    child: Wrap(
+                      spacing: 8.0,
+                      children: <Widget>[
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 4.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 4.0),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.secondary,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Text(
+                            widget.info.episode ?? "77",
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.surface),
+                          ),
                         ),
-                        child: Text(
-                          widget.info.episode ?? "77",
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.surface),
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 4.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 4.0),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Text(
+                            (widget.info.year ?? "2077") +
+                                (widget.info.season ?? ""),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.surface),
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 8.0),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 4.0),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Text(
-                          (widget.info.year ?? "2077") +
-                              (widget.info.season ?? ""),
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.surface),
-                        ),
-                      ),
-                      SizedBox(width: 8.0),
-                      widget.type == 'popular'
-                          ? widget.info.subtitle != ''
-                              ? Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 8.0, vertical: 4.0),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  child: Text(
-                                    widget.info.subtitle ?? "",
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface),
-                                  ),
-                                )
-                              : Container()
-                          : Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 4.0),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
-                                borderRadius: BorderRadius.circular(8.0),
+                        widget.type == 'popular'
+                            ? widget.info.subtitle != ''
+                                ? Container(
+                                    margin: const EdgeInsets.only(bottom: 4.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 4.0),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    child: Text(
+                                      widget.info.subtitle ?? "",
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surface),
+                                    ),
+                                  )
+                                : Container()
+                            : Container(
+                                margin: const EdgeInsets.only(bottom: 4.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 4.0),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Text(
+                                  "已追 ${widget.info.progress ?? 1} 话",
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surface),
+                                ),
                               ),
-                              child: Text(
-                                "已追 ${widget.info.progress ?? 1} 话",
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.surface),
-                              ),
-                            ),
-                    ],
+                      ],
+                    ),
                   ),
                   Row(
                     children: [
