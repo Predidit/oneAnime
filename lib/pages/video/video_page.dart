@@ -78,7 +78,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
 
   @override
   void onWindowRestore() {
-    danmakuController.onClear();
+    danmakuController.clear();
   }
 
   @override
@@ -156,7 +156,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
             Future.delayed(
                     Duration(milliseconds: idx * 1000 ~/ danmakus.length))
                 .then((_) {
-              if (mounted && playerController.playing) {
+              if (mounted && playerController.playing && videoController.danmakuOn) {
                 danmakuController
                     .addDanmaku(DanmakuContentItem(danmakus[idx].m));
               }
@@ -180,7 +180,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     if (videoController.androidFullscreen) {
       debugPrint('当前播放器全屏');
       try {
-        danmakuController.onClear();
+        danmakuController.clear();
       } catch (_) {}
       try {
         playerController.exitFullScreen();
@@ -831,7 +831,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                             TextButton(
                                               style: ButtonStyle(
                                                 padding:
-                                                    MaterialStateProperty.all(
+                                                    WidgetStateProperty.all(
                                                         EdgeInsets.zero),
                                               ),
                                               onPressed: () =>
@@ -1038,7 +1038,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                                 if (videoController
                                                     .androidFullscreen) {
                                                   try {
-                                                    danmakuController.onClear();
+                                                    danmakuController.clear();
                                                   } catch (_) {}
                                                   playerController
                                                       .exitFullScreen();
@@ -1072,7 +1072,6 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                             MediaQuery.of(context).padding.top -
                             MediaQuery.sizeOf(context).width * 9 / 16,
                       ),
-                // SizedBox(child: Text("${videoController.androidFullscreen}")),
               ],
             );
           }),

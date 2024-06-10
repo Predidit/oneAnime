@@ -38,9 +38,9 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  flutter_modular: ^6.3.2
-  mobx: ^2.2.1
-  flutter_mobx: ^2.0.6+5
+  flutter_modular: ^6.3.4
+  mobx: ^2.3.3
+  flutter_mobx: ^2.2.1
   dio: ^5.0.0
   cookie_jar: ^4.0.8
   dio_cookie_manager: ^3.1.1
@@ -62,7 +62,7 @@ dependencies:
   media_kit_libs_video: ^1.0.4                   # Native video dependencies.
   audio_video_progress_bar: ^2.0.2
 
-  canvas_danmaku: ^0.1.4
+  canvas_danmaku: ^0.1.6
 
   auto_orientation: ^2.3.1
   flutter_volume_controller: ^1.3.1
@@ -83,7 +83,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
   build_runner: ^2.4.6
-  mobx_codegen: ^2.3.0
+  mobx_codegen: ^2.6.1
   hive_generator: ^2.0.0
   ffigen: ^11.0.0
 
