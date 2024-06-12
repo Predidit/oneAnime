@@ -3,10 +3,8 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
-import 'package:oneanime/opencc_generated_bindings.dart';
 import 'package:oneanime/request/list.dart';
 import 'package:oneanime/request/video.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
@@ -32,6 +30,7 @@ abstract class _PopularController with Store {
   String keyword = '';
 
   Future getAnimeList() async {
+    isLoadingMore = true;
     if (list.length >= 20) {
       cacheList.addAll(list.sublist(0, 20));
     } else {
@@ -67,7 +66,6 @@ abstract class _PopularController with Store {
         return;
       }
     });
-    // debugPrint('与本地数据库同步数据');
     updateData();
   }
 

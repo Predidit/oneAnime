@@ -1,21 +1,17 @@
-import 'dart:convert';
 import 'package:oneanime/request/api.dart';
 import 'package:oneanime/request/request.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:flutter/material.dart';
 import 'package:oneanime/bean/anime/anime_sesson.dart';
-import 'package:html/dom.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:oneanime/bean/anime/anime_schedule.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/timeline/timeline_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
-import 'package:oneanime/bean/danmaku/danmaku_module.dart';
 
 class ListRequest {
   static Future getAnimeList() async {
-    bool needFix = false;
     List<AnimeInfo> list = [];
     List<AnimeInfo> newList = [];
     final res = await Request().get(Api.animeList);
@@ -78,7 +74,6 @@ class ListRequest {
     debugPrint('时间表链接为 $link');
     final res = await Request().get(link);
     String resString = res.data;
-    // debugPrint('从服务器获得的全链接响应 $resString');
     try {
       var document = parse(resString);
       final tables = document.getElementsByTagName('table');

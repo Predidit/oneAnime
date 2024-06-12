@@ -31,7 +31,7 @@ class _PopularPageState extends State<PopularPage>
   @override
   void initState() {
     super.initState();
-    if (popularController.cacheList.length == 0) {
+    if (popularController.cacheList.isEmpty) {
       debugPrint('页面列表尝试重新加载');
       popularController.getAnimeList();
     }
@@ -108,9 +108,7 @@ class _PopularPageState extends State<PopularPage>
         onRefresh: () async {
           if (popularController.keyword == '' &&
               popularController.isLoadingMore == false) {
-            popularController.isLoadingMore == true;
             await popularController.getAnimeList();
-            popularController.isLoadingMore == false;
           }
         },
         child: Scaffold(
@@ -136,8 +134,7 @@ class _PopularPageState extends State<PopularPage>
                   onTap: () {
                     setState(() {
                       _focusNode.requestFocus();
-                      // 添加动效
-                      _controller.clear(); // 如果需要清空文本字段内容
+                      _controller.clear(); 
                     });
                   },
                   onChanged: (t) {
@@ -182,13 +179,11 @@ class _PopularPageState extends State<PopularPage>
                     ),
                     const Padding(
                       padding: EdgeInsets.only(
-                          left: 10.0), // Adjust padding as needed
+                          left: 10.0), 
                     ),
                     FloatingActionButton(
                       onPressed: () async {
-                        popularController.isLoadingMore == true;
                         await popularController.getAnimeList();
-                        popularController.isLoadingMore == false;
                         SmartDialog.showToast('列表更新完成');
                       },
                       child: const Icon(Icons.refresh),
@@ -212,11 +207,11 @@ class _PopularPageState extends State<PopularPage>
       return ListView.separated(
         controller: scrollController,
         separatorBuilder: (context, index) => const SizedBox(height: 8.0),
-        itemCount: popularController.cacheList.length == 0
+        itemCount: popularController.cacheList.isEmpty
             ? 1
             : popularController.cacheList.length,
         itemBuilder: (context, index) {
-          return popularController.cacheList.length != 0
+          return popularController.cacheList.isNotEmpty
               ? AnimeInfoCard(
                   info: popularController.cacheList[index],
                   index: index,
