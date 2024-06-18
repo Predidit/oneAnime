@@ -156,7 +156,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
             Future.delayed(
                     Duration(milliseconds: idx * 1000 ~/ danmakus.length))
                 .then((_) {
-              if (mounted && playerController.playing && videoController.danmakuOn) {
+              if (mounted && playerController.playing && videoController.danmakuOn && !videoController.isBuffering) {
                 danmakuController
                     .addDanmaku(DanmakuContentItem(danmakus[idx].m));
               }
