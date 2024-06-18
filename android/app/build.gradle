@@ -49,6 +49,12 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        packagingOptions {
+            pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+            pickFirst 'lib/armeabi-v8a/libc++_shared.so'
+            pickFirst 'lib/x86/libc++_shared.so'
+            pickFirst 'lib/x86_64/libc++_shared.so'
+        }
     }
 
     buildTypes {

@@ -57,9 +57,8 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   window_manager: ^0.3.8
 
-  media_kit: ^1.1.10                             # Primary package.
-  media_kit_video: ^1.2.4                        # For video rendering.
-  media_kit_libs_video: ^1.0.4                   # Native video dependencies.
+  video_player: ^2.8.7
+  fvp: ^0.19.0
   audio_video_progress_bar: ^2.0.2
 
   canvas_danmaku: ^0.1.6

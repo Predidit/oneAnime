@@ -784,7 +784,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                 // 自定义顶部组件
                                 (videoController.showPositioned ||
                                         !playerController
-                                            .mediaPlayer.state.playing)
+                                            .mediaPlayer.value.isPlaying)
                                     ? Positioned(
                                         top: 0,
                                         left: 0,
@@ -876,7 +876,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                                 // 自定义播放器底部组件
                                 (videoController.showPositioned ||
                                         !playerController
-                                            .mediaPlayer.state.playing)
+                                            .mediaPlayer.value.isPlaying)
                                     ? Positioned(
                                         bottom: 0,
                                         left: 0,
