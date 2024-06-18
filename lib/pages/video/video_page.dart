@@ -34,7 +34,8 @@ class VideoPage extends StatefulWidget {
   State<VideoPage> createState() => _VideoPageState();
 }
 
-class _VideoPageState extends State<VideoPage> with WindowListener, WidgetsBindingObserver {
+class _VideoPageState extends State<VideoPage>
+    with WindowListener, WidgetsBindingObserver {
   // var _key = new GlobalKey<ScaffoldState>();
   dynamic navigationBarState;
   Box setting = GStorage.setting;
@@ -47,6 +48,11 @@ class _VideoPageState extends State<VideoPage> with WindowListener, WidgetsBindi
 
   // 弹幕
   final _danmuKey = GlobalKey();
+  late bool _showStroke;
+  late double _opacity;
+  late int _duration;
+  late double _fontSize;
+  late double danmakuArea;
 
   Timer? hideTimer;
   Timer? playerTimer;
@@ -76,6 +82,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener, WidgetsBindi
     });
   }
 
+  /// 处理 Windows 重新前台
   @override
   void onWindowRestore() {
     danmakuController.clear();
@@ -108,6 +115,14 @@ class _VideoPageState extends State<VideoPage> with WindowListener, WidgetsBindi
   }
 
   void init() async {
+    // 弹幕设置
+    _showStroke = setting.get(SettingBoxKey.danmakuBorder, defaultValue: true);
+    _opacity = setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
+    _duration = setting.get(SettingBoxKey.danmakuDuration, defaultValue: 8);
+    _fontSize = setting.get(SettingBoxKey.danmakuFontSize,
+        defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
+    danmakuArea = setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
+    // 播放器初始化
     videoController.playerSpeed = 1.0;
     playerController.videoUrl = videoController.videoUrl;
     playerController.videoCookie = videoController.videoCookie;
@@ -414,18 +429,6 @@ class _VideoPageState extends State<VideoPage> with WindowListener, WidgetsBindi
         Platform.isWindows || Platform.isLinux || Platform.isMacOS
             ? Provider.of<SideNavigationBarState>(context, listen: false)
             : Provider.of<NavigationBarState>(context, listen: false);
-
-    // 弹幕设置
-    // bool _running = true;
-    bool _showStroke =
-        setting.get(SettingBoxKey.danmakuBorder, defaultValue: true);
-    double _opacity =
-        setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
-    int _duration = 8;
-    double _fontSize = setting.get(SettingBoxKey.danmakuFontSize,
-        defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
-    double danmakuArea =
-        setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
 
     return PopScope(
       // key: _key,
@@ -1026,8 +1029,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener, WidgetsBindi
                                                   : Icons.comments_disabled),
                                               onPressed: () {
                                                 if (videoController
-                                                        .danDanmakus.length ==
-                                                    0) {
+                                                    .danDanmakus.isEmpty) {
                                                   SmartDialog.showToast(
                                                       '当前剧集没有找到弹幕的说',
                                                       displayType:

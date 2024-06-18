@@ -21,6 +21,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
   Box setting = GStorage.setting;
   late dynamic defaultDanmakuArea;
   late dynamic defaultDanmakuOpacity;
+  late dynamic defaultDanmakuDuration;
   late dynamic defaultDanmakuFontSize;
   final PopularController popularController = Modular.get<PopularController>();
 
@@ -29,8 +30,12 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
     super.initState();
     defaultDanmakuArea =
         setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
-    defaultDanmakuOpacity = setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
-    defaultDanmakuFontSize = setting.get(SettingBoxKey.danmakuFontSize, defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
+    defaultDanmakuOpacity =
+        setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
+    defaultDanmakuDuration =
+        setting.get(SettingBoxKey.danmakuDuration, defaultValue: 8);
+    defaultDanmakuFontSize = setting.get(SettingBoxKey.danmakuFontSize,
+        defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
   }
 
   void onBackPressed(BuildContext context) {
@@ -48,6 +53,13 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
     await setting.put(SettingBoxKey.danmakuOpacity, i);
     setState(() {
       defaultDanmakuOpacity = i;
+    });
+  }
+
+  void updateDanmakuDuration(int i) async {
+    await setting.put(SettingBoxKey.danmakuDuration, i);
+    setState(() {
+      defaultDanmakuDuration = i;
     });
   }
 
@@ -168,7 +180,10 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                           ),
                           TextButton(
                             onPressed: () async {
-                              updateDanmakuFontSize((Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
+                              updateDanmakuFontSize(
+                                  (Platform.isIOS || Platform.isAndroid)
+                                      ? 16.0
+                                      : 25.0);
                               SmartDialog.dismiss();
                             },
                             child: const Text('默认设置'),
@@ -210,7 +225,8 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                             spacing: 8,
                             runSpacing: 2,
                             children: [
-                              for (final double i in danOpacityList) ...<Widget>[
+                              for (final double i
+                                  in danOpacityList) ...<Widget>[
                                 if (i == defaultDanmakuOpacity) ...<Widget>[
                                   FilledButton(
                                     onPressed: () async {
@@ -255,6 +271,83 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
               dense: false,
               title: const Text('弹幕不透明度'),
               subtitle: Text('$defaultDanmakuOpacity',
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.outline)),
+            ),
+            ListTile(
+              onTap: () async {
+                final List<int> danDurationList = [
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                ];
+                SmartDialog.show(
+                    useAnimation: false,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('弹幕时长'),
+                        content: StatefulBuilder(builder:
+                            (BuildContext context, StateSetter setState) {
+                          return Wrap(
+                            spacing: 8,
+                            runSpacing: 2,
+                            children: [
+                              for (final int i in danDurationList) ...<Widget>[
+                                if (i == defaultDanmakuOpacity) ...<Widget>[
+                                  FilledButton(
+                                    onPressed: () async {
+                                      updateDanmakuDuration(i);
+                                      SmartDialog.dismiss();
+                                    },
+                                    child: Text(i.toString()),
+                                  ),
+                                ] else ...[
+                                  FilledButton.tonal(
+                                    onPressed: () async {
+                                      updateDanmakuDuration(i);
+                                      SmartDialog.dismiss();
+                                    },
+                                    child: Text(i.toString()),
+                                  ),
+                                ]
+                              ]
+                            ],
+                          );
+                        }),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => SmartDialog.dismiss(),
+                            child: Text(
+                              '取消',
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.outline),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              updateDanmakuDuration(8);
+                              SmartDialog.dismiss();
+                            },
+                            child: const Text('默认设置'),
+                          ),
+                        ],
+                      );
+                    });
+              },
+              dense: false,
+              title: const Text('弹幕时长'),
+              subtitle: Text('$defaultDanmakuDuration',
                   style: Theme.of(context)
                       .textTheme
                       .labelMedium!

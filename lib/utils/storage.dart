@@ -72,6 +72,7 @@ class SettingBoxKey {
       danmakuScroll = 'danmakuScroll',
       danmakuBottom = 'danmakuBottom',
       danmakuArea = 'danmakuArea',
+      danmakuDuration = 'danmakuDuration',
       danmakuEnabledByDefault = 'danmakuEnabledByDefault',
       themeMode = 'themeMode',
       themeColor = 'themeColor',
