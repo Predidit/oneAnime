@@ -37,11 +37,11 @@ class _PlayerItemState extends State<PlayerItem> {
           return Expanded(
             child: playerController.dataStatus == 'loaded'
                 ? AspectRatio(
-                  aspectRatio: playerController.mediaPlayer.value.aspectRatio,
-                  child: VideoPlayer(
+                    aspectRatio: playerController.mediaPlayer.value.aspectRatio,
+                    child: VideoPlayer(
                       playerController.mediaPlayer,
                     ),
-                )
+                  )
                 : const Center(child: CircularProgressIndicator()),
           );
         }),

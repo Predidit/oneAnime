@@ -34,7 +34,7 @@ class VideoPage extends StatefulWidget {
   State<VideoPage> createState() => _VideoPageState();
 }
 
-class _VideoPageState extends State<VideoPage> with WindowListener {
+class _VideoPageState extends State<VideoPage> with WindowListener, WidgetsBindingObserver {
   // var _key = new GlobalKey<ScaffoldState>();
   dynamic navigationBarState;
   Box setting = GStorage.setting;
@@ -81,9 +81,18 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
     danmakuController.clear();
   }
 
+  /// 处理 Android/iOS 应用后台或熄屏
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      playerController.pause();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNode);
     });
@@ -122,6 +131,7 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
   @override
   void dispose() {
     _focusNode.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     try {
       playerTimer?.cancel();
     } catch (e) {
@@ -156,7 +166,10 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
             Future.delayed(
                     Duration(milliseconds: idx * 1000 ~/ danmakus.length))
                 .then((_) {
-              if (mounted && playerController.playing && videoController.danmakuOn && !videoController.isBuffering) {
+              if (mounted &&
+                  playerController.playing &&
+                  videoController.danmakuOn &&
+                  !videoController.isBuffering) {
                 danmakuController
                     .addDanmaku(DanmakuContentItem(danmakus[idx].m));
               }
@@ -1064,7 +1077,6 @@ class _VideoPageState extends State<VideoPage> with WindowListener {
                     ),
                   ),
                 ),
-
                 videoController.androidFullscreen
                     ? Container()
                     : BangumiPanel(
