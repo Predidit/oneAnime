@@ -154,6 +154,9 @@ class _VideoPageState extends State<VideoPage>
     }
     historyController.updateHistory(
         videoController.link, videoController.currentPosition.inSeconds);
+    videoController.playing = false;
+    videoController.currentPosition = Duration.zero;
+    videoController.duration = Duration.zero;
     if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       windowManager.setAlwaysOnTop(false);
       windowManager.removeListener(this);
