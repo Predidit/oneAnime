@@ -1085,9 +1085,10 @@ class _VideoPageState extends State<VideoPage>
                 videoController.androidFullscreen
                     ? Container()
                     : BangumiPanel(
-                        sheetHeight: MediaQuery.sizeOf(context).height -
-                            MediaQuery.of(context).padding.top -
-                            MediaQuery.sizeOf(context).width * 9 / 16,
+                        title: videoController.title,
+                        episodeLength: videoController.token.length,
+                        currentEpisode: videoController.episode,
+                        onChangeEpisode: videoController.changeEpisode,
                       ),
               ],
             );
