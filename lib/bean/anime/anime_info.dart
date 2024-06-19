@@ -1,7 +1,6 @@
 import 'package:hive/hive.dart';
 
 /// This class parses a Node and stores anime info like anime name, anime link, total episodes, year, season and subtitle group
-@HiveType(typeId: 0)
 class AnimeInfo extends HiveObject {
   @HiveField(0)
   int? link;
