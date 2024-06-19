@@ -5,7 +5,6 @@ import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
-import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/pages/menu/menu.dart';
@@ -15,7 +14,7 @@ import 'package:provider/provider.dart';
 
 /// Takes an AnimeInfo object and render it to a card
 class AnimeInfoCard extends StatefulWidget {
-  AnimeInfoCard({
+  const AnimeInfoCard({
     Key? key,
     required this.info,
     required this.index,
@@ -26,7 +25,7 @@ class AnimeInfoCard extends StatefulWidget {
   final int index;
   final String type;
   @override
-  _AnimeInfoCardState createState() => _AnimeInfoCardState();
+  State<AnimeInfoCard> createState() => _AnimeInfoCardState();
 }
 
 class _AnimeInfoCardState extends State<AnimeInfoCard> {
@@ -43,7 +42,6 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
 
     return Card(
       margin: EdgeInsets.zero,
-      // color: Colors.white,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
@@ -51,24 +49,27 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
       child: InkWell(
         onTap: () async {
           SmartDialog.showLoading(msg: '获取中');
-          AnimeHistory? history = historyController.lookupHistory(widget.info.link ?? 0);
+          AnimeHistory? history =
+              historyController.lookupHistory(widget.info.link ?? 0);
           if (history == null) {
             historyController.updateHistory(widget.info.link ?? 0, 0);
           } else {
-            historyController.updateHistory(widget.info.link ?? 0, history.offset ?? 0);
+            historyController.updateHistory(
+                widget.info.link ?? 0, history.offset ?? 0);
           }
           try {
             debugPrint(
-                'AnimeButton被按下 对应链接为 https://anime1.me/?cat=${widget.info.link}');
+                'AnimeButton is pressed. https://anime1.me/?cat=${widget.info.link}');
             if (widget.info.progress != 1) {
               await popularController.getVideoLink(
                   'https://anime1.me/?cat=${widget.info.link}',
                   episode: widget.info.progress ?? 1);
             } else {
               await popularController
-                  .getVideoLink('https://anime1.me/?cat=${widget.info.link}'); 
+                  .getVideoLink('https://anime1.me/?cat=${widget.info.link}');
             }
-            debugPrint('链接解析成功 ${videoController.videoUrl}');
+            debugPrint(
+                'VideoSource resolved success ${videoController.videoUrl}');
             await popularController.getPageTitle(widget.info.name ?? '');
           } catch (e) {
             SmartDialog.dismiss();
@@ -82,19 +83,23 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
           videoController.link = widget.info.link!;
           videoController.offset = history?.offset ?? 0;
           videoController.follow = widget.info.follow ?? false;
-          navigationBarState = Platform.isWindows || Platform.isLinux || Platform.isMacOS
-              ? Provider.of<SideNavigationBarState>(context, listen: false)
-              : Provider.of<NavigationBarState>(context, listen: false);
+          navigationBarState =
+              Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                  ? Provider.of<SideNavigationBarState>(context, listen: false)
+                  : Provider.of<NavigationBarState>(context, listen: false);
           navigationBarState.hideNavigate();
           Modular.to.navigate('/tab/video/');
         },
         child: Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               SizedBox(
-                width: Platform.isWindows || Platform.isLinux || Platform.isMacOS ? 800 : 200,
+                width:
+                    Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                        ? 800
+                        : 200,
                 child: Text(
                   widget.info.name ?? '',
                   maxLines: 2,
@@ -102,11 +107,10 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
-                    // color: Colors.black
                   ),
                 ),
               ),
-              SizedBox(height: 8.0),
+              const SizedBox(height: 8.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -189,7 +193,8 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                           ? IconButton(
                               icon: const Icon(Icons.delete),
                               onPressed: () {
-                                debugPrint('尝试删除观看记录 ${widget.info.link}');
+                                debugPrint(
+                                    'Delete history ${widget.info.link}');
                                 historyController
                                     .deleteHistory(widget.info.link ?? 0);
                               },
@@ -213,7 +218,8 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                               follow = !follow;
                             });
                             SmartDialog.showToast(
-                                follow ? '自己追的番要好好看完哦' : '取消追番成功', displayType: SmartToastType.last);
+                                follow ? '自己追的番要好好看完哦' : '取消追番成功',
+                                displayType: SmartToastType.last);
                           }
                         },
                         splashColor: Theme.of(context)
