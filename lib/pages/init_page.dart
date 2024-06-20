@@ -1,16 +1,13 @@
 import 'dart:io';
 import 'dart:ffi';
-import 'package:ffi/ffi.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:hive/hive.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:oneanime/utils/storage.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/opencc_generated_bindings.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
-import 'package:adaptive_theme/adaptive_theme.dart';
 
 class InitPage extends StatefulWidget {
   const InitPage({super.key});

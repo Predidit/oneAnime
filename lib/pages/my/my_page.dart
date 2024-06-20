@@ -26,7 +26,6 @@ class _MyPageState extends State<MyPage> {
   late dynamic defaultDanmakuArea;
   late dynamic defaultThemeMode;
   late dynamic defaultThemeColor;
-  final _mineController = Modular.get<MyController>();
   final PopularController popularController = Modular.get<PopularController>();
 
   @override
