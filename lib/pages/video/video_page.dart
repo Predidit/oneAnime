@@ -26,6 +26,7 @@ import 'package:hive/hive.dart';
 import 'package:oneanime/bean/appbar/drag_to_move_bar.dart' as dtb;
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/utils/utils.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -103,6 +104,7 @@ class _VideoPageState extends State<VideoPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNode);
     });
+    WakelockPlus.enable();
     videoController.danmakuOn =
         setting.get(SettingBoxKey.danmakuEnabledByDefault, defaultValue: false);
     bool alwaysOntop =
@@ -146,6 +148,7 @@ class _VideoPageState extends State<VideoPage>
   @override
   void dispose() {
     _focusNode.dispose();
+    WakelockPlus.disable();
     WidgetsBinding.instance.removeObserver(this);
     try {
       playerTimer?.cancel();
