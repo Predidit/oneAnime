@@ -100,7 +100,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                 width:
                     Platform.isWindows || Platform.isLinux || Platform.isMacOS
                         ? 800
-                        : 200,
+                        : 300,
                 child: Text(
                   widget.info.name ?? '',
                   maxLines: 2,
