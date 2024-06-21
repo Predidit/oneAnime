@@ -42,6 +42,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
 
     return Card(
       margin: EdgeInsets.zero,
+      color: Colors.transparent,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
