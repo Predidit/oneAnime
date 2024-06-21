@@ -8,7 +8,6 @@ import 'package:oneanime/request/request.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:flutter/services.dart';
 import 'package:oneanime/pages/error/error.dart';
-import 'package:fvp/fvp.dart' as fvp;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,9 +47,6 @@ void main() async {
         }));
     return;
   }
-  fvp.registerWith(options: {
-    'platforms': ['windows', 'linux']
-  });
   Request();
   await Request.setCookie();
   runApp(ModularApp(

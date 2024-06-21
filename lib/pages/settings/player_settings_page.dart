@@ -50,6 +50,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
                 title: '硬件解码',
                 setKey: SettingBoxKey.HAenable,
                 defaultVal: true,
+                needReboot: true,
               ),
             ),
             InkWell(

@@ -3,6 +3,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fvp/fvp.dart' as fvp;
 import 'package:hive/hive.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:oneanime/utils/storage.dart';
@@ -19,6 +20,7 @@ class InitPage extends StatefulWidget {
 class _InitPageState extends State<InitPage> {
   Box setting = GStorage.setting;
   late bool autoUpdate;
+  late bool HAenable;
   final MyController _mineController = Modular.get<MyController>();
 
   @override
@@ -29,17 +31,28 @@ class _InitPageState extends State<InitPage> {
 
   _init() {
     openccInit();
-    autoUpdate =
-        setting.get(SettingBoxKey.autoUpdate, defaultValue: false);
+    autoUpdate = setting.get(SettingBoxKey.autoUpdate, defaultValue: false);
     if (autoUpdate) {
       update();
+    }
+    /// mdk初始化
+    HAenable = setting.get(SettingBoxKey.autoUpdate, defaultValue: true);
+    if (HAenable) {
+      fvp.registerWith(options: {
+        'platforms': ['windows', 'linux']
+      });
+    } else {
+      fvp.registerWith(options: {
+        'video.decoders': ['FFmpeg'],
+      });
     }
     Modular.to.navigate('/tab/popular/');
   }
 
   void openccInit() {
     if (Platform.isWindows) {
-      final PopularController popularController = Modular.get<PopularController>();
+      final PopularController popularController =
+          Modular.get<PopularController>();
       if (popularController.libopencc == '') {
         String fullPath = "opencc.dll";
         try {
@@ -53,7 +66,8 @@ class _InitPageState extends State<InitPage> {
       }
     }
     if (Platform.isLinux) {
-      final PopularController popularController = Modular.get<PopularController>();
+      final PopularController popularController =
+          Modular.get<PopularController>();
       if (popularController.libopencc == '') {
         String fullPath = "lib/opencc.so";
         try {
