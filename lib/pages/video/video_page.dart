@@ -450,6 +450,7 @@ class _VideoPageState extends State<VideoPage>
                 Container(
                   color: Colors.black,
                   child: MouseRegion(
+                    cursor: (videoController.androidFullscreen && !videoController.showPositioned) ? SystemMouseCursors.none : SystemMouseCursors.basic,
                     onHover: (_) {
                       _handleTap();
                     },
