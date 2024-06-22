@@ -83,6 +83,28 @@ class _VideoPageState extends State<VideoPage>
     });
   }
 
+  void _handleFullscreen() {
+    if (videoController.androidFullscreen) {
+      try {
+        danmakuController.clear();
+      } catch (_) {}
+      playerController.exitFullScreen();
+    } else {
+      playerController.enterFullScreen();
+    }
+    videoController.androidFullscreen = !videoController.androidFullscreen;
+  }
+
+  void _handleDanmaku() {
+    if (videoController.danDanmakus.isEmpty) {
+      SmartDialog.showToast('当前剧集没有找到弹幕的说', displayType: SmartToastType.last);
+      return;
+    }
+    danmakuController.clear();
+    videoController.danmakuOn = !videoController.danmakuOn;
+    debugPrint('弹幕开关变更为 ${videoController.danmakuOn}');
+  }
+
   /// 处理 Windows 重新前台
   @override
   void onWindowRestore() {
@@ -105,8 +127,6 @@ class _VideoPageState extends State<VideoPage>
       FocusScope.of(context).requestFocus(_focusNode);
     });
     WakelockPlus.enable();
-    videoController.danmakuOn =
-        setting.get(SettingBoxKey.danmakuEnabledByDefault, defaultValue: false);
     bool alwaysOntop =
         setting.get(SettingBoxKey.alwaysOntop, defaultValue: true);
     if (alwaysOntop &&
@@ -118,6 +138,8 @@ class _VideoPageState extends State<VideoPage>
 
   void init() async {
     // 弹幕设置
+    videoController.danmakuOn =
+        setting.get(SettingBoxKey.danmakuEnabledByDefault, defaultValue: false);
     _showStroke = setting.get(SettingBoxKey.danmakuBorder, defaultValue: true);
     _opacity = setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
     _duration = setting.get(SettingBoxKey.danmakuDuration, defaultValue: 8);
@@ -450,7 +472,10 @@ class _VideoPageState extends State<VideoPage>
                 Container(
                   color: Colors.black,
                   child: MouseRegion(
-                    cursor: (videoController.androidFullscreen && !videoController.showPositioned) ? SystemMouseCursors.none : SystemMouseCursors.basic,
+                    cursor: (videoController.androidFullscreen &&
+                            !videoController.showPositioned)
+                        ? SystemMouseCursors.none
+                        : SystemMouseCursors.basic,
                     onHover: (_) {
                       _handleTap();
                     },
@@ -540,6 +565,15 @@ class _VideoPageState extends State<VideoPage>
                                     videoController.androidFullscreen =
                                         !videoController.androidFullscreen;
                                   }
+                                }
+                                // F键被按下
+                                if (event.logicalKey ==
+                                    LogicalKeyboardKey.keyF) {
+                                  _handleFullscreen();
+                                }
+                                // D键盘被按下
+                                if (event.logicalKey == LogicalKeyboardKey.keyD) {
+                                  _handleDanmaku();
                                 }
                               }
                             },
@@ -1035,19 +1069,7 @@ class _VideoPageState extends State<VideoPage>
                                                   ? Icons.comment
                                                   : Icons.comments_disabled),
                                               onPressed: () {
-                                                if (videoController
-                                                    .danDanmakus.isEmpty) {
-                                                  SmartDialog.showToast(
-                                                      '当前剧集没有找到弹幕的说',
-                                                      displayType:
-                                                          SmartToastType.last);
-                                                  return;
-                                                }
-                                                danmakuController.clear();
-                                                videoController.danmakuOn =
-                                                    !videoController.danmakuOn;
-                                                debugPrint(
-                                                    '弹幕开关变更为 ${videoController.danmakuOn}');
+                                                _handleDanmaku();
                                               },
                                             ),
                                             IconButton(
@@ -1057,21 +1079,7 @@ class _VideoPageState extends State<VideoPage>
                                                   ? Icons.fullscreen_exit
                                                   : Icons.fullscreen),
                                               onPressed: () {
-                                                if (videoController
-                                                    .androidFullscreen) {
-                                                  try {
-                                                    danmakuController.clear();
-                                                  } catch (_) {}
-                                                  playerController
-                                                      .exitFullScreen();
-                                                } else {
-                                                  playerController
-                                                      .enterFullScreen();
-                                                }
-                                                videoController
-                                                        .androidFullscreen =
-                                                    !videoController
-                                                        .androidFullscreen;
+                                                _handleFullscreen();
                                               },
                                             ),
                                           ],
