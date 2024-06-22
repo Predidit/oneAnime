@@ -83,6 +83,20 @@ class _VideoPageState extends State<VideoPage>
     });
   }
 
+  void _handleShortSeek() {
+    try {
+      if (playerTimer != null) {
+        playerTimer!.cancel();
+      }
+      videoController.currentPosition =
+          Duration(seconds: videoController.currentPosition.inSeconds + 10);
+      playerController.seek(videoController.currentPosition);
+      playerTimer = getPlayerTimer();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   void _handleFullscreen() {
     if (videoController.androidFullscreen) {
       try {
@@ -515,20 +529,7 @@ class _VideoPageState extends State<VideoPage>
                                 if (event.logicalKey ==
                                     LogicalKeyboardKey.arrowRight) {
                                   debugPrint('右方向键被按下');
-                                  try {
-                                    if (playerTimer != null) {
-                                      playerTimer!.cancel();
-                                    }
-                                    videoController.currentPosition = Duration(
-                                        seconds: videoController
-                                                .currentPosition.inSeconds +
-                                            10);
-                                    playerController
-                                        .seek(videoController.currentPosition);
-                                    playerTimer = getPlayerTimer();
-                                  } catch (e) {
-                                    debugPrint(e.toString());
-                                  }
+                                  _handleShortSeek();
                                 }
                                 // 左方向键被按下
                                 if (event.logicalKey ==
@@ -572,7 +573,8 @@ class _VideoPageState extends State<VideoPage>
                                   _handleFullscreen();
                                 }
                                 // D键盘被按下
-                                if (event.logicalKey == LogicalKeyboardKey.keyD) {
+                                if (event.logicalKey ==
+                                    LogicalKeyboardKey.keyD) {
                                   _handleDanmaku();
                                 }
                               }
@@ -624,93 +626,100 @@ class _VideoPageState extends State<VideoPage>
                                             Platform.isMacOS
                                         ? Container()
                                         : GestureDetector(
+                                            onDoubleTap: _handleShortSeek,
                                             onHorizontalDragUpdate:
                                                 (DragUpdateDetails details) {
-                                            videoController.showPosition = true;
-                                            if (playerTimer != null) {
-                                              // debugPrint('检测到拖动, 定时器取消');
-                                              playerTimer!.cancel();
-                                            }
-                                            playerController.pause();
-                                            final double scale = 180000 /
-                                                MediaQuery.sizeOf(context)
-                                                    .width;
-                                            videoController.currentPosition =
-                                                Duration(
-                                                    milliseconds: videoController
-                                                            .currentPosition
-                                                            .inMilliseconds +
-                                                        (details.delta.dx *
-                                                                scale)
-                                                            .round());
-                                          }, onHorizontalDragEnd:
+                                              videoController.showPosition =
+                                                  true;
+                                              if (playerTimer != null) {
+                                                // debugPrint('检测到拖动, 定时器取消');
+                                                playerTimer!.cancel();
+                                              }
+                                              playerController.pause();
+                                              final double scale = 180000 /
+                                                  MediaQuery.sizeOf(context)
+                                                      .width;
+                                              videoController.currentPosition =
+                                                  Duration(
+                                                      milliseconds: videoController
+                                                              .currentPosition
+                                                              .inMilliseconds +
+                                                          (details.delta.dx *
+                                                                  scale)
+                                                              .round());
+                                            },
+                                            onHorizontalDragEnd:
                                                 (DragEndDetails details) {
-                                            playerController.seek(
-                                                videoController
-                                                    .currentPosition);
-                                            playerController.play();
-                                            playerTimer = getPlayerTimer();
-                                            videoController.showPosition =
-                                                false;
-                                          }, onVerticalDragUpdate:
+                                              playerController.seek(
+                                                  videoController
+                                                      .currentPosition);
+                                              playerController.play();
+                                              playerTimer = getPlayerTimer();
+                                              videoController.showPosition =
+                                                  false;
+                                            },
+                                            onVerticalDragUpdate:
                                                 (DragUpdateDetails
                                                     details) async {
-                                            final double totalWidth =
-                                                MediaQuery.sizeOf(context)
-                                                    .width;
-                                            final double totalHeight =
-                                                MediaQuery.sizeOf(context)
-                                                    .height;
-                                            final double tapPosition =
-                                                details.localPosition.dx;
-                                            final double sectionWidth =
-                                                totalWidth / 2;
-                                            final double delta =
-                                                details.delta.dy;
+                                              final double totalWidth =
+                                                  MediaQuery.sizeOf(context)
+                                                      .width;
+                                              final double totalHeight =
+                                                  MediaQuery.sizeOf(context)
+                                                      .height;
+                                              final double tapPosition =
+                                                  details.localPosition.dx;
+                                              final double sectionWidth =
+                                                  totalWidth / 2;
+                                              final double delta =
+                                                  details.delta.dy;
 
-                                            /// 非全屏时禁用
-                                            if (!videoController
-                                                .androidFullscreen) {
-                                              return;
-                                            }
-                                            if (tapPosition < sectionWidth) {
-                                              // 左边区域
-                                              videoController.showBrightness =
-                                                  true;
-                                              try {
-                                                videoController.brightness =
-                                                    await ScreenBrightness()
-                                                        .current;
-                                              } catch (e) {
-                                                debugPrint(e.toString());
+                                              /// 非全屏时禁用
+                                              if (!videoController
+                                                  .androidFullscreen) {
+                                                return;
                                               }
-                                              final double level =
-                                                  (totalHeight) * 3;
-                                              final double brightness =
-                                                  videoController.brightness -
-                                                      delta / level;
-                                              final double result =
-                                                  brightness.clamp(0.0, 1.0);
-                                              setBrightness(result);
-                                            } else {
-                                              // 右边区域
-                                              videoController.showVolume = true;
-                                              final double level =
-                                                  (totalHeight) * 3;
-                                              final double volume =
-                                                  videoController.volume -
-                                                      delta / level;
-                                              final double result =
-                                                  volume.clamp(0.0, 1.0);
-                                              setVolume(result);
-                                              videoController.volume = result;
-                                            }
-                                          }, onVerticalDragEnd:
+                                              if (tapPosition < sectionWidth) {
+                                                // 左边区域
+                                                videoController.showBrightness =
+                                                    true;
+                                                try {
+                                                  videoController.brightness =
+                                                      await ScreenBrightness()
+                                                          .current;
+                                                } catch (e) {
+                                                  debugPrint(e.toString());
+                                                }
+                                                final double level =
+                                                    (totalHeight) * 3;
+                                                final double brightness =
+                                                    videoController.brightness -
+                                                        delta / level;
+                                                final double result =
+                                                    brightness.clamp(0.0, 1.0);
+                                                setBrightness(result);
+                                              } else {
+                                                // 右边区域
+                                                videoController.showVolume =
+                                                    true;
+                                                final double level =
+                                                    (totalHeight) * 3;
+                                                final double volume =
+                                                    videoController.volume -
+                                                        delta / level;
+                                                final double result =
+                                                    volume.clamp(0.0, 1.0);
+                                                setVolume(result);
+                                                videoController.volume = result;
+                                              }
+                                            },
+                                            onVerticalDragEnd:
                                                 (DragEndDetails details) {
-                                            videoController.showBrightness =
-                                                false;
-                                            videoController.showVolume = false;
-                                          })),
+                                              videoController.showBrightness =
+                                                  false;
+                                              videoController.showVolume =
+                                                  false;
+                                            })),
                                 // 顶部进度条
                                 Positioned(
                                     top: 25,
