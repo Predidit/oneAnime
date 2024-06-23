@@ -145,10 +145,39 @@
               name: linux_outputs
               path: oneAnime_linux_*.tar.gz
 
+      flutter-build-macos:
+        name: "Release for Macos"
+        runs-on: "macos-latest"
+        permissions: write-all
+
+        steps:
+          - name: Clone repository
+            uses: actions/checkout@v4
+          - name: Extract tag name
+            run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          - name: Echo build progress
+            run: echo "oneAnime_macos_${{ env.tag }}.dmg build progress"
+          - name: Set up Flutter
+            uses: subosito/flutter-action@v2
+            with:
+              channel: stable
+              flutter-version-file: pubspec.yaml
+          - run: flutter pub get
+          - run: flutter build macos --release
+          - name: Create DMG
+            run: |
+              mkdir release
+              hdiutil create -format UDZO -srcfolder build/macos/Build/Products/Release/oneanime.app -volname oneanime oneAnime_macos_${{ env.tag }}.dmg
+          - name: Upload MacOS build
+            uses: actions/upload-artifact@v4
+            with:
+              name: macos_outputs
+              path: oneAnime_macos_*.dmg
+
       release:
         name: "Release"
         runs-on: "ubuntu-latest"
-        needs: [flutter-build-windows, flutter-build-android, flutter-build-linux] 
+        needs: [flutter-build-windows, flutter-build-android, flutter-build-linux, flutter-build-macos] 
         permissions: write-all
         steps:
           - name: Clone repository
@@ -184,6 +213,16 @@
             run: ls -l linux_outputs   
           - name: Copy linux build file to root
             run: cp linux_outputs/* oneAnime_linux_${{ env.tag }}.tar.gz
+
+          - name: Download macos build file
+            uses: actions/download-artifact@v4
+            with:
+              name: macos_outputs
+              path: macos_outputs  
+          - name: List files in macos_outputs directory
+            run: ls -l macos_outputs   
+          - name: Copy macos build file to root
+            run: cp macos_outputs/* oneAnime_macos_${{ env.tag }}.dmg
 
           - name: Download android build file
             uses: actions/download-artifact@v4
@@ -221,4 +260,5 @@
               files: |
                 build/signed/*.apk
                 oneAnime_windows_*.zip
+                oneAnime_macos_*.dmg
                 oneAnime_linux_*.tar.gz
