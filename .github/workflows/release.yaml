@@ -165,9 +165,7 @@
           - run: flutter pub get
           - run: flutter build macos --release
           - name: Create DMG
-            run: |
-              mkdir release
-              hdiutil create -format UDZO -srcfolder build/macos/Build/Products/Release/oneanime.app -volname oneanime oneAnime_macos_${{ env.tag }}.dmg
+            run: hdiutil create -format UDZO -srcfolder build/macos/Build/Products/Release/oneanime.app -volname oneanime oneAnime_macos_${{ env.tag }}.dmg
           - name: Upload MacOS build
             uses: actions/upload-artifact@v4
             with:
