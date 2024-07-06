@@ -105,7 +105,7 @@ class DanmakuRequest {
     // Bangumi API 文档要求的UA格式
     var httpHeaders = {
       'user-agent':
-          'Predidit/oneAnime/1.1.2 (Android) (https://github.com/Predidit/oneAnime)',
+          'Predidit/oneAnime/${Api.version} (Android) (https://github.com/Predidit/oneAnime)',
       'referer': '',
     };
     Map<String, String> keywordMap = {
