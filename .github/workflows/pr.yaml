@@ -1,0 +1,146 @@
+---
+    name: "PR workflow"
+
+    on:
+      pull_request:
+        types: [opened, synchronize, reopened]
+    
+    jobs:
+      flutter-build-android:
+        name: "Release for android"
+        runs-on: "ubuntu-latest" 
+        permissions: write-all
+        steps:
+          - name: Clone repository
+            uses: actions/checkout@v4
+          - name: Install dependencies
+            run: |
+              sudo apt-get update
+              sudo apt-get install -y clang cmake libgtk-3-dev ninja-build libayatana-appindicator3-dev mpv libmpv-dev libasound2-dev
+            shell: bash
+          - name: Set up JDK 17
+            uses: actions/setup-java@v3
+            with:
+              java-version: '17'
+              distribution: 'temurin'          
+          - name: Set up Flutter
+            uses: subosito/flutter-action@v2
+            with:
+              channel: stable
+              flutter-version-file: pubspec.yaml
+          - name: Get Flutter dependencies
+            run: flutter pub get
+            shell: bash
+          - name: Build Flutter for Android
+            run: flutter build apk --split-per-abi
+            shell: bash
+          - name: Package android build output
+            run: cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk oneAnime_android_canary.apk
+            shell: bash
+
+          - name: Upload android outputs
+            uses: actions/upload-artifact@v4
+            with:
+              name: android_outputs
+              path: oneAnime_android_*.apk
+
+      flutter-build-windows:
+        name: "Release for windows"
+        runs-on: "windows-latest"
+        permissions: write-all
+    
+        steps:
+          - name: Clone repository
+            uses: actions/checkout@v4
+          - run: choco install yq
+          - name: Set up Flutter
+            uses: subosito/flutter-action@v2
+            with:
+              channel: stable
+              flutter-version-file: pubspec.yaml
+          - name: Set up Java
+            uses: actions/setup-java@v4
+            with:
+              distribution: 'temurin'
+              java-version: '18'
+          - run: flutter pub get
+          - run: flutter build windows   
+          - name: Download OpenCC Assets
+            uses: dsaltares/fetch-gh-release-asset@master
+            with:
+              repo: 'Predidit/open_chinese_convert_bridge'
+              version: 'tags/1.0.0'
+              file: 'opencc_windows.zip'
+              token: ${{ secrets.GITHUB_TOKEN }}
+          - run: Expand-Archive -LiteralPath opencc_windows.zip -DestinationPath build/windows/x64/runner/Release
+          - run: Compress-Archive build/windows/x64/runner/Release/* oneAnime_windows_canary.zip
+          - name: Upload windows outputs
+            uses: actions/upload-artifact@v4
+            with:
+              name: windows_outputs
+              path: |
+                oneAnime_windows_*.zip
+
+      flutter-build-linux:
+        name: "Release for Linux"
+        runs-on: "ubuntu-latest" 
+        permissions: write-all
+        steps:
+          - name: Clone repository
+            uses: actions/checkout@v4
+          - name: Install dependencies
+            run: |
+              sudo apt-get update
+              sudo apt-get install -y clang cmake libgtk-3-dev ninja-build libayatana-appindicator3-dev mpv unzip libmpv-dev libasound2-dev
+            shell: bash
+          - name: Set up Flutter
+            uses: subosito/flutter-action@v2
+            with:
+              channel: stable
+              flutter-version-file: pubspec.yaml
+          - name: Get Flutter dependencies
+            run: flutter pub get
+            shell: bash
+          - name: Build Flutter for Linux
+            run: flutter build linux
+            shell: bash
+          - name: Download OpenCC Assets
+            uses: dsaltares/fetch-gh-release-asset@master
+            with:
+              repo: 'Predidit/open_chinese_convert_bridge'
+              version: 'tags/1.0.0'
+              file: 'opencc_linux.zip'
+              token: ${{ secrets.GITHUB_TOKEN }}
+          - run: unzip opencc_linux.zip -d build/linux/x64/release/bundle/lib
+          - name: Package linux build output
+            run: tar -zcvf oneAnime_linux_canary.tar.gz -C build/linux/x64/release/bundle .
+            shell: bash
+
+          - name: Upload linux outputs
+            uses: actions/upload-artifact@v4
+            with:
+              name: linux_outputs
+              path: oneAnime_linux_*.tar.gz
+
+      flutter-build-macos:
+        name: "Release for Macos"
+        runs-on: "macos-latest"
+        permissions: write-all
+
+        steps:
+          - name: Clone repository
+            uses: actions/checkout@v4
+          - name: Set up Flutter
+            uses: subosito/flutter-action@v2
+            with:
+              channel: stable
+              flutter-version-file: pubspec.yaml
+          - run: flutter pub get
+          - run: flutter build macos --release
+          - name: Create DMG
+            run: hdiutil create -format UDZO -srcfolder build/macos/Build/Products/Release/oneanime.app -volname oneanime oneAnime_macos_canary.dmg
+          - name: Upload MacOS build
+            uses: actions/upload-artifact@v4
+            with:
+              name: macos_outputs
+              path: oneAnime_macos_*.dmg
