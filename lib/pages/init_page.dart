@@ -36,7 +36,7 @@ class _InitPageState extends State<InitPage> {
       update();
     }
     /// mdk初始化
-    HAenable = setting.get(SettingBoxKey.autoUpdate, defaultValue: true);
+    HAenable = setting.get(SettingBoxKey.HAenable, defaultValue: true);
     if (HAenable) {
       fvp.registerWith(options: {
         'platforms': ['windows', 'linux']
