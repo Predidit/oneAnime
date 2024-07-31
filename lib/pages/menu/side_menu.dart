@@ -56,7 +56,7 @@ class _SideMenu extends State<SideMenu> {
                     groupAlignment: 1.0,
                     labelType: NavigationRailLabelType.selected,
                     leading: Padding(
-                      padding: const EdgeInsets.only(top: 32.0), // 增加顶部内边距
+                      padding: const EdgeInsets.only(top: 20.0), // 增加顶部内边距
                       child: FloatingActionButton(
                         elevation: 0,
                         onPressed: () {
