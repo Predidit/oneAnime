@@ -1,8 +1,45 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:oneanime/request/api.dart';
+import 'package:flutter/services.dart';
+import 'package:screen_pixel/screen_pixel.dart';
 
 class Utils {
+  static Future<bool> isLowResolution() async {
+    try {
+      Map<String, double>? screenInfo = await getScreenInfo();
+      if (screenInfo != null) {
+        if (screenInfo['height']! / screenInfo['ratio']! < 900) {
+          return true;
+        }
+      }
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static Future<Map<String, double>?> getScreenInfo() async {
+    final screenPixelPlugin = ScreenPixel();
+    Map<String, double>? screenResolution;
+    final MediaQueryData mediaQuery = MediaQueryData.fromView(
+        WidgetsBinding.instance.platformDispatcher.views.first);
+    final double screenRatio = mediaQuery.devicePixelRatio;
+    Map<String, double>? screenInfo = {};
+
+    try {
+      screenResolution = await screenPixelPlugin.getResolution();
+      screenInfo = {
+        'width': screenResolution['width']!,
+        'height': screenResolution['height']!,
+        'ratio': screenRatio
+      };
+    } on PlatformException {
+      screenInfo = null;
+    }
+    return screenInfo;
+  }
+
   static videoCookieC(List<String> baseCookies) {
     String finalCookie = '';
     String baseCookieString = baseCookies.join('; ');

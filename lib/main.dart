@@ -7,16 +7,17 @@ import 'package:oneanime/app_widget.dart';
 import 'package:oneanime/request/request.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:flutter/services.dart';
+import 'package:oneanime/utils/utils.dart';
 import 'package:oneanime/pages/error/error.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await windowManager.ensureInitialized();
-    WindowOptions windowOptions = const WindowOptions(
-      size: Size(1280, 800),
+    bool isLowResolution = await Utils.isLowResolution();
+    WindowOptions windowOptions = WindowOptions(
+      size: isLowResolution ? const Size(800, 540) : const Size(1280, 800),
       center: true,
-      // backgroundColor: Colors.white,
       skipTaskbar: false,
       titleBarStyle: TitleBarStyle.hidden,
     );
@@ -24,8 +25,6 @@ void main() async {
       await windowManager.show();
       await windowManager.focus();
     });
-    // windowManager.setMaximizable(false);
-    // windowManager.setResizable(false);
   }
   if (Platform.isAndroid || Platform.isIOS) {
     // 小白条、导航栏沉浸
