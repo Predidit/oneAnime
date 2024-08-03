@@ -50,6 +50,12 @@ class _VideoPageState extends State<VideoPage>
   late double _fontSize;
   late double danmakuArea;
 
+  // 界面管理
+  bool showPositioned = false;
+  bool showPosition = false;
+  bool showBrightness = false;
+  bool showVolume = false;
+
   Timer? hideTimer;
   Timer? playerTimer;
   Timer? mouseScrollerTimer;
@@ -57,25 +63,37 @@ class _VideoPageState extends State<VideoPage>
   bool isPopping = false;
 
   void _handleTap() {
-    videoController.showPositioned = true;
+    setState(() {
+      showPositioned = true;
+    });
     if (hideTimer != null) {
       hideTimer!.cancel();
     }
 
     hideTimer = Timer(const Duration(seconds: 4), () {
-      videoController.showPositioned = false;
+      if (mounted) {
+        setState(() {
+          showPositioned = false;
+        });
+      }
       hideTimer = null;
     });
   }
 
   void _handleMouseScroller() {
-    videoController.showVolume = true;
+    setState(() {
+      showVolume = true;
+    });
     if (mouseScrollerTimer != null) {
       mouseScrollerTimer!.cancel();
     }
 
     mouseScrollerTimer = Timer(const Duration(seconds: 2), () {
-      videoController.showVolume = false;
+      if (mounted) {
+        setState(() {
+          showVolume = false;
+        });
+      }
       mouseScrollerTimer = null;
     });
   }
@@ -184,7 +202,7 @@ class _VideoPageState extends State<VideoPage>
     WakelockPlus.disable();
     WidgetsBinding.instance.removeObserver(this);
     try {
-      playerTimer?.cancel();
+      playerTimer!.cancel();
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -457,10 +475,10 @@ class _VideoPageState extends State<VideoPage>
                 Container(
                   color: Colors.black,
                   child: MouseRegion(
-                    cursor: (videoController.androidFullscreen &&
-                            !videoController.showPositioned)
-                        ? SystemMouseCursors.none
-                        : SystemMouseCursors.basic,
+                    cursor:
+                        (videoController.androidFullscreen && !showPositioned)
+                            ? SystemMouseCursors.none
+                            : SystemMouseCursors.basic,
                     onHover: (_) {
                       _handleTap();
                     },
@@ -600,8 +618,9 @@ class _VideoPageState extends State<VideoPage>
                                             onDoubleTap: _handleShortSeek,
                                             onHorizontalDragUpdate:
                                                 (DragUpdateDetails details) {
-                                              videoController.showPosition =
-                                                  true;
+                                              setState(() {
+                                                showPosition = true;
+                                              });
                                               if (playerTimer != null) {
                                                 // debugPrint('检测到拖动, 定时器取消');
                                                 playerTimer!.cancel();
@@ -626,8 +645,9 @@ class _VideoPageState extends State<VideoPage>
                                                       .currentPosition);
                                               playerController.play();
                                               playerTimer = getPlayerTimer();
-                                              videoController.showPosition =
-                                                  false;
+                                              setState(() {
+                                                showPosition = false;
+                                              });
                                             },
                                             onVerticalDragUpdate:
                                                 (DragUpdateDetails
@@ -652,8 +672,9 @@ class _VideoPageState extends State<VideoPage>
                                               }
                                               if (tapPosition < sectionWidth) {
                                                 // 左边区域
-                                                videoController.showBrightness =
-                                                    true;
+                                                setState(() {
+                                                  showBrightness = true;
+                                                });
                                                 try {
                                                   videoController.brightness =
                                                       await ScreenBrightness()
@@ -671,8 +692,9 @@ class _VideoPageState extends State<VideoPage>
                                                 setBrightness(result);
                                               } else {
                                                 // 右边区域
-                                                videoController.showVolume =
-                                                    true;
+                                                setState(() {
+                                                  showVolume = true;
+                                                });
                                                 final double level =
                                                     (totalHeight) * 3;
                                                 final double volume =
@@ -686,16 +708,16 @@ class _VideoPageState extends State<VideoPage>
                                             },
                                             onVerticalDragEnd:
                                                 (DragEndDetails details) {
-                                              videoController.showBrightness =
-                                                  false;
-                                              videoController.showVolume =
-                                                  false;
+                                              setState(() {
+                                                showBrightness = false;
+                                                showVolume = false;
+                                              });
                                             })),
                                 // 顶部进度条
                                 Positioned(
                                     top: 25,
                                     width: 200,
-                                    child: videoController.showPosition
+                                    child: showPosition
                                         ? Wrap(
                                             alignment: WrapAlignment.center,
                                             children: <Widget>[
@@ -729,7 +751,7 @@ class _VideoPageState extends State<VideoPage>
                                 // 亮度条
                                 Positioned(
                                     top: 25,
-                                    child: videoController.showBrightness
+                                    child: showBrightness
                                         ? Wrap(
                                             alignment: WrapAlignment.center,
                                             children: <Widget>[
@@ -762,7 +784,7 @@ class _VideoPageState extends State<VideoPage>
                                 // 音量条
                                 Positioned(
                                     top: 25,
-                                    child: videoController.showVolume
+                                    child: showVolume
                                         ? Wrap(
                                             alignment: WrapAlignment.center,
                                             children: <Widget>[
@@ -819,7 +841,7 @@ class _VideoPageState extends State<VideoPage>
                                 ),
 
                                 // 自定义顶部组件
-                                (videoController.showPositioned ||
+                                (showPositioned ||
                                         !playerController
                                             .mediaPlayer.value.isPlaying)
                                     ? Positioned(
@@ -886,7 +908,7 @@ class _VideoPageState extends State<VideoPage>
                                     : Container(),
 
                                 // 自定义播放器底部组件
-                                (videoController.showPositioned ||
+                                (showPositioned ||
                                         !playerController
                                             .mediaPlayer.value.isPlaying)
                                     ? Positioned(
@@ -947,8 +969,16 @@ class _VideoPageState extends State<VideoPage>
                                                     videoController.buffer,
                                                 total: videoController.duration,
                                                 onSeek: (duration) {
+                                                  if (playerTimer != null) {
+                                                    playerTimer!.cancel();
+                                                  }
+                                                  videoController
+                                                          .currentPosition =
+                                                      duration;
                                                   playerController
                                                       .seek(duration);
+                                                  playerTimer =
+                                                      getPlayerTimer();
                                                 },
                                               ),
                                             ),

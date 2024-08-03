@@ -153,70 +153,6 @@ mixin _$VideoController on _VideoController, Store {
     });
   }
 
-  late final _$showPositionedAtom =
-      Atom(name: '_VideoController.showPositioned', context: context);
-
-  @override
-  bool get showPositioned {
-    _$showPositionedAtom.reportRead();
-    return super.showPositioned;
-  }
-
-  @override
-  set showPositioned(bool value) {
-    _$showPositionedAtom.reportWrite(value, super.showPositioned, () {
-      super.showPositioned = value;
-    });
-  }
-
-  late final _$showPositionAtom =
-      Atom(name: '_VideoController.showPosition', context: context);
-
-  @override
-  bool get showPosition {
-    _$showPositionAtom.reportRead();
-    return super.showPosition;
-  }
-
-  @override
-  set showPosition(bool value) {
-    _$showPositionAtom.reportWrite(value, super.showPosition, () {
-      super.showPosition = value;
-    });
-  }
-
-  late final _$showBrightnessAtom =
-      Atom(name: '_VideoController.showBrightness', context: context);
-
-  @override
-  bool get showBrightness {
-    _$showBrightnessAtom.reportRead();
-    return super.showBrightness;
-  }
-
-  @override
-  set showBrightness(bool value) {
-    _$showBrightnessAtom.reportWrite(value, super.showBrightness, () {
-      super.showBrightness = value;
-    });
-  }
-
-  late final _$showVolumeAtom =
-      Atom(name: '_VideoController.showVolume', context: context);
-
-  @override
-  bool get showVolume {
-    _$showVolumeAtom.reportRead();
-    return super.showVolume;
-  }
-
-  @override
-  set showVolume(bool value) {
-    _$showVolumeAtom.reportWrite(value, super.showVolume, () {
-      super.showVolume = value;
-    });
-  }
-
   late final _$volumeAtom =
       Atom(name: '_VideoController.volume', context: context);
 
@@ -309,10 +245,6 @@ buffer: ${buffer},
 duration: ${duration},
 episode: ${episode},
 danmakuOn: ${danmakuOn},
-showPositioned: ${showPositioned},
-showPosition: ${showPosition},
-showBrightness: ${showBrightness},
-showVolume: ${showVolume},
 volume: ${volume},
 brightness: ${brightness},
 playerSpeed: ${playerSpeed},
