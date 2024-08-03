@@ -14,27 +14,19 @@ class MyModule extends Module {
     r.child("/", child: (_) => const MyPage());
     r.child("/player",
         child: (_) => const PlayerSettingsPage(),
-        transition: Platform.isWindows || Platform.isLinux || Platform.isMacOS
-            ? TransitionType.noTransition
-            : TransitionType.leftToRight);
+        transition: TransitionType.noTransition);
     r.child("/danmaku",
         child: (_) => const DanmakuSettingsPage(),
-        transition: Platform.isWindows || Platform.isLinux || Platform.isMacOS
-            ? TransitionType.noTransition
-            : TransitionType.leftToRight);
+        transition: TransitionType.noTransition);
     r.child("/theme",
         child: (_) => const ThemeSettingsPage(),
-        transition: Platform.isWindows || Platform.isLinux || Platform.isMacOS
-            ? TransitionType.noTransition
-            : TransitionType.leftToRight);
+        transition: TransitionType.noTransition);
     r.child("/theme/display",
         child: (_) => const SetDiaplayMode(),
-        transition: TransitionType.leftToRight);
+        transition: TransitionType.noTransition);
     r.child("/other",
         child: (_) => const OtherSettingsPage(),
-        transition: Platform.isWindows || Platform.isLinux || Platform.isMacOS
-            ? TransitionType.noTransition
-            : TransitionType.leftToRight);
-    r.module("/about", module: AboutModule());
+        transition: TransitionType.noTransition);
+    r.module("/about", module: AboutModule(), transition: TransitionType.noTransition);
   }
 }
