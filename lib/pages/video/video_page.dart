@@ -11,12 +11,9 @@ import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:oneanime/pages/player/player_item.dart';
-import 'package:oneanime/pages/menu/menu.dart';
-import 'package:provider/provider.dart';
 import 'package:oneanime/bean/danmaku/danmaku_module.dart';
 import 'package:oneanime/bean/anime/anime_panel.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:canvas_danmaku/canvas_danmaku.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:window_manager/window_manager.dart';
@@ -37,8 +34,6 @@ class VideoPage extends StatefulWidget {
 
 class _VideoPageState extends State<VideoPage>
     with WindowListener, WidgetsBindingObserver {
-  // var _key = new GlobalKey<ScaffoldState>();
-  dynamic navigationBarState;
   Box setting = GStorage.setting;
   late DanmakuController danmakuController;
   final FocusNode _focusNode = FocusNode();
@@ -58,6 +53,8 @@ class _VideoPageState extends State<VideoPage>
   Timer? hideTimer;
   Timer? playerTimer;
   Timer? mouseScrollerTimer;
+
+  bool isPopping = false;
 
   void _handleTap() {
     videoController.showPositioned = true;
@@ -246,7 +243,7 @@ class _VideoPageState extends State<VideoPage>
     });
   }
 
-  void onBackPressed(BuildContext context) {
+  void onBackPressed() {
     if (videoController.androidFullscreen) {
       debugPrint('当前播放器全屏');
       try {
@@ -261,30 +258,10 @@ class _VideoPageState extends State<VideoPage>
       }
     }
     debugPrint('当前播放器非全屏');
-    navigationBarState.showNavigate();
-    switch (videoController.from) {
-      case '/tab/timeline/':
-        {
-          navigationBarState.updateSelectedIndex(1);
-        }
-        break;
-      case '/tab/follow/':
-        {
-          navigationBarState.updateSelectedIndex(2);
-        }
-        break;
-      case '/tab/history/':
-        {
-          navigationBarState.updateSelectedIndex(3);
-        }
-        break;
-      default:
-        {
-          navigationBarState.updateSelectedIndex(0);
-        }
-        break;
+    if (!isPopping) {
+      isPopping = true;
+      Navigator.of(context).pop();
     }
-    Modular.to.navigate(videoController.from);
   }
 
   Future<void> setVolume(double value) async {
@@ -467,16 +444,10 @@ class _VideoPageState extends State<VideoPage>
 
   @override
   Widget build(BuildContext context) {
-    navigationBarState =
-        Platform.isWindows || Platform.isLinux || Platform.isMacOS
-            ? Provider.of<SideNavigationBarState>(context, listen: false)
-            : Provider.of<NavigationBarState>(context, listen: false);
-
     return PopScope(
-      // key: _key,
       canPop: false,
       onPopInvoked: (bool didPop) async {
-        onBackPressed(context);
+        onBackPressed();
       },
       child: SafeArea(
         child: Scaffold(
@@ -862,32 +833,7 @@ class _VideoPageState extends State<VideoPage>
                                               icon:
                                                   const Icon(Icons.arrow_back),
                                               onPressed: () {
-                                                if (videoController
-                                                        .androidFullscreen ==
-                                                    true) {
-                                                  playerController
-                                                      .exitFullScreen();
-                                                  videoController
-                                                          .androidFullscreen =
-                                                      false;
-                                                  return;
-                                                }
-                                                navigationBarState
-                                                    .showNavigate();
-                                                videoController.from ==
-                                                        '/tab/popular/'
-                                                    ? navigationBarState
-                                                        .updateSelectedIndex(0)
-                                                    : (videoController.from ==
-                                                            '/tab/follow/'
-                                                        ? navigationBarState
-                                                            .updateSelectedIndex(
-                                                                2)
-                                                        : navigationBarState
-                                                            .updateSelectedIndex(
-                                                                1));
-                                                Modular.to.navigate(
-                                                    videoController.from);
+                                                onBackPressed();
                                               },
                                             ),
                                             const Expanded(

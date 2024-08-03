@@ -76,7 +76,6 @@ abstract class _VideoController with Store {
   String videoUrl = '';
   String videoCookie = '';
   String title = '';
-  String from = '/tab/popular/';
   int link = 0;
   int offset = 0;
 

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/init_page.dart';
 import 'package:oneanime/pages/router.dart';
@@ -8,6 +7,8 @@ import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/timeline/timeline_controller.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:oneanime/pages/history/history_controller.dart';
+import 'package:oneanime/pages/video/video_module.dart';
+import 'package:oneanime/pages/history/history_module.dart';
 import 'package:oneanime/pages/error/error.dart';
 
 
@@ -38,6 +39,7 @@ class IndexModule extends Module {
     r.child("/tab", child: (_) {
       return const IndexPage();
     }, children: menu.routes, transition: TransitionType.noTransition);
-    // r.module("/video", module: VideoModule());
+    r.module("/video", module: VideoModule(), transition: TransitionType.noTransition);
+    r.module("/history", module: HistoryModule(), transition: TransitionType.noTransition);
   }
 }

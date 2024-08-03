@@ -16,7 +16,6 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
-  dynamic navigationBarState;
   Box setting = GStorage.setting;
   late dynamic defaultDanmakuArea;
   late dynamic defaultThemeMode;

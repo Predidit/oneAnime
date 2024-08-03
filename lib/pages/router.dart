@@ -2,9 +2,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/popular/popular_module.dart';
 import 'package:oneanime/pages/timeline/timeline_module.dart';
 import 'package:oneanime/pages/my/my_module.dart';
-import 'package:oneanime/pages/video/video_module.dart';
 import 'package:oneanime/pages/follow/follow_module.dart';
-import 'package:oneanime/pages/history/history_module.dart';
 
 
  
@@ -52,15 +50,7 @@ final MenuRoute menu = MenuRoute([
     module: MyModule(),
   ),
   MenuRouteItem(
-    path: "/video",
-    module: VideoModule(),
-  ),
-  MenuRouteItem(
     path: "/follow",
     module: FollowModule(),
-  ),
-  MenuRouteItem(
-    path: "/history",
-    module: HistoryModule(),
   ),
 ]);

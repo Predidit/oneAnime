@@ -38,7 +38,6 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
     final VideoController videoController = Modular.get<VideoController>();
     final HistoryController historyController =
         Modular.get<HistoryController>();
-    dynamic navigationBarState;
 
     return Card(
       margin: EdgeInsets.zero,
@@ -80,16 +79,10 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
           if (widget.info.progress != 1) {
             SmartDialog.showToast('上次观看到第 ${widget.info.progress} 话');
           }
-          videoController.from = '/tab/' + widget.type + '/';
           videoController.link = widget.info.link!;
           videoController.offset = history?.offset ?? 0;
           videoController.follow = widget.info.follow ?? false;
-          navigationBarState =
-              Platform.isWindows || Platform.isLinux || Platform.isMacOS
-                  ? Provider.of<SideNavigationBarState>(context, listen: false)
-                  : Provider.of<NavigationBarState>(context, listen: false);
-          navigationBarState.hideNavigate();
-          Modular.to.navigate('/tab/video/');
+          Modular.to.pushNamed('/video/');
         },
         child: Container(
           padding: const EdgeInsets.all(16.0),

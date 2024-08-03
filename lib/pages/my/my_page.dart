@@ -4,14 +4,11 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:oneanime/pages/menu/menu.dart';
-import 'package:oneanime/request/api.dart';
 import 'package:oneanime/utils/storage.dart';
-import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 import 'package:oneanime/bean/settings/settings.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -73,7 +70,7 @@ class _MyPageState extends State<MyPage> {
             ),
             ListTile(
               onTap: () async {
-                Modular.to.pushNamed('/tab/history/');
+                Modular.to.pushNamed('/history/');
               },
               dense: false,
               title: const Text('历史记录'),

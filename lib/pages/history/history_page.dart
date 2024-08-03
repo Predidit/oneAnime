@@ -1,12 +1,8 @@
-import 'dart:io';
 import 'package:oneanime/pages/history/history_controller.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/bean/anime/anime_card.dart';
-import 'package:oneanime/pages/menu/menu.dart';
-import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 
 class HistoryPage extends StatefulWidget {
@@ -18,7 +14,6 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage>
     with AutomaticKeepAliveClientMixin {
-  dynamic navigationBarState;
   final ScrollController scrollController = ScrollController();
   final HistoryController historyController = Modular.get<HistoryController>();
 
@@ -28,13 +23,7 @@ class _HistoryPageState extends State<HistoryPage>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // 在widget构建完成后调用的函数
-      navigationBarState = Platform.isWindows || Platform.isLinux || Platform.isMacOS
-          ? Provider.of<SideNavigationBarState>(context, listen: false)
-          : Provider.of<NavigationBarState>(context, listen: false);
-      navigationBarState.showNavigate();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
     historyController.getHistoryList();
     scrollController.addListener(() {
       historyController.scrollOffset = scrollController.offset;
@@ -48,22 +37,13 @@ class _HistoryPageState extends State<HistoryPage>
     super.dispose();
   }
 
-  void onBackPressed(BuildContext context) {
-    Modular.to.navigate('/tab/my/');
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        onBackPressed(context);
-      },
+      canPop: true,
       child: Scaffold(
-        appBar: const SysAppBar(
-          title: Text('历史记录')
-        ),
+        appBar: const SysAppBar(title: Text('历史记录')),
         body: Container(child: animeList),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -89,7 +69,10 @@ class _HistoryPageState extends State<HistoryPage>
           // 倒序
           return historyController.historyList.length != 0
               ? AnimeInfoCard(
-                  info: historyController.historyList[historyController.historyList.length - index -1], index: historyController.historyList.length - index -1, type: 'history')
+                  info: historyController.historyList[
+                      historyController.historyList.length - index - 1],
+                  index: historyController.historyList.length - index - 1,
+                  type: 'history')
               : const SizedBox(
                   height: 600,
                   child: Column(
