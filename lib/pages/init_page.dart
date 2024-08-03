@@ -35,15 +35,26 @@ class _InitPageState extends State<InitPage> {
     if (autoUpdate) {
       update();
     }
+
     /// mdk初始化
     HAenable = setting.get(SettingBoxKey.HAenable, defaultValue: true);
     if (HAenable) {
       fvp.registerWith(options: {
-        'platforms': ['windows', 'linux']
+        'platforms': ['windows', 'linux'],
+        'player': {
+          'avio.reconnect': '1',
+          'avio.reconnect_delay_max': '7',
+          'buffer': '2000+150000',
+        },
       });
     } else {
       fvp.registerWith(options: {
         'video.decoders': ['FFmpeg'],
+        'player': {
+          'avio.reconnect': '1',
+          'avio.reconnect_delay_max': '7',
+          'buffer': '2000+150000',
+        },
       });
     }
     Modular.to.navigate('/tab/popular/');
