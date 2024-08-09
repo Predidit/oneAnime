@@ -53,7 +53,10 @@ dependencies:
   connectivity_plus: ^4.0.1
   url_launcher: ^6.1.14
   device_info_plus: ^9.0.2
-  flutter_open_chinese_convert: ^0.3.0
+  flutter_open_chinese_convert: 
+    git:
+      url: https://github.com/Predidit/flutter_open_chinese_convert.git
+      ref: master
   flutter_launcher_icons: ^0.13.1
   window_manager: ^0.3.8
 
