@@ -56,7 +56,7 @@ dependencies:
   flutter_open_chinese_convert: 
     git:
       url: https://github.com/Predidit/flutter_open_chinese_convert.git
-      ref: master
+      ref: 0.3.1
   flutter_launcher_icons: ^0.13.1
   window_manager: ^0.3.8
 

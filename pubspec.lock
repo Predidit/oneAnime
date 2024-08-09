@@ -399,8 +399,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: master
-      resolved-ref: "78e72b9e459e43e25e0636125951e66d655accc2"
+      ref: "0.3.1"
+      resolved-ref: bbc23a7f2884e22a1eba1fc0a328de8b79b610bb
       url: "https://github.com/Predidit/flutter_open_chinese_convert.git"
     source: git
     version: "0.3.0"
