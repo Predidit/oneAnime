@@ -20,7 +20,7 @@ version: 1.2.8+1
 
 environment:
   sdk: '>=3.2.6 <4.0.0'
-  flutter: 3.22.3
+  flutter: 3.24.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -51,7 +51,7 @@ dependencies:
   hive_flutter: ^1.1.0
   flutter_smart_dialog: ^4.9.4
   connectivity_plus: ^4.0.1
-  url_launcher: ^6.3.0
+  url_launcher: ^6.1.14
   device_info_plus: ^9.0.2
   flutter_open_chinese_convert: ^0.3.0
   flutter_launcher_icons: ^0.13.1
