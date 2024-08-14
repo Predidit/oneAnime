@@ -7,6 +7,7 @@
 - Android 10 及以上
 - Windows 10 1806 及以上
 - macOS 10.15 及以上 
+- iOS (需要自签名)
 - Linux
 
 ## 功能 / 开发计划
