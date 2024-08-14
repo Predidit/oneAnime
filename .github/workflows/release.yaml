@@ -172,10 +172,42 @@
               name: macos_outputs
               path: oneAnime_macos_*.dmg
 
+      flutter-build-ios:
+        name: "Release for iOS"
+        runs-on: "macos-latest"
+        permissions: write-all
+
+        steps:
+          - name: Clone repository
+            uses: actions/checkout@v4
+          - name: Extract tag name
+            run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          - name: Echo build progress
+            run: echo "oneAnime_ios_${{ env.tag }}.ipa build progress"
+          - name: Set up Flutter
+            uses: subosito/flutter-action@v2
+            with:
+              channel: stable
+              flutter-version-file: pubspec.yaml
+          - run: flutter pub get
+          - name: Build IPA
+            run: |
+              flutter build ios --release --no-codesign
+          - name: Create IPA
+            run: |
+              mkdir build/ios/iphoneos/Payload
+              cp -R build/ios/iphoneos/Runner.app build/ios/iphoneos/Payload/Runner.app
+              zip -q -r oneAnime_ios_${{ env.tag }}_no_sign.ipa build/ios/iphoneos/Payload
+          - name: Upload iOS build
+            uses: actions/upload-artifact@v4
+            with:
+              name: ios_outputs
+              path: oneAnime_ios_*.ipa
+
       release:
         name: "Release"
         runs-on: "ubuntu-latest"
-        needs: [flutter-build-windows, flutter-build-android, flutter-build-linux, flutter-build-macos] 
+        needs: [flutter-build-windows, flutter-build-android, flutter-build-linux, flutter-build-macos, flutter-build-ios] 
         permissions: write-all
         steps:
           - name: Clone repository
@@ -221,6 +253,16 @@
             run: ls -l macos_outputs   
           - name: Copy macos build file to root
             run: cp macos_outputs/* oneAnime_macos_${{ env.tag }}.dmg
+
+          - name: Download iOS build file
+            uses: actions/download-artifact@v4
+            with:
+              name: ios_outputs
+              path: ios_outputs  
+          - name: List files in ios_outputs directory
+            run: ls -l ios_outputs   
+          - name: Copy ios build file to root
+            run: cp ios_outputs/* oneAnime_ios_${{ env.tag }}_no_sign.ipa
 
           - name: Download android build file
             uses: actions/download-artifact@v4
