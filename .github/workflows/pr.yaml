@@ -151,7 +151,7 @@
               name: macos_outputs
               path: oneAnime_macos_*.dmg
 
-        flutter-build-ios:
+      flutter-build-ios:
         name: "Release for iOS"
         runs-on: "macos-latest"
         permissions: write-all
