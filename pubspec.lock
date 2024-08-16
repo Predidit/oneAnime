@@ -398,10 +398,11 @@ packages:
   flutter_open_chinese_convert:
     dependency: "direct main"
     description:
-      name: flutter_open_chinese_convert
-      sha256: eccf6268a3295db8590a841a38a7c4fc03fe68d4794b1b6e31e0349efe9db089
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: master
+      resolved-ref: bb92440a364d7cc206a6802e05186d2152c63c25
+      url: "https://github.com/Predidit/flutter_open_chinese_convert.git"
+    source: git
     version: "0.3.3"
   flutter_plugin_android_lifecycle:
     dependency: transitive
