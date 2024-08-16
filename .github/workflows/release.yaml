@@ -197,7 +197,7 @@
             run: |
               mkdir Payload
               cp -R build/ios/iphoneos/Runner.app Payload/Runner.app
-              zip -q -r Kazumi_ios_canary_no_sign.ipa Payload
+              zip -q -r oneAnime_ios_${{ env.tag }}.ipa Payload
           - name: Upload iOS build
             uses: actions/upload-artifact@v4
             with:
