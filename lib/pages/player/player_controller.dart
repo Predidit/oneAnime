@@ -7,7 +7,6 @@ import 'package:oneanime/utils/constans.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:auto_orientation/auto_orientation.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:hive/hive.dart';
@@ -127,9 +126,17 @@ abstract class _PlayerController with Store {
       if (kIsWeb) {
         await document.documentElement?.requestFullscreen();
       } else if (Platform.isAndroid || Platform.isIOS) {
-        await AutoOrientation.landscapeAutoMode(forceSensor: true);
-      } else if (Platform.isMacOS || Platform.isWindows || Platform.isLinux) {
-        await windowManager.setFullScreen(true);
+        // await SystemChrome.setEnabledSystemUIMode(
+        //   SystemUiMode.immersiveSticky,
+        //   overlays: [],
+        // );
+        await SystemChrome.setPreferredOrientations(
+          [
+            DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight,
+          ],
+        );
+        // await AutoOrientation.landscapeAutoMode(forceSensor: true);
       }
     } catch (exception, stacktrace) {
       debugPrint(exception.toString());
@@ -162,7 +169,7 @@ abstract class _PlayerController with Store {
 
   Duration get buffer {
     if (mediaPlayer.value.buffered.isEmpty) {
-      return Duration.zero; 
+      return Duration.zero;
     }
 
     Duration maxDuration = mediaPlayer.value.buffered[0].end;
