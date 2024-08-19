@@ -60,8 +60,9 @@ class LocalCacheKey {
 
 class SettingBoxKey {
   static const String HAenable = 'HAenable',
+      // 检查是否为第一次运行
+      firstRun = 'firstRun',
       searchEnhanceEnable = 'searchEnhanceEnable', 
-      // Todo 检查更新
       autoUpdate = 'autoUpdate',
       alwaysOntop = 'alwaysOntop',
       danmakuEnhance = 'danmakuEnhance',

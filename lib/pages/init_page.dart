@@ -9,6 +9,8 @@ import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/opencc_generated_bindings.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class InitPage extends StatefulWidget {
   const InitPage({super.key});
@@ -57,7 +59,52 @@ class _InitPageState extends State<InitPage> {
         },
       });
     }
-    Modular.to.navigate('/tab/popular/');
+    
+    _checkStatements();
+  }
+
+  _checkStatements() async {
+    String statementsText = '';
+    bool firstRun =
+        await setting.get(SettingBoxKey.firstRun, defaultValue: true);
+    try {
+      statementsText =
+          await rootBundle.loadString("assets/statements/statements.txt");
+    } catch (_) {}
+    if (firstRun) {
+      SmartDialog.show(
+        useAnimation: false,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('免责声明'),
+            scrollable: true,
+            content: Text(statementsText),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  exit(0);
+                },
+                child: Text(
+                  '退出',
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.outline),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  setting.put(SettingBoxKey.firstRun, false);
+                  SmartDialog.dismiss();
+                  Modular.to.navigate('/tab/popular/');
+                },
+                child: const Text('已阅读并同意'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      Modular.to.navigate('/tab/popular/');
+    }
   }
 
   void openccInit() {
