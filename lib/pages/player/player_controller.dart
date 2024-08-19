@@ -81,9 +81,9 @@ abstract class _PlayerController with Store {
       await windowManager.setFullScreen(true);
       return;
     }
-    await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
+    // await SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    // ]);
     await landScape();
     await SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.immersiveSticky,

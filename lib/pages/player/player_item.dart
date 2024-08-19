@@ -31,21 +31,15 @@ class _PlayerItemState extends State<PlayerItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Observer(builder: (context) {
-          return Expanded(
-            child: playerController.dataStatus == 'loaded'
-                ? AspectRatio(
-                    aspectRatio: playerController.mediaPlayer.value.aspectRatio,
-                    child: VideoPlayer(
-                      playerController.mediaPlayer,
-                    ),
-                  )
-                : const Center(child: CircularProgressIndicator()),
-          );
-        }),
-      ],
-    );
+    return Observer(builder: (context) {
+      return playerController.dataStatus == 'loaded'
+          ? AspectRatio(
+              aspectRatio: playerController.mediaPlayer.value.aspectRatio,
+              child: VideoPlayer(
+                playerController.mediaPlayer,
+              ),
+            )
+          : const Center(child: CircularProgressIndicator());
+    });
   }
 }
