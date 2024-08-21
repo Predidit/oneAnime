@@ -7,6 +7,7 @@ import 'package:html/dom.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:oneanime/bean/danmaku/danmaku_module.dart';
 import 'package:oneanime/bean/anime/anime_bangumi_info.dart';
+import 'package:oneanime/utils/utils.dart';
 
 class DanmakuRequest {
   // 获取动画疯sn集合, 需要进一步处理
@@ -14,7 +15,7 @@ class DanmakuRequest {
     List<String> dataList = [];
     var httpHeaders = {
       'user-agent':
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_3_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15',
+          Utils.getRandomUA(),
       'referer': 'https://ani.gamer.com.tw/',
     };
     Map<String, String> keywordMap = {
@@ -47,7 +48,7 @@ class DanmakuRequest {
   static getBangumiID(String title) async {
     var httpHeaders = {
       'user-agent':
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_3_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15',
+          Utils.getRandomUA(),
       'referer': '',
     };
     Map<String, String> keywordMap = {
@@ -78,7 +79,7 @@ class DanmakuRequest {
     }
     var httpHeaders = {
       'user-agent':
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_3_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15',
+          Utils.getRandomUA(),
       'referer': '',
     };
     Map<String, String> withRelated = {

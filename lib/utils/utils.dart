@@ -1,6 +1,8 @@
+import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:oneanime/request/api.dart';
+import 'package:oneanime/utils/constans.dart';
 import 'package:flutter/services.dart';
 import 'package:screen_pixel/screen_pixel.dart';
 
@@ -17,6 +19,13 @@ class Utils {
     } catch (_) {
       return false;
     }
+  }
+
+  static String getRandomUA() {
+    final random = Random();
+    String randomElement =
+        userAgentsList[random.nextInt(userAgentsList.length)];
+    return randomElement;
   }
 
   static Future<Map<String, double>?> getScreenInfo() async {

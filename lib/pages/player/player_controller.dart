@@ -10,6 +10,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:hive/hive.dart';
+import 'package:oneanime/utils/utils.dart';
 
 part 'player_controller.g.dart';
 
@@ -65,7 +66,7 @@ abstract class _PlayerController with Store {
 
     var httpHeaders = {
       'user-agent':
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_3_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15',
+          Utils.getRandomUA(),
       'referer': HttpString.baseUrl,
       'Cookie': videoCookie,
     };
