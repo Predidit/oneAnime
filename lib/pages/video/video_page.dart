@@ -472,9 +472,9 @@ class _VideoPageState extends State<VideoPage>
       onPopInvoked: (bool didPop) async {
         onBackPressed();
       },
-      child: SafeArea(
-        child: Scaffold(
-          body: Observer(builder: (context) {
+      child: Scaffold(
+        body: SafeArea(
+          child: Observer(builder: (context) {
             return Column(
               children: [
                 Container(

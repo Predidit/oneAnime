@@ -41,7 +41,6 @@ class _SideMenu extends State<SideMenu> {
 
   @override
   Widget build(BuildContext context) {
-    var themeData = Theme.of(context);
     return ChangeNotifierProvider(
       create: (context) => SideNavigationBarState(),
       child: Scaffold(
