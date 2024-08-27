@@ -251,6 +251,10 @@ class _VideoPageState extends State<VideoPage>
         }
       }
 
+      FlutterVolumeController.getVolume().then((value) {
+        videoController.volume = value ?? 0.0;
+      });
+
       if (playerController.completed == true &&
           videoController.episode < videoController.token.length) {
         videoController.changeEpisode(videoController.episode + 1);
@@ -602,16 +606,8 @@ class _VideoPageState extends State<VideoPage>
                                         child: Container(
                                           color: Colors.transparent,
                                         ),
-                                        onTap: () async {
+                                        onTap: () {
                                           _handleTap();
-                                          try {
-                                            videoController.volume =
-                                                await FlutterVolumeController
-                                                        .getVolume() ??
-                                                    videoController.volume;
-                                          } catch (e) {
-                                            debugPrint(e.toString());
-                                          }
                                         },
                                         onDoubleTap: () {
                                           _handleTap();
