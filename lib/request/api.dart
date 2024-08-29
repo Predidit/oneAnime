@@ -9,6 +9,7 @@ class Api {
   static const String aniDanmakuAPI = "https://ani.gamer.com.tw/ajax/danmuGet.php";
   static const String aniSearch = "https://ani.gamer.com.tw/search.php";
   static const String bangumiSearch = "https://api.bgm.tv/search/subject/";
+  static const String dandanIndex = 'https://www.dandanplay.com/';
   static const String dandanAPI = "https://api.dandanplay.net/api/v2/comment/";
   static const String dandanSearch = "https://api.dandanplay.net/api/v2/search/anime";
   static const String dandanInfo = "https://api.dandanplay.net/api/v2/bangumi/";

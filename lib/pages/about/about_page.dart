@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/request/api.dart';
@@ -61,11 +60,25 @@ class _AboutPageState extends State<AboutPage> {
             ),
             ListTile(
               onTap: () {
-                launchUrl(Uri.parse(Api.sourceUrl));
+                launchUrl(Uri.parse(Api.sourceUrl),
+                    mode: LaunchMode.externalApplication);
               },
               dense: false,
               title: const Text('项目主页'),
               trailing: Text('Github',
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.outline)),
+            ),
+            ListTile(
+              onTap: () {
+                launchUrl(Uri.parse(Api.dandanIndex),
+                    mode: LaunchMode.externalApplication);
+              },
+              dense: false,
+              title: const Text('弹幕来源'),
+              trailing: Text('DanDanPlay',
                   style: Theme.of(context)
                       .textTheme
                       .labelMedium!
