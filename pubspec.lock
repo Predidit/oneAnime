@@ -463,10 +463,10 @@ packages:
     dependency: "direct main"
     description:
       name: fvp
-      sha256: "6ecd1968d67c30f25a14e2112f5caa34fe5ff581c20b6f1edc17a19b28587eb7"
+      sha256: "040aa12beccd5bc60631259f27a481c4abc11a389aa4f57a47b643f58fe0b060"
       url: "https://pub.dev"
     source: hosted
-    version: "0.26.0"
+    version: "0.26.1"
   glob:
     dependency: transitive
     description:
