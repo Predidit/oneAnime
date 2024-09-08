@@ -30,22 +30,22 @@ class ApiInterceptor extends Interceptor {
   static Future<String> dioError(DioException error) async {
     switch (error.type) {
       case DioExceptionType.badCertificate:
-        return '证书有误！';
+        return 'Certificate error';
       case DioExceptionType.badResponse:
-        return '服务器异常，请稍后重试！';
+        return 'Server error, please try again later';
       case DioExceptionType.cancel:
-        return '请求已被取消，请重新请求';
+        return 'Request has been canceled';
       case DioExceptionType.connectionError:
-        return '连接错误，请检查网络设置';
+        return 'Network error, please check your network settings';
       case DioExceptionType.connectionTimeout:
-        return '网络连接超时，请检查网络设置';
+        return 'Connection timeout, please check your network settings';
       case DioExceptionType.receiveTimeout:
-        return '响应超时，请稍后重试！';
+        return 'Receive response timeout, please check your network settings';
       case DioExceptionType.sendTimeout:
-        return '发送请求超时，请检查网络设置';
+        return '';
       case DioExceptionType.unknown:
         final String res = await checkConnect();
-        return '$res 网络异常';
+        return '$res or unknown error';
     }
   }
 
@@ -53,22 +53,22 @@ class ApiInterceptor extends Interceptor {
     final connectivityResult =
         await Connectivity().checkConnectivity();
     if (connectivityResult.contains(ConnectivityResult.mobile)) {
-      return '正在使用移动流量';
+      return 'Using mobile data';
     }
     if (connectivityResult.contains(ConnectivityResult.wifi)) {
-      return '正在使用wifi';
+      return 'Using Wi-Fi';
     }
     if (connectivityResult.contains(ConnectivityResult.ethernet)) {
-      return '正在使用局域网';
+      return 'Using Ethernet';
     }
     if (connectivityResult.contains(ConnectivityResult.vpn)) {
-      return '正在使用代理网络';
+      return 'Using VPN';
     }
     if (connectivityResult.contains(ConnectivityResult.other)) {
-      return '正在使用其他网络';
+      return 'Using other network';
     }
     if (connectivityResult.contains(ConnectivityResult.none)) {
-      return '未连接到任何网络';
+      return 'No network connection';
     }
     return '';
   }

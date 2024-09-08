@@ -9,6 +9,7 @@ import 'package:hive/hive.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 import 'package:oneanime/bean/settings/settings.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({super.key});
@@ -19,6 +20,7 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   dynamic navigationBarState;
+  late Translations i18n;
   Box setting = GStorage.setting;
   late dynamic defaultDanmakuArea;
   late dynamic defaultThemeMode;
@@ -28,6 +30,7 @@ class _MyPageState extends State<MyPage> {
   @override
   void initState() {
     super.initState();
+    i18n = Translations.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 在widget构建完成后调用的函数
       navigationBarState = Platform.isWindows || Platform.isLinux || Platform.isMacOS
@@ -57,13 +60,13 @@ class _MyPageState extends State<MyPage> {
         onBackPressed(context);
       },
       child: Scaffold(
-        appBar: const SysAppBar(title: Text('我的')),
+        appBar: SysAppBar(title: Text(i18n.menu.my)),
         body: Column(
           children: [
-            const InkWell(
+            InkWell(
               child: SetSwitchItem(
-                title: '隐身模式',
-                subTitle: '不保留观看记录',
+                title: i18n.my.private,
+                subTitle: i18n.my.privateSubtitle,
                 setKey: SettingBoxKey.privateMode,
                 defaultVal: false,
               ),
@@ -73,7 +76,7 @@ class _MyPageState extends State<MyPage> {
                 Modular.to.pushNamed('/history/');
               },
               dense: false,
-              title: const Text('历史记录'),
+              title: Text(i18n.my.history.title),
               // trailing: const Icon(Icons.navigate_next),
             ),
             ListTile(
@@ -81,7 +84,7 @@ class _MyPageState extends State<MyPage> {
                 Modular.to.pushNamed('/tab/my/player');
               },
               dense: false,
-              title: const Text('播放设置'),
+              title: Text(i18n.my.playerSettings.title),
               // trailing: const Icon(Icons.navigate_next),
             ),
             ListTile(
@@ -89,7 +92,7 @@ class _MyPageState extends State<MyPage> {
                 Modular.to.pushNamed('/tab/my/danmaku');
               },
               dense: false,
-              title: const Text('弹幕设置'),
+              title: Text(i18n.my.danmakuSettings.title),
               // trailing: const Icon(Icons.navigate_next),
             ),
             ListTile(
@@ -97,7 +100,7 @@ class _MyPageState extends State<MyPage> {
                 Modular.to.pushNamed('/tab/my/theme');
               },
               dense: false,
-              title: const Text('外观设置'),
+              title: Text(i18n.my.themeSettings.title),
               // trailing: const Icon(Icons.navigate_next),
             ),
             ListTile(
@@ -105,7 +108,7 @@ class _MyPageState extends State<MyPage> {
                 Modular.to.pushNamed('/tab/my/other');
               },
               dense: false,
-              title: const Text('其他设置'),
+              title: Text(i18n.my.otherSettings.title),
               // trailing: const Icon(Icons.navigate_next),
             ),
             ListTile(
@@ -113,7 +116,7 @@ class _MyPageState extends State<MyPage> {
                 Modular.to.pushNamed('/tab/my/about');
               },
               dense: false,
-              title: const Text('关于'),
+              title: Text(i18n.my.about.title),
             ),
           ],
         ),

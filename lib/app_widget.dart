@@ -8,6 +8,7 @@ import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:hive/hive.dart';
 import 'package:oneanime/utils/utils.dart';
 import 'package:oneanime/utils/storage.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 class AppWidget extends StatefulWidget {
   const AppWidget({super.key});
@@ -45,13 +46,9 @@ class _AppWidgetState extends State<AppWidget> {
       initial: AdaptiveThemeMode.system,
       builder: (theme, darkTheme) => MaterialApp.router(
         title: "oneAnime",
+        locale: TranslationProvider.of(context).flutterLocale, 
+        supportedLocales: AppLocaleUtils.supportedLocales,
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        supportedLocales: const [
-          Locale.fromSubtags(
-              languageCode: 'zh', scriptCode: 'Hans', countryCode: "CN")
-        ],
-        locale: const Locale.fromSubtags(
-            languageCode: 'zh', scriptCode: 'Hans', countryCode: "CN"),
         theme: theme,
         darkTheme: darkTheme,
         routerConfig: Modular.routerConfig,

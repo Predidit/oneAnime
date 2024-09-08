@@ -9,9 +9,11 @@ import 'package:oneanime/utils/storage.dart';
 import 'package:flutter/services.dart';
 import 'package:oneanime/utils/utils.dart';
 import 'package:oneanime/pages/error/error.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  LocaleSettings.useDeviceLocale();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await windowManager.ensureInitialized();
     bool isLowResolution = await Utils.isLowResolution();
@@ -49,8 +51,10 @@ void main() async {
   }
   Request();
   await Request.setCookie();
-  runApp(ModularApp(
-    module: AppModule(),
-    child: const AppWidget(),
+  runApp(TranslationProvider(
+    child: ModularApp(
+      module: AppModule(),
+      child: const AppWidget(),
+    ),
   ));
 }

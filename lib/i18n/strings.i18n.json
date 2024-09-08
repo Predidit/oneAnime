@@ -1,0 +1,129 @@
+{
+    "toast": {
+        "loading": "Loading",
+        "historyToast": "Last watched episode $episode",
+        "favoriteToast": "Make sure to finish watching your favorite shows!",
+        "dismissFavorite": "Successfully unfollowed",
+        "needReboot": "Reboot to take effect",
+        "checkUpdateWithNoUpdate": "You are already on the latest version!",
+        "exitApp": "Press again to exit the app",
+        "refreshAnimeListWithSuccess": "List updated successfully",
+        "animeNotExist": "The first episode of the anime hasn't been updated yet >_<",
+        "currentEpisode": "Episode $episode",
+        "currentEpisodeIsLast": "This is the latest episode",
+        "danmakuEmpty": "No comments found for this episode",
+        "danmakuCannotEmpty": "Comment content cannot be empty",
+        "danmakuTooLong": "Comment content cannot exceed 100 characters",
+        "danmakuSendSuccess": "Sent successfully"
+    },
+    "dialog": {
+        "confirm": "Confirm",
+        "dismiss": "Dismiss",
+        "setDefault": "Default",
+        "danmakuSending": "Sending...",
+        "danmakuSend": "Send",
+        "checkUpdateWithUpdate": "New version found $value",
+        "timeMachine": "Time Machine"
+    },
+    "menu": {
+        "home": "Home",
+        "calendar": "Calendar",
+        "favorite": "Favorite",
+        "my": "My"
+    },
+    "video": {
+        "playSpeed": "Play Speed",
+        "collection": "Collection ",
+        "playingCollection": "Playing: $title",
+        "changeEpisode": "Change Episode",
+        "episodeTotal": "total $total episodes"
+    },
+    "anime": {
+        "anime": "Anime",
+        "serializing": "Serializing",
+        "OVA": "OVA",
+        "OAD": "OAD",
+        "movie": "Movie",
+        "year": "Year",
+        "seaons": {
+            "spring": "Spring",
+            "summer": "Summer",
+            "autumn": "Autumn",
+            "winter": "Winter"
+        },
+        "singleSeason": "Season"
+    },
+    "popular": {
+        "searchBar": "Quick search",
+        "empty": "Empty >_<"
+    },
+    "favorite": {
+        "title": "Favorite",
+        "empty": "Ah (⊙.⊙) There is no follow-up talk"
+    },
+    "calendar": {
+        "title": "Calendar",
+        "empty": "The data has not been updated yet (´;ω;`)"
+    },
+    "my": {
+        "private": "Private Mode",
+        "privateSubtitle": "won't save any watching history",
+        "history": {
+            "title": "History",
+            "empty": "Ah Lie (⊙.⊙) There is no viewing record."
+        },
+        "playerSettings": {
+            "title": "Player Settings",
+            "hardwareAcceleration": "Hardware Acceleration",
+            "autoPlay": "Auto Play",
+            "autoJump": "Auto Jump",
+            "autoJumpSubtitle": "Jump to the position where you stopped last time"
+        },
+        "danmakuSettings": {
+            "title": "Danmaku Settings",
+            "defaultEnable": "Default Enable",
+            "defaultEnableSubtitle": "Whether to enable danmaku by default",
+            "enhance": "Enhance",
+            "stroke": "Stroke",
+            "fontSize": "Font Size",
+            "transparency": "Transparency",
+            "duration": "Duration",
+            "area": "Area",
+            "areaSubtitleOccupy": "Occupy $value screen"
+        },
+        "themeSettings": {
+            "title": "Theme Settings",
+            "colorPalette": "Color Palette",
+            "refreshRate": "Refresh Rate",
+            "refreshRateWarning": "Not working? Try to restart the app",
+            "refreshRateAuto": "Auto",
+            "themeMode": "Theme Mode",
+            "themeModeSystem": "System",
+            "themeModeLight": "Light",
+            "themeModeDark": "Dark",
+            "OLEDEnhance": "OLEDEnhance",
+            "OLEDEnhanceSubtitle": "Use pure black to enhance the OLED effect",
+            "alwaysOntop": "Always On Top",
+            "alwaysOntopSubtitle": "Always stay on top of other windows while playing"
+        },
+        "otherSettings": {
+            "title": "Other Settings",
+            "searchEnhace": "Search Enhance",
+            "searchEnhaceSubtitle": "Auto translate search keywords",
+            "proxySettings": "Proxy Settings",
+            "proxyHost": "Proxy Host",
+            "proxyPort": "Proxy Port",
+            "proxyEnable": "Proxy Enable",
+            "autoUpdate": "Auto Update"
+        },
+        "about": {
+            "title": "About",
+            "openSourceLicense": "Open Source License",
+            "openSourceLicenseSubtitle": "View all open source licenses",
+            "GithubRepo": "Github Repo",
+            "danmakuSource": "Danmaku Source",
+            "checkUpdate": "Check Update",
+            "currentVersion": "Current Version"
+        }
+    }
+}

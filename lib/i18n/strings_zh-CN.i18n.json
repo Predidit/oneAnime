@@ -1,0 +1,129 @@
+{
+    "toast": {
+        "loading": "获取中",
+        "historyToast": "上次观看到第 $episode 话",
+        "favoriteToast": "自己追的番要好好看完哦",
+        "dismissFavorite": "取消追番成功",
+        "needReboot": "重启生效",
+        "checkUpdateWithNoUpdate": "当前已经是最新版本！",
+        "exitApp": "再按一次退出应用",
+        "refreshAnimeListWithSuccess": "列表更新完成",
+        "animeNotExist": "动画还沒有更新第一集 >_<",
+        "currentEpisode": "第 $episode 话",
+        "currentEpisodeIsLast": "已经是最新一集",
+        "danmakuEmpty": "当前剧集没有找到弹幕的说",
+        "danmakuCannotEmpty": "弹幕内容不能为空",
+        "danmakuTooLong": "弹幕内容不能超过100个字符",
+        "danmakuSendSuccess": "发送成功"
+    },
+    "dialog": {
+        "confirm": "确认",
+        "dismiss": "取消",
+        "setDefault": "默认设置",
+        "danmakuSending": "发送中...",
+        "danmakuSend": "发送",
+        "checkUpdateWithUpdate": "发现新版本 $value",
+        "timeMachine": "时间机器"
+    },
+    "menu": {
+        "home": "推荐",
+        "calendar": "时间表",
+        "favorite": "追番",
+        "my": "我的"
+    },
+    "video": {
+        "playSpeed": "播放速度",
+        "collection": "合集 ",
+        "playingCollection": "正在播放 $title",
+        "changeEpisode": "切换选集",
+        "episodeTotal": "全 $total 话"
+    },
+    "anime": {
+        "anime": "新番",
+        "serializing": "连载中",
+        "OVA": "OVA",
+        "OAD": "OAD",
+        "movie": "剧场版",
+        "year": "年",
+        "seaons": {
+            "spring": "春",
+            "summer": "夏",
+            "autumn": "秋",
+            "winter": "冬"
+        },
+        "singleSeason": "季"
+    },
+    "popular": {
+        "searchBar": "快速搜索",
+        "empty": "空空如也 >_<"
+    },
+    "favorite": {
+        "title": "追番",
+        "empty": "啊咧（⊙.⊙） 没有追番的说"
+    },
+    "calendar": {
+        "title": "时间表",
+        "empty": "数据还没有更新 (´;ω;`)"
+    },
+    "my": {
+        "private": "隐身模式",
+        "privateSubtitle": "不保留观看记录",
+        "history": {
+            "title": "历史记录",
+            "empty": "啊咧（⊙.⊙） 没有观看记录的说"
+        },
+        "playerSettings": {
+            "title": "播放设置",
+            "hardwareAcceleration": "硬件解码",
+            "autoPlay": "自动播放",
+            "autoJump": "自动跳转",
+            "autoJumpSubtitle": "跳转到上次播放位置"
+        },
+        "danmakuSettings": {
+            "title": "弹幕设置",
+            "defaultEnable": "默认开启",
+            "defaultEnableSubtitle": "默认是否随视频播放弹幕",
+            "enhance": "精准匹配",
+            "stroke": "弹幕描边",
+            "fontSize": "字体大小",
+            "transparency": "弹幕不透明度",
+            "duration": "弹幕时长",
+            "area": "弹幕区域",
+            "areaSubtitleOccupy": "占据 $value 屏幕"
+        },
+        "themeSettings": {
+            "title": "外观设置",
+            "colorPalette": "配色方案",
+            "refreshRate": "屏幕帧率",
+            "refreshRateWarning": "没有生效？重启应用试试",
+            "refreshRateAuto": "自动",
+            "themeMode": "主题模式",
+            "themeModeSystem": "跟随系统",
+            "themeModeLight": "浅色",
+            "themeModeDark": "深色",
+            "OLEDEnhance": "OLED优化",
+            "OLEDEnhanceSubtitle": "深色模式下使用纯黑背景",
+            "alwaysOntop": "窗口置顶",
+            "alwaysOntopSubtitle": "播放时始终保持在其他窗口上方"
+        },
+        "otherSettings": {
+            "title": "其他设置",
+            "searchEnhace": "搜索优化",
+            "searchEnhaceSubtitle": "自动翻译关键词",
+            "proxySettings": "配置代理",
+            "proxyHost": "代理主机",
+            "proxyPort": "代理端口",
+            "proxyEnable": "启用代理",
+            "autoUpdate": "自动更新"
+        },
+        "about": {
+            "title": "关于",
+            "openSourceLicense": "开源许可证",
+            "openSourceLicenseSubtitle": "查看所有开源许可证",
+            "GithubRepo": "项目主页",
+            "danmakuSource": "弹幕来源",
+            "checkUpdate": "检查更新",
+            "currentVersion": "当前版本"
+        }
+    }
+}

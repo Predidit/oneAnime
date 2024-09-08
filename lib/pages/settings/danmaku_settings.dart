@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/bean/settings/settings.dart';
 import 'package:oneanime/utils/storage.dart';
-import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 class DanmakuSettingsPage extends StatefulWidget {
   const DanmakuSettingsPage({super.key});
@@ -19,6 +19,7 @@ class DanmakuSettingsPage extends StatefulWidget {
 class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
   dynamic navigationBarState;
   Box setting = GStorage.setting;
+  late Translations i18n;
   late dynamic defaultDanmakuArea;
   late dynamic defaultDanmakuOpacity;
   late dynamic defaultDanmakuDuration;
@@ -28,6 +29,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
   @override
   void initState() {
     super.initState();
+    i18n = Translations.of(context);
     defaultDanmakuArea =
         setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
     defaultDanmakuOpacity =
@@ -84,27 +86,27 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
         onBackPressed(context);
       },
       child: Scaffold(
-        appBar: const SysAppBar(title: Text('弹幕设置')),
+        appBar: SysAppBar(title: Text(i18n.my.danmakuSettings.title)),
         body: Column(
           children: [
-            const InkWell(
+           InkWell(
               child: SetSwitchItem(
-                title: '默认开启',
-                subTitle: '默认是否随视频播放弹幕',
+                title: i18n.my.danmakuSettings.defaultEnable,
+                subTitle: i18n.my.danmakuSettings.defaultEnableSubtitle,
                 setKey: SettingBoxKey.danmakuEnabledByDefault,
                 defaultVal: false,
               ),
             ),
-            const InkWell(
+            InkWell(
               child: SetSwitchItem(
-                title: '精准匹配',
+                title: i18n.my.danmakuSettings.enhance,
                 setKey: SettingBoxKey.danmakuEnhance,
                 defaultVal: true,
               ),
             ),
-            const InkWell(
+            InkWell(
               child: SetSwitchItem(
-                title: '弹幕描边',
+                title: i18n.my.danmakuSettings.stroke,
                 setKey: SettingBoxKey.danmakuBorder,
                 defaultVal: true,
               ),
@@ -140,7 +142,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                     useAnimation: false,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text('字体大小'),
+                        title: Text(i18n.my.danmakuSettings.fontSize),
                         content: StatefulBuilder(builder:
                             (BuildContext context, StateSetter setState) {
                           return Wrap(
@@ -173,7 +175,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                           TextButton(
                             onPressed: () => SmartDialog.dismiss(),
                             child: Text(
-                              '取消',
+                              i18n.dialog.dismiss,
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.outline),
                             ),
@@ -186,14 +188,14 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                                       : 25.0);
                               SmartDialog.dismiss();
                             },
-                            child: const Text('默认设置'),
+                            child: Text(i18n.dialog.setDefault),
                           ),
                         ],
                       );
                     });
               },
               dense: false,
-              title: const Text('字体大小'),
+              title: Text(i18n.my.danmakuSettings.fontSize),
               subtitle: Text('$defaultDanmakuFontSize',
                   style: Theme.of(context)
                       .textTheme
@@ -218,7 +220,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                     useAnimation: false,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text('弹幕不透明度'),
+                        title: Text(i18n.my.danmakuSettings.transparency),
                         content: StatefulBuilder(builder:
                             (BuildContext context, StateSetter setState) {
                           return Wrap(
@@ -252,7 +254,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                           TextButton(
                             onPressed: () => SmartDialog.dismiss(),
                             child: Text(
-                              '取消',
+                              i18n.dialog.dismiss,
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.outline),
                             ),
@@ -262,14 +264,14 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                               updateDanmakuOpacity(1.0);
                               SmartDialog.dismiss();
                             },
-                            child: const Text('默认设置'),
+                            child: Text(i18n.dialog.setDefault),
                           ),
                         ],
                       );
                     });
               },
               dense: false,
-              title: const Text('弹幕不透明度'),
+              title: Text(i18n.my.danmakuSettings.transparency),
               subtitle: Text('$defaultDanmakuOpacity',
                   style: Theme.of(context)
                       .textTheme
@@ -296,7 +298,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                     useAnimation: false,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text('弹幕时长'),
+                        title: Text(i18n.my.danmakuSettings.duration),
                         content: StatefulBuilder(builder:
                             (BuildContext context, StateSetter setState) {
                           return Wrap(
@@ -329,7 +331,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                           TextButton(
                             onPressed: () => SmartDialog.dismiss(),
                             child: Text(
-                              '取消',
+                              i18n.dialog.dismiss,
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.outline),
                             ),
@@ -339,14 +341,14 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                               updateDanmakuDuration(8);
                               SmartDialog.dismiss();
                             },
-                            child: const Text('默认设置'),
+                            child: Text(i18n.dialog.setDefault),
                           ),
                         ],
                       );
                     });
               },
               dense: false,
-              title: const Text('弹幕时长'),
+              title: Text(i18n.my.danmakuSettings.duration),
               subtitle: Text('$defaultDanmakuDuration',
                   style: Theme.of(context)
                       .textTheme
@@ -364,7 +366,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                     useAnimation: false,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text('弹幕区域'),
+                        title: Text(i18n.my.danmakuSettings.area),
                         content: StatefulBuilder(builder:
                             (BuildContext context, StateSetter setState) {
                           return Wrap(
@@ -397,7 +399,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                           TextButton(
                             onPressed: () => SmartDialog.dismiss(),
                             child: Text(
-                              '取消',
+                              i18n.dialog.dismiss,
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.outline),
                             ),
@@ -407,15 +409,15 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                               updateDanmakuArea(1.0);
                               SmartDialog.dismiss();
                             },
-                            child: const Text('默认设置'),
+                            child: Text(i18n.dialog.setDefault),
                           ),
                         ],
                       );
                     });
               },
               dense: false,
-              title: const Text('弹幕区域'),
-              subtitle: Text('占据 $defaultDanmakuArea 屏幕',
+              title: Text(i18n.my.danmakuSettings.area),
+              subtitle: Text(i18n.my.danmakuSettings.areaSubtitleOccupy(value: defaultDanmakuArea),
                   style: Theme.of(context)
                       .textTheme
                       .labelMedium!

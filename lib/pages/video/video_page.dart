@@ -24,6 +24,7 @@ import 'package:oneanime/bean/appbar/drag_to_move_bar.dart' as dtb;
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/utils/utils.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -36,6 +37,7 @@ class _VideoPageState extends State<VideoPage>
     with WindowListener, WidgetsBindingObserver {
   Box setting = GStorage.setting;
   late DanmakuController danmakuController;
+  late Translations i18n;
   final FocusNode _focusNode = FocusNode();
   final VideoController videoController = Modular.get<VideoController>();
   final PopularController popularController = Modular.get<PopularController>();
@@ -152,6 +154,7 @@ class _VideoPageState extends State<VideoPage>
   @override
   void initState() {
     super.initState();
+    i18n = Translations.of(context);
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNode);
@@ -321,7 +324,7 @@ class _VideoPageState extends State<VideoPage>
                         onPressed: () async {
                           SmartDialog.dismiss();
                         },
-                        child: Text('第${i.toString()}话'),
+                        child: Text(i18n.toast.currentEpisode(episode: i.toString())),
                       ),
                     ] else ...[
                       FilledButton.tonal(
@@ -329,7 +332,7 @@ class _VideoPageState extends State<VideoPage>
                           videoController.changeEpisode(i);
                           SmartDialog.dismiss();
                         },
-                        child: Text('第${i.toString()}话'),
+                        child: Text(i18n.toast.currentEpisode(episode: i.toString())),
                       ),
                     ]
                   ]
@@ -390,7 +393,7 @@ class _VideoPageState extends State<VideoPage>
               TextButton(
                 onPressed: () => SmartDialog.dismiss(),
                 child: Text(
-                  '取消',
+                  i18n.dialog.dismiss,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.outline),
                 ),
@@ -400,7 +403,7 @@ class _VideoPageState extends State<VideoPage>
                   await videoController.setPlaybackSpeed(1.0);
                   SmartDialog.dismiss();
                 },
-                child: const Text('默认速度'),
+                child: Text(i18n.dialog.setDefault),
               ),
             ],
           );
@@ -426,7 +429,7 @@ class _VideoPageState extends State<VideoPage>
               TextButton(
                 onPressed: () => SmartDialog.dismiss(),
                 child: Text(
-                  '取消',
+                  i18n.dialog.dismiss,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.outline),
                 ),
@@ -439,10 +442,10 @@ class _VideoPageState extends State<VideoPage>
                       : () async {
                           final String msg = textController.text;
                           if (msg.isEmpty) {
-                            SmartDialog.showToast('弹幕内容不能为空');
+                            SmartDialog.showToast(i18n.toast.danmakuEmpty);
                             return;
                           } else if (msg.length > 100) {
-                            SmartDialog.showToast('弹幕内容不能超过100个字符');
+                            SmartDialog.showToast(i18n.toast.danmakuTooLong);
                             return;
                           }
                           setState(() {
@@ -453,11 +456,11 @@ class _VideoPageState extends State<VideoPage>
                           setState(() {
                             isSending = false; // 发送结束，更新状态
                           });
-                          SmartDialog.showToast('发送成功');
+                          SmartDialog.showToast(i18n.toast.danmakuSendSuccess);
                           danmakuController.addDanmaku(DanmakuContentItem(msg));
                           SmartDialog.dismiss();
                         },
-                  child: Text(isSending ? '发送中...' : '发送'),
+                  child: Text(isSending ? i18n.dialog.danmakuSending : i18n.dialog.danmakuSend),
                 );
               })
             ],
@@ -929,8 +932,8 @@ class _VideoPageState extends State<VideoPage>
                                                 !videoController.follow;
                                             SmartDialog.showToast(
                                                 videoController.follow
-                                                    ? '自己追的番要好好看完哦'
-                                                    : '取消追番成功',
+                                                    ? i18n.toast.favoriteToast
+                                                    : i18n.toast.dismissFavorite,
                                                 displayType:
                                                     SmartToastType.last);
                                           },

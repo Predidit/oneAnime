@@ -4,13 +4,11 @@ import 'package:oneanime/bean/anime/anime_history.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:oneanime/pages/menu/menu.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/history/history_controller.dart';
-import 'package:provider/provider.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 /// Takes an AnimeInfo object and render it to a card
 class AnimeInfoCard extends StatefulWidget {
@@ -30,8 +28,10 @@ class AnimeInfoCard extends StatefulWidget {
 
 class _AnimeInfoCardState extends State<AnimeInfoCard> {
   late bool follow;
+  late Translations i18n;
   @override
   Widget build(BuildContext context) {
+    i18n = Translations.of(context);
     follow = widget.info.follow ?? false;
     final PopularController popularController =
         Modular.get<PopularController>();
@@ -48,7 +48,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
       ),
       child: InkWell(
         onTap: () async {
-          SmartDialog.showLoading(msg: '获取中');
+          SmartDialog.showLoading(msg: i18n.toast.loading);
           AnimeHistory? history =
               historyController.lookupHistory(widget.info.link ?? 0);
           if (history == null) {
@@ -77,7 +77,8 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
           }
           SmartDialog.dismiss();
           if (widget.info.progress != 1) {
-            SmartDialog.showToast('上次观看到第 ${widget.info.progress} 话');
+            SmartDialog.showToast(i18n.toast.historyToast(episode: widget.info.progress ?? 1),
+                displayType: SmartToastType.last);
           }
           videoController.link = widget.info.link!;
           videoController.offset = history?.offset ?? 0;
@@ -171,7 +172,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                                 child: Text(
-                                  "已追 ${widget.info.progress ?? 1} 话",
+                                  "已追 ${widget.info.progress ?? 1} 話",
                                   style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
@@ -212,7 +213,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                               follow = !follow;
                             });
                             SmartDialog.showToast(
-                                follow ? '自己追的番要好好看完哦' : '取消追番成功',
+                                follow ? i18n.toast.favoriteToast : i18n.toast.dismissFavorite,
                                 displayType: SmartToastType.last);
                           }
                         },

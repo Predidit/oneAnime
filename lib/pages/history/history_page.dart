@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/bean/anime/anime_card.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
+import 'package:oneanime/i18n/strings.g.dart'; 
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -14,6 +15,7 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage>
     with AutomaticKeepAliveClientMixin {
+  late Translations i18n;
   final ScrollController scrollController = ScrollController();
   final HistoryController historyController = Modular.get<HistoryController>();
 
@@ -23,6 +25,7 @@ class _HistoryPageState extends State<HistoryPage>
   @override
   void initState() {
     super.initState();
+    i18n = Translations.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
     historyController.getHistoryList();
     scrollController.addListener(() {
@@ -33,7 +36,6 @@ class _HistoryPageState extends State<HistoryPage>
   @override
   void dispose() {
     scrollController.removeListener(() {});
-    debugPrint('history 模块已卸载, 监听器移除');
     super.dispose();
   }
 
@@ -43,7 +45,7 @@ class _HistoryPageState extends State<HistoryPage>
     return PopScope(
       canPop: true,
       child: Scaffold(
-        appBar: const SysAppBar(title: Text('历史记录')),
+        appBar: SysAppBar(title: Text(i18n.my.history.title)),
         body: Container(child: animeList),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -73,13 +75,13 @@ class _HistoryPageState extends State<HistoryPage>
                       historyController.historyList.length - index - 1],
                   index: historyController.historyList.length - index - 1,
                   type: 'history')
-              : const SizedBox(
+              : SizedBox(
                   height: 600,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('啊咧（⊙.⊙） 没有观看记录的说'),
+                      Text(i18n.my.history.empty),
                     ],
                   ));
         },

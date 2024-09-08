@@ -6,6 +6,7 @@ import 'package:hive/hive.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -19,11 +20,13 @@ class _AboutPageState extends State<AboutPage> {
   late dynamic defaultDanmakuArea;
   late dynamic defaultThemeMode;
   late dynamic defaultThemeColor;
+  late Translations i18n;
   final MyController _mineController = Modular.get<MyController>();
 
   @override
   void initState() {
     super.initState();
+    i18n = Translations.of(context);
   }
 
   void onBackPressed(BuildContext context) {
@@ -32,24 +35,18 @@ class _AboutPageState extends State<AboutPage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {
         onBackPressed(context);
       },
       child: Scaffold(
-        appBar: const SysAppBar(title: Text('关于')),
+        appBar: SysAppBar(title: Text(i18n.my.about.title)),
         body: Column(
           children: [
             ListTile(
-              title: const Text('开源许可证'),
-              subtitle: Text('查看所有开源许可证',
+              title: Text(i18n.my.about.openSourceLicense),
+              subtitle: Text(i18n.my.about.openSourceLicenseSubtitle,
                   style: Theme.of(context)
                       .textTheme
                       .labelMedium!
@@ -64,7 +61,7 @@ class _AboutPageState extends State<AboutPage> {
                     mode: LaunchMode.externalApplication);
               },
               dense: false,
-              title: const Text('项目主页'),
+              title: Text(i18n.my.about.GithubRepo),
               trailing: Text('Github',
                   style: Theme.of(context)
                       .textTheme
@@ -77,7 +74,7 @@ class _AboutPageState extends State<AboutPage> {
                     mode: LaunchMode.externalApplication);
               },
               dense: false,
-              title: const Text('弹幕来源'),
+              title: Text(i18n.my.about.danmakuSource),
               trailing: Text('DanDanPlay',
                   style: Theme.of(context)
                       .textTheme
@@ -89,8 +86,8 @@ class _AboutPageState extends State<AboutPage> {
                 _mineController.checkUpdata();
               },
               dense: false,
-              title: const Text('检查更新'),
-              trailing: Text('当前版本 ${Api.version}',
+              title: Text(i18n.my.about.checkUpdate),
+              trailing: Text('${i18n.my.about.currentVersion} ${Api.version}',
                   style: Theme.of(context)
                       .textTheme
                       .labelMedium!

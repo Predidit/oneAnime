@@ -10,6 +10,7 @@ import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 import 'package:oneanime/bean/settings/color_type.dart';
 import 'package:oneanime/bean/settings/settings.dart';
 import 'package:oneanime/utils/utils.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 class ThemeSettingsPage extends StatefulWidget {
   const ThemeSettingsPage({super.key});
@@ -21,6 +22,7 @@ class ThemeSettingsPage extends StatefulWidget {
 class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
   dynamic navigationBarState;
   Box setting = GStorage.setting;
+  late Translations i18n;
   late dynamic defaultDanmakuArea;
   late dynamic defaultThemeMode;
   late dynamic defaultThemeColor;
@@ -30,6 +32,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
   @override
   void initState() {
     super.initState();
+    i18n = Translations.of(context);
     defaultThemeMode =
         setting.get(SettingBoxKey.themeMode, defaultValue: 'system');
     defaultThemeColor =
@@ -106,19 +109,13 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {
         onBackPressed(context);
       },
       child: Scaffold(
-        appBar: const SysAppBar(title: Text('外观设置')),
+        appBar: SysAppBar(title: Text(i18n.my.themeSettings.title)),
         body: Column(
           children: [
             ListTile(
@@ -128,7 +125,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                     useAnimation: false,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text('配色方案'),
+                        title: Text(i18n.my.themeSettings.colorPalette),
                         content: StatefulBuilder(builder:
                             (BuildContext context, StateSetter setState) {
                           return Wrap(
@@ -194,7 +191,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                     });
               },
               dense: false,
-              title: const Text('配色方案'),
+              title: Text(i18n.my.themeSettings.colorPalette),
             ),
             Platform.isAndroid
                 ? ListTile(
@@ -202,7 +199,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                       Modular.to.pushNamed('/tab/my/theme/display');
                     },
                     dense: false,
-                    title: const Text('屏幕帧率'),
+                    title: Text(i18n.my.themeSettings.refreshRate),
                     // trailing: const Icon(Icons.navigate_next),
                   )
                 : Container(),
@@ -212,7 +209,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                     useAnimation: false,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text('主题模式'),
+                        title: Text(i18n.my.themeSettings.themeMode),
                         content: StatefulBuilder(
                           builder:
                               (BuildContext context, StateSetter setState) {
@@ -226,39 +223,39 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                                           updateTheme('system');
                                           SmartDialog.dismiss();
                                         },
-                                        child: const Text("跟随系统"))
+                                        child: Text(i18n.my.themeSettings.themeModeSystem))
                                     : FilledButton.tonal(
                                         onPressed: () {
                                           updateTheme('system');
                                           SmartDialog.dismiss();
                                         },
-                                        child: const Text("跟随系统")),
+                                        child: Text(i18n.my.themeSettings.themeModeSystem)),
                                 defaultThemeMode == 'light'
                                     ? FilledButton(
                                         onPressed: () {
                                           updateTheme('light');
                                           SmartDialog.dismiss();
                                         },
-                                        child: const Text("浅色"))
+                                        child: Text(i18n.my.themeSettings.themeModeLight))
                                     : FilledButton.tonal(
                                         onPressed: () {
                                           updateTheme('light');
                                           SmartDialog.dismiss();
                                         },
-                                        child: const Text("浅色")),
+                                        child: Text(i18n.my.themeSettings.themeModeLight)),
                                 defaultThemeMode == 'dark'
                                     ? FilledButton(
                                         onPressed: () {
                                           updateTheme('dark');
                                           SmartDialog.dismiss();
                                         },
-                                        child: const Text("深色"))
+                                        child: Text(i18n.my.themeSettings.themeModeDark))
                                     : FilledButton.tonal(
                                         onPressed: () {
                                           updateTheme('dark');
                                           SmartDialog.dismiss();
                                         },
-                                        child: const Text("深色")),
+                                        child: Text(i18n.my.themeSettings.themeModeDark)),
                               ],
                             );
                           },
@@ -267,11 +264,11 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                     });
               },
               dense: false,
-              title: const Text('主题模式'),
+              title: Text(i18n.my.themeSettings.themeMode),
               subtitle: Text(
                   defaultThemeMode == 'light'
-                      ? '浅色'
-                      : (defaultThemeMode == 'dark' ? '深色' : '跟随系统'),
+                      ? i18n.my.themeSettings.themeModeLight
+                      : (defaultThemeMode == 'dark' ? i18n.my.themeSettings.themeModeDark : i18n.my.themeSettings.themeModeSystem),
                   style: Theme.of(context)
                       .textTheme
                       .labelMedium!
@@ -279,18 +276,18 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
             ),
             InkWell(
               child: SetSwitchItem(
-                title: 'OLED优化',
-                subTitle: '深色模式下使用纯黑背景',
+                title: i18n.my.themeSettings.OLEDEnhance,
+                subTitle: i18n.my.themeSettings.OLEDEnhanceSubtitle,
                 setKey: SettingBoxKey.oledEnhance,
                 callFn: (_) => {updateOledEnhance()},
                 defaultVal: false,
               ),
             ),
             (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
-                ? const InkWell(
+                ? InkWell(
                     child: SetSwitchItem(
-                      title: '窗口置顶',
-                      subTitle: '播放时始终保持在其他窗口上方',
+                      title: i18n.my.themeSettings.alwaysOntop,
+                      subTitle: i18n.my.themeSettings.alwaysOntopSubtitle,
                       setKey: SettingBoxKey.alwaysOntop,
                       defaultVal: true,
                     ),

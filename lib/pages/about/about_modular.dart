@@ -17,7 +17,6 @@ class AboutModule extends Module {
         child: (_) => const LicensePage(
               applicationName: 'oneAnime',
               applicationVersion: Api.version,
-              applicationLegalese: '开源许可证',
             ),
         transition: TransitionType.noTransition);
   }

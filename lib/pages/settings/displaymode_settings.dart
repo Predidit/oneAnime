@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:hive/hive.dart';
 import 'package:oneanime/utils/storage.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 class SetDiaplayMode extends StatefulWidget {
   const SetDiaplayMode({super.key});
@@ -16,6 +17,7 @@ class _SetDiaplayModeState extends State<SetDiaplayMode> {
   List<DisplayMode> modes = <DisplayMode>[];
   DisplayMode? active;
   DisplayMode? preferred;
+  late Translations i18n;
   Box setting = GStorage.setting;
 
   final ValueNotifier<int> page = ValueNotifier<int>(0);
@@ -26,6 +28,7 @@ class _SetDiaplayModeState extends State<SetDiaplayMode> {
   @override
   void initState() {
     super.initState();
+    i18n = Translations.of(context);
     init();
     SchedulerBinding.instance.addPostFrameCallback((_) {
       fetchAll();
@@ -63,7 +66,7 @@ class _SetDiaplayModeState extends State<SetDiaplayMode> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('屏幕帧率设置')),
+      appBar: AppBar(title: Text(i18n.my.themeSettings.refreshRate)),
       body: SafeArea(
         top: false,
         child: Column(
@@ -73,7 +76,7 @@ class _SetDiaplayModeState extends State<SetDiaplayMode> {
             Padding(
               padding: const EdgeInsets.only(left: 25, top: 10, bottom: 5),
               child: Text(
-                '没有生效? 重启app试试',
+                i18n.my.themeSettings.refreshRateWarning,
                 style: TextStyle(color: Theme.of(context).colorScheme.outline),
               ),
             ),
@@ -85,8 +88,8 @@ class _SetDiaplayModeState extends State<SetDiaplayMode> {
                   return RadioListTile<DisplayMode>(
                     value: mode,
                     title: mode == DisplayMode.auto
-                        ? const Text('自动')
-                        : Text('$mode${mode == active ? "  [系统]" : ""}'),
+                        ? Text(i18n.my.themeSettings.refreshRateAuto)
+                        : Text('$mode'),
                     groupValue: preferred,
                     onChanged: (DisplayMode? newMode) async {
                       await FlutterDisplayMode.setPreferredMode(newMode!);

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 class BangumiPanel extends StatelessWidget {
   const BangumiPanel({
@@ -19,6 +20,7 @@ class BangumiPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Translations i18n = Translations.of(context);
     final ScrollController listViewScrollCtr = ScrollController();
 
     return Expanded(
@@ -31,10 +33,10 @@ class BangumiPanel extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('合集 '),
+                      Text(i18n.video.collection),
                       Expanded(
                         child: Text(
-                          ' 正在播放：$title',
+                          i18n.video.playingCollection(title: title),
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 12,
@@ -58,7 +60,7 @@ class BangumiPanel extends StatelessWidget {
                                   useAnimation: false,
                                   builder: (context) {
                                     return AlertDialog(
-                                      title: const Text('切换选集'),
+                                      title: Text(i18n.video.changeEpisode),
                                       content: StatefulBuilder(builder:
                                           (BuildContext context,
                                               StateSetter setState) {
@@ -76,7 +78,7 @@ class BangumiPanel extends StatelessWidget {
                                                     SmartDialog.dismiss();
                                                   },
                                                   child:
-                                                      Text('第${i.toString()}话'),
+                                                      Text(i18n.toast.currentEpisode(episode: i.toString())),
                                                 ),
                                               ] else ...[
                                                 FilledButton.tonal(
@@ -85,7 +87,7 @@ class BangumiPanel extends StatelessWidget {
                                                     SmartDialog.dismiss();
                                                   },
                                                   child:
-                                                      Text('第${i.toString()}话'),
+                                                      Text(i18n.toast.currentEpisode(episode: i.toString())),
                                                 ),
                                               ]
                                             ]
@@ -97,7 +99,7 @@ class BangumiPanel extends StatelessWidget {
                             }
                           },
                           child: Text(
-                            '全$episodeLength话',
+                            i18n.video.episodeTotal(total: episodeLength),
                             style: const TextStyle(fontSize: 13),
                           ),
                         ),
@@ -150,7 +152,7 @@ class BangumiPanel extends StatelessWidget {
                                   const SizedBox(width: 6)
                                 ],
                                 Text(
-                                  '第${i + 1}话',
+                                  i18n.toast.currentEpisode(episode: i + 1),
                                   style: TextStyle(
                                       fontSize: 13,
                                       color: i == (currentEpisode - 1)

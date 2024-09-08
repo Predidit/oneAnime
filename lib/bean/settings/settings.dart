@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:hive/hive.dart';
 import 'package:oneanime/utils/storage.dart';
-import 'package:oneanime/utils/utils.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 class SetSwitchItem extends StatefulWidget {
   final String? title;
@@ -30,10 +30,12 @@ class _SetSwitchItemState extends State<SetSwitchItem> {
   // ignore: non_constant_identifier_names
   Box Setting = GStorage.setting;
   late bool val;
+  late Translations i18n;
 
   @override
   void initState() {
     super.initState();
+    i18n = Translations.of(context);
     val = Setting.get(widget.setKey, defaultValue: widget.defaultVal ?? false);
   }
 
@@ -44,7 +46,7 @@ class _SetSwitchItemState extends State<SetSwitchItem> {
       widget.callFn!.call(val);
     }
     if (widget.needReboot != null && widget.needReboot!) {
-      SmartDialog.showToast('重启生效');
+      SmartDialog.showToast(i18n.toast.needReboot);
     }
     setState(() {});
   }
@@ -91,10 +93,12 @@ class SelectDialog<T> extends StatefulWidget {
 
 class _SelectDialogState<T> extends State<SelectDialog<T>> {
   late T _tempValue;
+  late Translations i18n;
 
   @override
   void initState() {
     super.initState();
+    i18n = Translations.of(context);
     _tempValue = widget.value;
   }
 
@@ -130,13 +134,13 @@ class _SelectDialogState<T> extends State<SelectDialog<T>> {
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: Text(
-            '取消',
+            i18n.dialog.dismiss,
             style: TextStyle(color: Theme.of(context).colorScheme.outline),
           ),
         ),
         TextButton(
           onPressed: () => Navigator.pop(context, _tempValue),
-          child: const Text('确定'),
+          child: Text(i18n.dialog.confirm),
         )
       ],
     );

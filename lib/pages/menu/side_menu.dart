@@ -3,6 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/router.dart';
 import 'package:provider/provider.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 class SideMenu extends StatefulWidget {
   //const SideMenu({Key? key}) : super(key: key);
@@ -37,7 +38,14 @@ class SideNavigationBarState extends ChangeNotifier {
 
 class _SideMenu extends State<SideMenu> {
   final PageController _page = PageController();
+  late Translations i18n;
   final _mineController = Modular.get<MyController>();
+
+  @override
+  void initState() {
+    super.initState();
+    i18n = Translations.of(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,26 +70,26 @@ class _SideMenu extends State<SideMenu> {
                       child: const Icon(Icons.cloud_outlined),
                     ),
 
-                    destinations: const <NavigationRailDestination>[
+                    destinations: <NavigationRailDestination>[
                       NavigationRailDestination(
-                        selectedIcon: Icon(Icons.home),
-                        icon: Icon(Icons.home_outlined),
-                        label: Text('推荐'),
+                        selectedIcon: const Icon(Icons.home),
+                        icon: const Icon(Icons.home_outlined),
+                        label: Text(i18n.menu.home),
                       ),
                       NavigationRailDestination(
-                        selectedIcon: Icon(Icons.timeline),
-                        icon: Icon(Icons.timeline_outlined),
-                        label: Text('时间表'),
+                        selectedIcon: const Icon(Icons.timeline),
+                        icon: const Icon(Icons.timeline_outlined),
+                        label: Text(i18n.menu.calendar),
                       ),
                       NavigationRailDestination(
-                        selectedIcon: Icon(Icons.favorite),
-                        icon: Icon(Icons.favorite_border),
-                        label: Text('追番'),
+                        selectedIcon: const Icon(Icons.favorite),
+                        icon: const Icon(Icons.favorite_border),
+                        label: Text(i18n.menu.favorite),
                       ),
                       NavigationRailDestination(
-                        selectedIcon: Icon(Icons.settings),
-                        icon: Icon(Icons.settings_outlined),
-                        label: Text('我的'),
+                        selectedIcon: const Icon(Icons.settings),
+                        icon: const Icon(Icons.settings_outlined),
+                        label: Text(i18n.menu.my),
                       ),
                     ],
                     selectedIndex: state.selectedIndex,

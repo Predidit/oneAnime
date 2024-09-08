@@ -8,6 +8,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 class PopularPage extends StatefulWidget {
   const PopularPage({super.key});
@@ -20,6 +21,7 @@ class _PopularPageState extends State<PopularPage>
     with AutomaticKeepAliveClientMixin {
   DateTime? _lastPressedAt;
   bool showArrowUp = false;
+  late Translations i18n;
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _controller = TextEditingController();
   final ScrollController scrollController = ScrollController();
@@ -31,18 +33,19 @@ class _PopularPageState extends State<PopularPage>
   @override
   void initState() {
     super.initState();
+    i18n = Translations.of(context);
     if (popularController.cacheList.isEmpty) {
-      debugPrint('页面列表尝试重新加载');
+      debugPrint('Popular list is empty, loading...');
       popularController.getAnimeList();
     }
-    debugPrint('动画缓存列表长度为 ${popularController.list.length}');
+    debugPrint('The length of anime list is ${popularController.list.length}');
     scrollController.addListener(() {
       popularController.scrollOffset = scrollController.offset;
       if (scrollController.position.pixels >=
               scrollController.position.maxScrollExtent - 200 &&
           popularController.isLoadingMore == false &&
           popularController.keyword == '') {
-        debugPrint('Popular 正在加载更多');
+        debugPrint('Popular list loading more');
         popularController.isLoadingMore = true;
         popularController.onLoad();
       }
@@ -72,9 +75,8 @@ class _PopularPageState extends State<PopularPage>
     if (_lastPressedAt == null ||
         DateTime.now().difference(_lastPressedAt!) >
             const Duration(seconds: 2)) {
-      // 两次点击时间间隔超过2秒，重新记录时间戳
       _lastPressedAt = DateTime.now();
-      SmartDialog.showToast("再按一次退出应用");
+      SmartDialog.showToast(i18n.toast.exitApp);
       return;
     }
     SystemNavigator.pop(); // 退出应用
@@ -123,11 +125,11 @@ class _PopularPageState extends State<PopularPage>
                   focusNode: _focusNode,
                   controller: _controller,
                   style: const TextStyle(color: Colors.white, fontSize: 20),
-                  decoration: const InputDecoration(
-                    hintText: '快速搜索',
-                    hintStyle: TextStyle(color: Colors.white, fontSize: 20),
+                  decoration: InputDecoration(
+                    hintText: i18n.popular.searchBar,
+                    hintStyle: const TextStyle(color: Colors.white, fontSize: 20),
                     border: InputBorder.none,
-                    prefixIcon: Icon(Icons.search, color: Colors.white),
+                    prefixIcon: const Icon(Icons.search, color: Colors.white),
                   ),
                   autocorrect: false,
                   autofocus: false,
@@ -184,7 +186,7 @@ class _PopularPageState extends State<PopularPage>
                     FloatingActionButton(
                       onPressed: () async {
                         await popularController.getAnimeList();
-                        SmartDialog.showToast('列表更新完成');
+                        SmartDialog.showToast(i18n.toast.refreshAnimeListWithSuccess);
                       },
                       child: const Icon(Icons.refresh),
                     ),
@@ -226,13 +228,13 @@ class _PopularPageState extends State<PopularPage>
                           CircularProgressIndicator(),
                         ],
                       ))
-                  : const SizedBox(
+                  : SizedBox(
                       height: 600,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('空空如也 >_<'),
+                          Text(i18n.popular.empty),
                         ],
                       )));
         },

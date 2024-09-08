@@ -8,6 +8,7 @@ import 'package:oneanime/bean/anime/anime_card.dart';
 import 'package:oneanime/pages/menu/menu.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
+import 'package:oneanime/i18n/strings.g.dart';
 
 class FollowPage extends StatefulWidget {
   const FollowPage({super.key});
@@ -19,6 +20,7 @@ class FollowPage extends StatefulWidget {
 class _FollowPageState extends State<FollowPage>
     with AutomaticKeepAliveClientMixin {
   dynamic navigationBarState;
+  late Translations i18n;
   final ScrollController scrollController = ScrollController();
   final FollowController followController = Modular.get<FollowController>();
 
@@ -28,6 +30,7 @@ class _FollowPageState extends State<FollowPage>
   @override
   void initState() {
     super.initState();
+    i18n = Translations.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 在widget构建完成后调用的函数
       navigationBarState = Platform.isWindows || Platform.isLinux || Platform.isMacOS
@@ -62,8 +65,8 @@ class _FollowPageState extends State<FollowPage>
         onBackPressed(context);
       },
       child: Scaffold(
-        appBar: const SysAppBar(
-          title: Text('追番')
+        appBar: SysAppBar(
+          title: Text(i18n.favorite.title),
         ),
         body: Container(child: animeList),
         floatingActionButton: FloatingActionButton(
@@ -89,13 +92,13 @@ class _FollowPageState extends State<FollowPage>
           return followController.followList.length != 0
               ? AnimeInfoCard(
                   info: followController.followList[index], index: index, type: 'follow')
-              : const SizedBox(
+              : SizedBox(
                   height: 600,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('啊咧（⊙.⊙） 没有追番的说'),
+                      Text(i18n.favorite.empty),
                     ],
                   ));
         },
