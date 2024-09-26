@@ -64,12 +64,12 @@ class _HistoryPageState extends State<HistoryPage>
       return ListView.separated(
         controller: scrollController,
         separatorBuilder: (context, index) => const SizedBox(height: 8.0),
-        itemCount: historyController.historyList.length == 0
+        itemCount: historyController.historyList.isEmpty
             ? 1
             : historyController.historyList.length,
         itemBuilder: (context, index) {
           // 倒序
-          return historyController.historyList.length != 0
+          return historyController.historyList.isNotEmpty
               ? AnimeInfoCard(
                   info: historyController.historyList[
                       historyController.historyList.length - index - 1],

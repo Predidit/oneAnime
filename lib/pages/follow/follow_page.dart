@@ -85,11 +85,11 @@ class _FollowPageState extends State<FollowPage>
       return ListView.separated(
         controller: scrollController,
         separatorBuilder: (context, index) => const SizedBox(height: 8.0),
-        itemCount: followController.followList.length == 0
+        itemCount: followController.followList.isEmpty
             ? 1
             : followController.followList.length,
         itemBuilder: (context, index) {
-          return followController.followList.length != 0
+          return followController.followList.isNotEmpty
               ? AnimeInfoCard(
                   info: followController.followList[index], index: index, type: 'follow')
               : SizedBox(

@@ -982,9 +982,9 @@ class _VideoPageState extends State<VideoPage>
                                               ),
                                               IconButton(
                                                 icon: (videoController.follow)
-                                                    ? Icon(Icons.favorite,
+                                                    ? const Icon(Icons.favorite,
                                                         color: Colors.white)
-                                                    : Icon(
+                                                    : const Icon(
                                                         Icons.favorite_border,
                                                         color: Colors.white),
                                                 onPressed: () {
@@ -1102,13 +1102,11 @@ class _VideoPageState extends State<VideoPage>
                                                           const EdgeInsets.only(
                                                               left: 10.0),
                                                       child: Text(
-                                                        Utils.durationToString(
+                                                        "${Utils.durationToString(
                                                                 videoController
-                                                                    .currentPosition) +
-                                                            " / " +
-                                                            Utils.durationToString(
+                                                                    .currentPosition)} / ${Utils.durationToString(
                                                                 playerController
-                                                                    .duration),
+                                                                    .duration)}",
                                                         style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: Platform

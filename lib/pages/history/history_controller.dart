@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oneanime/bean/anime/anime_history.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:hive/hive.dart';
-import 'package:oneanime/utils/storage.dart';
 
 part 'history_controller.g.dart';
 
@@ -29,7 +27,7 @@ abstract class _HistoryController with Store {
 
   Future getHistoryList() async {
     historyList.clear();
-    if (history.length != 0) {
+    if (history.isNotEmpty) {
       list = popularController.list;
       history.asMap().forEach((key, value) {
         list.asMap().forEach((index, item) {
@@ -60,7 +58,7 @@ abstract class _HistoryController with Store {
     int? deleteKey;
     AnimeHistory newRecord;
     int time = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    if (history.length != 0) {
+    if (history.isNotEmpty) {
       history.asMap().forEach((key, value) {
         if (value.link == link) {
           // history[key].time = time;
@@ -75,7 +73,7 @@ abstract class _HistoryController with Store {
       }
     }
     newRecord = AnimeHistory.fromJson({"link": link, "time": time, "offset": offset});
-    debugPrint('更新历史记录: link: ${link}, time: ${time}, offset: ${offset}');
+    debugPrint('更新历史记录: link: $link, time: $time, offset: $offset');
     history.add(newRecord);
     GStorage.history.add(newRecord);
   }
@@ -94,7 +92,7 @@ abstract class _HistoryController with Store {
       }
     });
     if (deleteKey != null) {
-      debugPrint('找到目标历史记录 ${deleteKey}');
+      debugPrint('找到目标历史记录 $deleteKey');
       history.removeAt(deleteKey!);
       deleteKey = null;
     }

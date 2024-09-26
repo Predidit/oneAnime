@@ -17,12 +17,12 @@ class ListRequest {
     final res = await Request().get(Api.animeList);
     final resJson = res.data;
     if (resJson is List) {
-      resJson.forEach((item) {
+      for (var item in resJson) {
         // 0 means that it is 🔞
         if (item is List && item[0] > 0) {
           list.add(AnimeInfo.fromList(item));
         }
-      });
+      }
     } else {
       debugPrint('非法的Json ${res.toString()}');
     }
@@ -30,7 +30,7 @@ class ListRequest {
     final PopularController popularController =
         Modular.get<PopularController>();
 
-    if (list.length != 0) {
+    if (list.isNotEmpty) {
       List<AnimeInfo> oldlist = popularController.list;
 
       debugPrint('检测到远方番剧数据库变动');
@@ -78,17 +78,17 @@ class ListRequest {
       var document = parse(resString);
       final tables = document.getElementsByTagName('table');
       final tbody = tables.first.nodes[1];
-      tbody.nodes.forEach((tr) {
+      for (var tr in tbody.nodes) {
         // anime1.me is also one line (so check the length to prevent it)
         if (tr.nodes.length > 1) {
           // It is in order so use an index to indicate the date
           int i = 0;
-          tr.nodes.forEach((td) {
-            AnimeSchedule t = new AnimeSchedule(td, i++);
+          for (var td in tr.nodes) {
+            AnimeSchedule t = AnimeSchedule(td, i++);
             if (t.valid()) schedules.add(t);
-          });
+          }
         }
-      });
+      }
 
       return schedules;
     } catch (e) {

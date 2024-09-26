@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:oneanime/request/request.dart';
 import 'package:oneanime/request/api.dart';
@@ -29,7 +28,7 @@ class DanmakuRequest {
     String? href = element?.attributes['href'];
     material.debugPrint('动画疯目录 URL 为 $href');
     final resNext = await Request().get(
-        'https://ani.gamer.com.tw/' + (href ?? ''),
+        'https://ani.gamer.com.tw/${href ?? ''}',
         options: Options(headers: httpHeaders));
     // material.debugPrint(res.data);
     Document documentNext = htmlParser.parse(resNext.data);
@@ -86,9 +85,9 @@ class DanmakuRequest {
       'withRelated': 'true',
     };
     material.debugPrint(
-        "弹幕请求最终URL ${Api.dandanAPI + "$bangumiID" + episode.toString().padLeft(4, '0')}");
+        "弹幕请求最终URL ${"${Api.dandanAPI}$bangumiID${episode.toString().padLeft(4, '0')}"}");
     final res = await Request().get(
-        (Api.dandanAPI + "$bangumiID" + episode.toString().padLeft(4, '0')),
+        ("${Api.dandanAPI}$bangumiID${episode.toString().padLeft(4, '0')}"),
         data: withRelated,
         options: Options(headers: httpHeaders));
     

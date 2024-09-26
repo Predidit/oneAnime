@@ -32,7 +32,7 @@ class IndexModule extends Module {
         children: [
           ChildRoute(
             "/error",
-            child: (_) => ErrorPage('未知错误')
+            child: (_) => const ErrorPage('未知错误')
           ),
         ],
         transition: TransitionType.noTransition);

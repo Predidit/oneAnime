@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:mobx/mobx.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:flutter_modular/flutter_modular.dart';

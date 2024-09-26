@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:oneanime/pages/my/my_page.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/about/about_modular.dart';

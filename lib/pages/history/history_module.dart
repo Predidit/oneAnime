@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:oneanime/pages/history/history_page.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 

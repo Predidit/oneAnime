@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:oneanime/request/api.dart';
 import 'package:oneanime/pages/about/about_page.dart';

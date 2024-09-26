@@ -1,7 +1,7 @@
 import 'package:oneanime/utils/constans.dart';
 
 class Api {
-  static const String domain = HttpString.baseUrl + '/';
+  static const String domain = '${HttpString.baseUrl}/';
   static const String animeList = 'https://d1zquzjgwo9yb.cloudfront.net/';
   static const String videoAPI = 'https://v.anime1.me/api';
   static const String version = '1.3.4';

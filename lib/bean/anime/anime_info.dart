@@ -33,8 +33,9 @@ class AnimeInfo extends HiveObject {
   bool contains(String t) {
     // emm, any better way of writing this?
     if (basicContains(t)) return true;
-    if (year != null && season != null && (year! + season!).contains(t))
+    if (year != null && season != null && (year! + season!).contains(t)) {
       return true;
+    }
     if (episode != null && episode!.contains(t)) return true;
     if (subtitle != null && subtitle!.contains(t)) return true;
 
@@ -43,7 +44,7 @@ class AnimeInfo extends HiveObject {
 
   bool basicContains(String t) {
     final tL = t.toLowerCase();
-    final nL = this.name?.toLowerCase();
+    final nL = name?.toLowerCase();
     if (nL == null) {
       return false;
     } else {
@@ -54,14 +55,14 @@ class AnimeInfo extends HiveObject {
   AnimeInfo.fromList(List list) {
     // The ID is the link
     // this.link = 'https://anime1.me/?cat=${list[0]}';
-    this.link = list[0];
-    this.name = list[1];
-    this.episode = list[2];
-    this.year = list[3];
-    this.season = list[4];
-    this.subtitle = list[5];
-    this.follow = false;
-    this.progress = 1;
+    link = list[0];
+    name = list[1];
+    episode = list[2];
+    year = list[3];
+    season = list[4];
+    subtitle = list[5];
+    follow = false;
+    progress = 1;
   }
 
   Map<String, dynamic> toJson() => {

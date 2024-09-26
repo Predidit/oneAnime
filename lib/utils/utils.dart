@@ -60,7 +60,7 @@ class Utils {
             cookieParts[0] == 'h' ||
             cookieParts[0].startsWith('_ga')) {
           finalCookie =
-              finalCookie + cookieParts[0] + '=' + cookieParts[1] + '; ';
+              '$finalCookie${cookieParts[0]}=${cookieParts[1]}; ';
         }
       }
     });
@@ -74,8 +74,6 @@ class Utils {
       colorScheme: defaultDarkTheme.colorScheme.copyWith(
         onPrimary: Colors.black,
         onSecondary: Colors.black,
-        background: Colors.black,
-        onBackground: Colors.black,
         surface: Colors.black,
         onSurface: Colors.white,
       ),

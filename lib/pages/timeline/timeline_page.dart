@@ -40,7 +40,7 @@ class _TimelinePageState extends State<TimelinePage>
     int weekday = DateTime.now().weekday - 1;
     controller =
         TabController(vsync: this, length: tabs.length, initialIndex: weekday);
-    if (timelineController.schedules.length == 0) {
+    if (timelineController.schedules.isEmpty) {
       debugPrint('timeline list is empty, try load again');
       timelineController.getSchedules();
     }
@@ -179,7 +179,7 @@ class _TimelinePageState extends State<TimelinePage>
   }
 
   Widget get renderBody {
-    if (timelineController.schedules.length > 0) {
+    if (timelineController.schedules.isNotEmpty) {
       return TabBarView(
         controller: controller,
         children: renderSchedule(),
@@ -260,7 +260,6 @@ class _TimelinePageState extends State<TimelinePage>
                 ),
               ),
             );
-            ;
           },
         ),
       ));

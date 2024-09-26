@@ -11,7 +11,7 @@ abstract class AnimeBasic {
 
   /// Check if name is loaded and not null
   bool valid() {
-    return name != null && name!.trim().length > 0;
+    return name != null && name!.trim().isNotEmpty;
   }
 
   /// Move episode number in front ([12] xxxx)
