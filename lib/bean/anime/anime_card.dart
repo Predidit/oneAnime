@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:oneanime/utils/utils.dart';
 import 'package:oneanime/bean/anime/anime_history.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:flutter/material.dart';
@@ -92,9 +91,9 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
             children: <Widget>[
               SizedBox(
                 width:
-                    Platform.isWindows || Platform.isLinux || Platform.isMacOS
-                        ? 800
-                        : 300,
+                    Utils.isCompact()
+                        ? 300
+                        : 800,
                 child: Text(
                   widget.info.name ?? '',
                   maxLines: 2,

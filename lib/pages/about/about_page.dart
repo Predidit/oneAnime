@@ -26,7 +26,6 @@ class _AboutPageState extends State<AboutPage> {
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
   }
 
   void onBackPressed(BuildContext context) {
@@ -35,6 +34,7 @@ class _AboutPageState extends State<AboutPage> {
 
   @override
   Widget build(BuildContext context) {
+    i18n = Translations.of(context);
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {

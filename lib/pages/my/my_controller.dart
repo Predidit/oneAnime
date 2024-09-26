@@ -41,7 +41,6 @@ class MyController {
       if (type == 'manual') {
         SmartDialog.showToast('Already the latest version');
       }
-      return false;
     });
     return true;
   }

@@ -59,7 +59,7 @@ class _InitPageState extends State<InitPage> {
         },
       });
     }
-    
+
     _checkStatements();
   }
 
@@ -74,6 +74,8 @@ class _InitPageState extends State<InitPage> {
     if (firstRun) {
       SmartDialog.show(
         useAnimation: false,
+        backDismiss: false,
+        clickMaskDismiss: false,
         builder: (context) {
           return AlertDialog(
             title: const Text('免责声明'),
@@ -146,40 +148,18 @@ class _InitPageState extends State<InitPage> {
 
   @override
   Widget build(BuildContext context) {
+    /// 适配平板设备
+    Box setting = GStorage.setting;
+    bool isWideScreen = MediaQuery.of(context).size.shortestSide >= 600 &&
+        (MediaQuery.of(context).size.shortestSide /
+                MediaQuery.of(context).size.longestSide >=
+            9 / 16);
+    if (isWideScreen) {
+      debugPrint('当前设备宽屏');
+    } else {
+      debugPrint('当前设备非宽屏');
+    }
+    setting.put(SettingBoxKey.isWideScreen, isWideScreen);
     return const RouterOutlet();
-  }
-}
-
-class LoadingWidget extends StatelessWidget {
-  const LoadingWidget({super.key, required this.value});
-
-  final double value;
-
-  @override
-  Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(title: const Text("oneAnime")),
-      body: Center(
-        child: SizedBox(
-          height: 200,
-          child: Flex(
-            direction: Axis.vertical,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              SizedBox(
-                width: size.width * 0.6,
-                child: LinearProgressIndicator(
-                  value: value,
-                  backgroundColor: Colors.black12,
-                  minHeight: 10,
-                ),
-              ),
-              const Text("初始化中"),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

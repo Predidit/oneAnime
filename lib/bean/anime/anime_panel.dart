@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:oneanime/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/i18n/strings.g.dart';
@@ -26,7 +25,7 @@ class BangumiPanel extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Platform.isWindows || Platform.isLinux || Platform.isMacOS
+          !Utils.isCompact()
               ? const SizedBox(height: 7)
               : Padding(
                   padding: const EdgeInsets.only(top: 10, bottom: 6),
@@ -114,7 +113,7 @@ class BangumiPanel extends StatelessWidget {
               scrollDirection: Axis.vertical, // 将滚动方向改为竖直
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount:
-                    Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                    !Utils.isCompact()
                         ? 10
                         : 3,
                 crossAxisSpacing: 10, // 间距

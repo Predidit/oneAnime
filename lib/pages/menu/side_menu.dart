@@ -44,11 +44,11 @@ class _SideMenu extends State<SideMenu> {
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    i18n = Translations.of(context);
     return ChangeNotifierProvider(
       create: (context) => SideNavigationBarState(),
       child: Scaffold(

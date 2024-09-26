@@ -30,7 +30,6 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
     enableSystemProxy =
         setting.get(SettingBoxKey.enableSystemProxy, defaultValue: false);
   }
@@ -129,6 +128,7 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    i18n = Translations.of(context);
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {

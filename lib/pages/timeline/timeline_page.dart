@@ -9,6 +9,7 @@ import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/pages/menu/menu.dart';
+import 'package:oneanime/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:oneanime/bean/anime/anime_history.dart';
@@ -36,7 +37,6 @@ class _TimelinePageState extends State<TimelinePage>
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
     int weekday = DateTime.now().weekday - 1;
     controller =
         TabController(vsync: this, length: tabs.length, initialIndex: weekday);
@@ -47,7 +47,7 @@ class _TimelinePageState extends State<TimelinePage>
   }
 
   void onBackPressed(BuildContext context) {
-    navigationBarState = Platform.isWindows || Platform.isLinux || Platform.isMacOS
+    navigationBarState = !Utils.isCompact()
         ? Provider.of<SideNavigationBarState>(context, listen: false)
         : Provider.of<NavigationBarState>(context, listen: false);
     navigationBarState.showNavigate();
@@ -82,6 +82,7 @@ class _TimelinePageState extends State<TimelinePage>
 
   @override
   Widget build(BuildContext context) {
+    i18n = Translations.of(context);
     return Observer(builder: (context) {
       return PopScope(
         canPop: false,
@@ -235,7 +236,7 @@ class _TimelinePageState extends State<TimelinePage>
                     }
                     videoController.title = item.name ?? '';
                     SmartDialog.dismiss();
-                    navigationBarState = Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                    navigationBarState = !Utils.isCompact()
                         ? Provider.of<SideNavigationBarState>(context,
                             listen: false)
                         : Provider.of<NavigationBarState>(context,

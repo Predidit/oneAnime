@@ -35,7 +35,6 @@ class _SetSwitchItemState extends State<SetSwitchItem> {
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
     val = Setting.get(widget.setKey, defaultValue: widget.defaultVal ?? false);
   }
 
@@ -53,6 +52,7 @@ class _SetSwitchItemState extends State<SetSwitchItem> {
 
   @override
   Widget build(BuildContext context) {
+    i18n = Translations.of(context);
     TextStyle titleStyle = Theme.of(context).textTheme.titleMedium!;
     TextStyle subTitleStyle = Theme.of(context)
         .textTheme
@@ -98,12 +98,12 @@ class _SelectDialogState<T> extends State<SelectDialog<T>> {
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
     _tempValue = widget.value;
   }
 
   @override
   Widget build(BuildContext context) {
+    i18n = Translations.of(context);
     TextStyle titleStyle = Theme.of(context).textTheme.titleMedium!;
 
     return AlertDialog(

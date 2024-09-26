@@ -41,11 +41,11 @@ class _BottomMenu extends State<BottomMenu> {
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    i18n = Translations.of(context);
     return ChangeNotifierProvider(
         create: (context) => NavigationBarState(),
         child: Scaffold(

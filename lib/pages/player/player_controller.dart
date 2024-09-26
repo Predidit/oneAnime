@@ -1,13 +1,8 @@
-import 'dart:io';
-
 import 'package:mobx/mobx.dart';
 import 'package:video_player/video_player.dart';
 import 'package:canvas_danmaku/canvas_danmaku.dart';
 import 'package:oneanime/utils/constans.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:window_manager/window_manager.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:hive/hive.dart';
 import 'package:oneanime/utils/utils.dart';
@@ -75,81 +70,6 @@ abstract class _PlayerController with Store {
         httpHeaders: httpHeaders);
     await mediaPlayer.initialize();
     return mediaPlayer;
-  }
-
-  Future<void> enterFullScreen() async {
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      await windowManager.setFullScreen(true);
-      return;
-    }
-    // await SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.portraitUp,
-    // ]);
-    await landScape();
-    await SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.immersiveSticky,
-    );
-  }
-
-  //退出全屏显示
-  Future<void> exitFullScreen() async {
-    debugPrint('退出全屏模式');
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      await windowManager.setFullScreen(false);
-    }
-    dynamic document;
-    late SystemUiMode mode = SystemUiMode.edgeToEdge;
-    try {
-      if (kIsWeb) {
-        document.exitFullscreen();
-      } else if (Platform.isAndroid || Platform.isIOS) {
-        if (Platform.isAndroid &&
-            (await DeviceInfoPlugin().androidInfo).version.sdkInt < 29) {
-          mode = SystemUiMode.manual;
-        }
-        await SystemChrome.setEnabledSystemUIMode(
-          mode,
-          overlays: SystemUiOverlay.values,
-        );
-        // await SystemChrome.setPreferredOrientations([]);
-        verticalScreen();
-      }
-    } catch (exception, stacktrace) {
-      debugPrint(exception.toString());
-      debugPrint(stacktrace.toString());
-    }
-  }
-
-  //横屏
-  Future<void> landScape() async {
-    dynamic document;
-    try {
-      if (kIsWeb) {
-        await document.documentElement?.requestFullscreen();
-      } else if (Platform.isAndroid || Platform.isIOS) {
-        // await SystemChrome.setEnabledSystemUIMode(
-        //   SystemUiMode.immersiveSticky,
-        //   overlays: [],
-        // );
-        await SystemChrome.setPreferredOrientations(
-          [
-            DeviceOrientation.landscapeLeft,
-            DeviceOrientation.landscapeRight,
-          ],
-        );
-        // await AutoOrientation.landscapeAutoMode(forceSensor: true);
-      }
-    } catch (exception, stacktrace) {
-      debugPrint(exception.toString());
-      debugPrint(stacktrace.toString());
-    }
-  }
-
-//竖屏
-  Future<void> verticalScreen() async {
-    await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
   }
 
   Function get setRate {

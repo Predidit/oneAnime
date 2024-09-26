@@ -1,10 +1,16 @@
+import 'dart:io';
 import 'dart:math';
+import 'package:hive/hive.dart';
+import 'package:oneanime/utils/storage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:oneanime/request/api.dart';
-import 'package:oneanime/utils/constans.dart';
 import 'package:flutter/services.dart';
+import 'package:oneanime/request/api.dart';
+import 'package:flutter/foundation.dart';
+import 'package:oneanime/utils/constans.dart';
 import 'package:screen_pixel/screen_pixel.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:window_manager/window_manager.dart';
 
 class Utils {
   static Future<bool> isLowResolution() async {
@@ -59,8 +65,7 @@ class Utils {
             cookieParts[0] == 'p' ||
             cookieParts[0] == 'h' ||
             cookieParts[0].startsWith('_ga')) {
-          finalCookie =
-              '$finalCookie${cookieParts[0]}=${cookieParts[1]}; ';
+          finalCookie = '$finalCookie${cookieParts[0]}=${cookieParts[1]}; ';
         }
       }
     });
@@ -98,5 +103,100 @@ class Utils {
     } catch (e) {
       return Api.version;
     }
+  }
+
+  /// 判断是否为桌面设备
+  static bool isDesktop() {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      return true;
+    }
+    return false;
+  }
+
+  /// 判断设备是否为宽屏
+  static bool isWideScreen() {
+    Box setting = GStorage.setting;
+    bool isWideScreen =
+        setting.get(SettingBoxKey.isWideScreen, defaultValue: false);
+    return isWideScreen;
+  }
+
+  /// 判断设备是否为平板
+  static bool isTablet() {
+    return isWideScreen() && !isDesktop();
+  }
+
+  /// 判断设备是否需要紧凑布局
+  static bool isCompact() {
+    return !isDesktop() && !isWideScreen();
+  }
+
+  // 进入全屏显示
+  static Future<void> enterFullScreen() async {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      await windowManager.setFullScreen(true);
+      return;
+    }
+    await landScape();
+    await SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.immersiveSticky,
+    );
+  }
+
+  //退出全屏显示
+  static Future<void> exitFullScreen() async {
+    debugPrint('退出全屏模式');
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      await windowManager.setFullScreen(false);
+    }
+    dynamic document;
+    late SystemUiMode mode = SystemUiMode.edgeToEdge;
+    try {
+      if (kIsWeb) {
+        document.exitFullscreen();
+      } else if (Platform.isAndroid || Platform.isIOS) {
+        if (Platform.isAndroid &&
+            (await DeviceInfoPlugin().androidInfo).version.sdkInt < 29) {
+          mode = SystemUiMode.manual;
+        }
+        await SystemChrome.setEnabledSystemUIMode(
+          mode,
+          overlays: SystemUiOverlay.values,
+        );
+        if (isCompact()) {
+          verticalScreen();
+        }
+      }
+    } catch (exception, stacktrace) {
+      debugPrint(exception.toString());
+      debugPrint(stacktrace.toString());
+    }
+  }
+
+  //横屏
+  static Future<void> landScape() async {
+    dynamic document;
+    try {
+      if (kIsWeb) {
+        await document.documentElement?.requestFullscreen();
+      } else if (Platform.isAndroid || Platform.isIOS) {
+        await SystemChrome.setPreferredOrientations(
+          [
+            DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight,
+          ],
+        );
+      }
+    } catch (exception, stacktrace) {
+      debugPrint(exception.toString());
+      debugPrint(stacktrace.toString());
+    }
+  }
+
+  //竖屏
+  static Future<void> verticalScreen() async {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
   }
 }

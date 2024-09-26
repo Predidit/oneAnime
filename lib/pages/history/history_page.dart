@@ -25,7 +25,6 @@ class _HistoryPageState extends State<HistoryPage>
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
     historyController.getHistoryList();
     scrollController.addListener(() {
@@ -42,6 +41,7 @@ class _HistoryPageState extends State<HistoryPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    i18n = Translations.of(context);
     return PopScope(
       canPop: true,
       child: Scaffold(

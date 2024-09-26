@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/menu/side_menu.dart';
+import 'package:oneanime/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:oneanime/pages/menu/menu.dart';
 import 'package:oneanime/utils/storage.dart';
@@ -30,10 +31,9 @@ class _MyPageState extends State<MyPage> {
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 在widget构建完成后调用的函数
-      navigationBarState = Platform.isWindows || Platform.isLinux || Platform.isMacOS
+      navigationBarState = !Utils.isCompact()
           ? Provider.of<SideNavigationBarState>(context, listen: false)
           : Provider.of<NavigationBarState>(context, listen: false);
       navigationBarState.showNavigate();
@@ -48,12 +48,7 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    i18n = Translations.of(context);
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {

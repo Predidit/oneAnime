@@ -7,6 +7,7 @@ import 'package:oneanime/bean/anime/anime_card.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter/services.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
+import 'package:oneanime/utils/utils.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:oneanime/i18n/strings.g.dart';
 
@@ -33,7 +34,6 @@ class _PopularPageState extends State<PopularPage>
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
     if (popularController.cacheList.isEmpty) {
       debugPrint('Popular list is empty, loading...');
       popularController.getAnimeList();
@@ -49,7 +49,7 @@ class _PopularPageState extends State<PopularPage>
         popularController.isLoadingMore = true;
         popularController.onLoad();
       }
-      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      if (!Utils.isCompact()) {
         checkArrowUp();
       }
     });
@@ -98,6 +98,7 @@ class _PopularPageState extends State<PopularPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    i18n = Translations.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       scrollController.jumpTo(popularController.scrollOffset);
     });
@@ -154,7 +155,7 @@ class _PopularPageState extends State<PopularPage>
               ],
             ),
             elevation: 0, // 移除阴影效果
-            shape: Platform.isWindows || Platform.isLinux || Platform.isMacOS
+            shape: !Utils.isCompact()
                 ? const RoundedRectangleBorder(
                     // 添加圆角
                     borderRadius: BorderRadius.vertical(
@@ -165,7 +166,7 @@ class _PopularPageState extends State<PopularPage>
                 : null,
           ),
           body: Container(child: animeList),
-          floatingActionButton: Platform.isWindows || Platform.isLinux || Platform.isMacOS
+          floatingActionButton: !Utils.isCompact()
               ? Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:oneanime/pages/follow/follow_controller.dart';
+import 'package:oneanime/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -30,10 +30,9 @@ class _FollowPageState extends State<FollowPage>
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 在widget构建完成后调用的函数
-      navigationBarState = Platform.isWindows || Platform.isLinux || Platform.isMacOS
+      navigationBarState = !Utils.isCompact()
           ? Provider.of<SideNavigationBarState>(context, listen: false)
           : Provider.of<NavigationBarState>(context, listen: false);
       navigationBarState.showNavigate();
@@ -59,6 +58,7 @@ class _FollowPageState extends State<FollowPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    i18n = Translations.of(context);
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {

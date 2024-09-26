@@ -32,7 +32,6 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
     defaultThemeMode =
         setting.get(SettingBoxKey.themeMode, defaultValue: 'system');
     defaultThemeColor =
@@ -109,6 +108,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    i18n = Translations.of(context);
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {
@@ -283,7 +283,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                 defaultVal: false,
               ),
             ),
-            (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
+            !Utils.isCompact()
                 ? InkWell(
                     child: SetSwitchItem(
                       title: i18n.my.themeSettings.alwaysOntop,

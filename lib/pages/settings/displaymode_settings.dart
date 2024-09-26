@@ -28,7 +28,6 @@ class _SetDiaplayModeState extends State<SetDiaplayMode> {
   @override
   void initState() {
     super.initState();
-    i18n = Translations.of(context);
     init();
     SchedulerBinding.instance.addPostFrameCallback((_) {
       fetchAll();
@@ -65,6 +64,7 @@ class _SetDiaplayModeState extends State<SetDiaplayMode> {
 
   @override
   Widget build(BuildContext context) {
+    i18n = Translations.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(i18n.my.themeSettings.refreshRate)),
       body: SafeArea(
