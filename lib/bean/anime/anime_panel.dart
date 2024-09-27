@@ -113,7 +113,7 @@ class BangumiPanel extends StatelessWidget {
               scrollDirection: Axis.vertical, // 将滚动方向改为竖直
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount:
-                    !Utils.isCompact()
+                    (!Utils.isCompact() && !Utils.isTablet())
                         ? 10
                         : 3,
                 crossAxisSpacing: 10, // 间距

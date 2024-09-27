@@ -491,7 +491,12 @@ class _VideoPageState extends State<VideoPage>
                           MediaQuery.of(context).size.width)
                   ? Row(
                       children: [
-                        playerBody,
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height,
+                            width: (!videoController.androidFullscreen)
+                                ? MediaQuery.of(context).size.height
+                                : MediaQuery.of(context).size.width,
+                            child: playerBody),
                         videoController.androidFullscreen
                             ? Container()
                             : BangumiPanel(
@@ -504,7 +509,12 @@ class _VideoPageState extends State<VideoPage>
                     )
                   : Column(
                       children: [
-                        playerBody,
+                        SizedBox(
+                            height: videoController.androidFullscreen
+                                ? MediaQuery.of(context).size.height
+                                : MediaQuery.of(context).size.width * 9 / 16,
+                            width: MediaQuery.of(context).size.width,
+                            child: playerBody),
                         videoController.androidFullscreen
                             ? Container()
                             : BangumiPanel(

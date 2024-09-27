@@ -38,7 +38,7 @@ void main() async {
       statusBarColor: Colors.transparent,
     ));
   }
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   try {
     await GStorage.init();
   } catch (e) {
