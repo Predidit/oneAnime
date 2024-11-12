@@ -8,7 +8,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   fvp
   screen_brightness_windows
   screen_pixel
-  screen_retriever
+  screen_retriever_windows
   url_launcher_windows
   window_manager
 )
