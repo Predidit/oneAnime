@@ -1,0 +1,98 @@
+name: "appimage"
+
+on:
+  push:
+    tags:
+      - "1.*"
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+
+jobs:
+  flutter-build-linux:
+    name: "Release for Linux"
+    # Change to self-hosted runner
+    runs-on: self-hosted
+    permissions: write-all
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Extract tag name
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Echo build progress
+        run: echo "oneAnime_linux_${{ env.tag }}.AppImage build progress"
+        shell: bash
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake libgtk-3-dev ninja-build libayatana-appindicator3-dev mpv unzip libmpv-dev libasound2-dev
+        shell: bash
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+        shell: bash
+
+      - name: Build Flutter for Linux
+        run: flutter build linux
+        shell: bash
+
+      # Downloading OpenCC Assets (as in your original workflow)
+      - name: Download OpenCC Assets
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          repo: 'Predidit/open_chinese_convert_bridge'
+          version: 'tags/1.0.0'
+          file: 'opencc_linux.zip'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: unzip opencc_linux.zip -d build/linux/x64/release/bundle/lib
+        shell: bash
+
+      # Steps to create an AppImage
+      - name: Download linuxdeploy
+        shell: bash
+        run: |
+          wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          chmod +x linuxdeploy-x86_64.AppImage
+
+      # Prepare AppDir structure for AppImage
+      # Modify paths and filenames as needed for your application.
+      # Ensure you have a .desktop file and icon file checked into your repo.
+      # For example, assume you have `assets/icon.png` and `oneAnime.desktop` in the repo.
+      - name: Prepare AppDir
+        shell: bash
+        run: |
+          mkdir -p AppDir/usr/bin
+          cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
+          # Copy desktop file and icon
+          cp oneAnime.desktop AppDir/
+          cp assets/images/logo/logo_rounded.png AppDir/
+          # The desktop file should have a line like "Icon=icon" and be named accordingly.
+
+      # Build the AppImage with linuxdeploy
+      - name: Build AppImage
+        shell: bash
+        run: |
+          # Using linuxdeploy to bundle dependencies and produce an AppImage
+          # Adjust arguments if needed (e.g., specifying desktop file with --desktop-file)
+          ./linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file AppDir/oneAnime.desktop --icon-file AppDir/icon.png --output appimage
+          mv *.AppImage oneAnime_linux_${{ env.tag }}.AppImage
+
+      - name: Upload Linux AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux_appimage
+          path: oneAnime_linux_*.AppImage

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=OneAnime
+Comment=Watch and manage anime collections
+Exec=./oneanime
+Icon=icon
+Terminal=false
+Type=Application
+Categories=AudioVideo;Player;Video;
