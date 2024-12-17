@@ -42,7 +42,6 @@ class _InitPageState extends State<InitPage> {
     HAenable = setting.get(SettingBoxKey.HAenable, defaultValue: true);
     if (HAenable) {
       fvp.registerWith(options: {
-        'platforms': ['windows', 'linux'],
         'player': {
           'avio.reconnect': '1',
           'avio.reconnect_delay_max': '7',
