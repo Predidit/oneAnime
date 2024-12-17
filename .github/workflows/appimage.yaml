@@ -15,7 +15,7 @@ jobs:
   flutter-build-linux:
     name: "Release for Linux"
     # Change to self-hosted runner
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions: write-all
     steps:
       - name: Clone repository
@@ -62,34 +62,39 @@ jobs:
         shell: bash
 
       # Steps to create an AppImage
-      - name: Download linuxdeploy
-        shell: bash
+      - name: Download and extract linuxdeploy
         run: |
           wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           chmod +x linuxdeploy-x86_64.AppImage
+          # Extract the AppImage
+          ./linuxdeploy-x86_64.AppImage --appimage-extract
+          # Rename for clarity
+          rm -rf linuxdeploy || true
+          mv squashfs-root linuxdeploy
 
       # Prepare AppDir structure for AppImage
       # Modify paths and filenames as needed for your application.
       # Ensure you have a .desktop file and icon file checked into your repo.
       # For example, assume you have `assets/icon.png` and `oneAnime.desktop` in the repo.
+
       - name: Prepare AppDir
         shell: bash
         run: |
           mkdir -p AppDir/usr/bin
           cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
           # Copy desktop file and icon
-          cp oneAnime.desktop AppDir/
-          cp assets/images/logo/logo_rounded.png AppDir/
+          cp oneAnime.desktop AppDir/oneAnime.desktop
+          cp assets/images/logo/logo_rounded_160x160.png AppDir/icon.png
           # The desktop file should have a line like "Icon=icon" and be named accordingly.
 
       # Build the AppImage with linuxdeploy
       - name: Build AppImage
-        shell: bash
         run: |
-          # Using linuxdeploy to bundle dependencies and produce an AppImage
-          # Adjust arguments if needed (e.g., specifying desktop file with --desktop-file)
-          ./linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file AppDir/oneAnime.desktop --icon-file AppDir/icon.png --output appimage
-          mv *.AppImage oneAnime_linux_${{ env.tag }}.AppImage
+          linuxdeploy/AppRun --appdir AppDir \
+            --desktop-file AppDir/oneAnime.desktop \
+            --icon-file AppDir/icon.png \
+            --output appimage
+          mv OneAnime-x86_64.AppImage oneAnime_linux_${{ env.tag }}.AppImage
 
       - name: Upload Linux AppImage
         uses: actions/upload-artifact@v4
