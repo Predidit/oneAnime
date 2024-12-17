@@ -65,7 +65,9 @@ A: 受限于 Anime1 网站本身的架构与设计，Anime1 不向用户提供�
 
 特别感谢 [Bangumi](https://bangumi.tv/) 本项目使用了 Bangumi 开放API 以提供番剧元数据。
 
-感谢 [fvp](https://github.com/wang-bin/fvp) 本项目跨平台媒体播放能力来自 fvp
+感谢 [media-kit](https://github.com/media-kit/media-kit) 本项目跨平台媒体播放能力来自 media-kit
+
+感谢 [avbuild](https://github.com/wang-bin/avbuild) 本项目使用了来自 avbuild 的树外补丁实现非标准视频流播放
 
 感谢 [hive](https://github.com/isar/hive) 本项目持久化储存能力来自 hive
 
