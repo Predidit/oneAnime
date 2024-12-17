@@ -9,10 +9,12 @@ import 'package:oneanime/utils/storage.dart';
 import 'package:flutter/services.dart';
 import 'package:oneanime/utils/utils.dart';
 import 'package:oneanime/pages/error/error.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:oneanime/i18n/strings.g.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MediaKit.ensureInitialized();
   LocaleSettings.useDeviceLocale();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await windowManager.ensureInitialized();

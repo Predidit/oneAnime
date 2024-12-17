@@ -242,7 +242,7 @@ class _TimelinePageState extends State<TimelinePage>
                             listen: false);
                     Modular.to.pushNamed('/video/');
                   } else {
-                    SmartDialog.showToast(i18n.toast.animeNotExist, displayType: SmartToastType.last);
+                    SmartDialog.showToast(i18n.toast.animeNotExist, displayType: SmartToastType.onlyRefresh);
                   }
                 },
                 child: Align(

@@ -77,7 +77,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
           SmartDialog.dismiss();
           if (widget.info.progress != 1) {
             SmartDialog.showToast(i18n.toast.historyToast(episode: widget.info.progress ?? 1),
-                displayType: SmartToastType.last);
+                displayType: SmartToastType.onlyRefresh);
           }
           videoController.link = widget.info.link!;
           videoController.offset = history?.offset ?? 0;
@@ -213,7 +213,7 @@ class _AnimeInfoCardState extends State<AnimeInfoCard> {
                             });
                             SmartDialog.showToast(
                                 follow ? i18n.toast.favoriteToast : i18n.toast.dismissFavorite,
-                                displayType: SmartToastType.last);
+                                displayType: SmartToastType.onlyRefresh);
                           }
                         },
                         splashColor: Theme.of(context)

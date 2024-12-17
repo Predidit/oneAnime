@@ -46,7 +46,7 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
                 title: i18n.my.playerSettings.hardwareAcceleration,
                 setKey: SettingBoxKey.HAenable,
                 defaultVal: true,
-                needReboot: true,
+                needReboot: false,
               ),
             ),
             InkWell(

@@ -23,7 +23,6 @@ import 'package:hive/hive.dart';
 import 'package:oneanime/bean/appbar/drag_to_move_bar.dart' as dtb;
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/utils/utils.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:oneanime/i18n/strings.g.dart';
 
 class VideoPage extends StatefulWidget {
@@ -129,7 +128,7 @@ class _VideoPageState extends State<VideoPage>
 
   void _handleDanmaku() {
     if (videoController.danDanmakus.isEmpty) {
-      SmartDialog.showToast('当前剧集没有找到弹幕的说', displayType: SmartToastType.last);
+      SmartDialog.showToast('当前剧集没有找到弹幕的说', displayType: SmartToastType.onlyRefresh);
       return;
     }
     danmakuController.clear();
@@ -158,7 +157,6 @@ class _VideoPageState extends State<VideoPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNode);
     });
-    WakelockPlus.enable();
     bool alwaysOntop =
         setting.get(SettingBoxKey.alwaysOntop, defaultValue: true);
     if (alwaysOntop &&
@@ -202,7 +200,6 @@ class _VideoPageState extends State<VideoPage>
   @override
   void dispose() {
     _focusNode.dispose();
-    WakelockPlus.disable();
     WidgetsBinding.instance.removeObserver(this);
     try {
       playerTimer!.cancel();
@@ -887,7 +884,7 @@ class _VideoPageState extends State<VideoPage>
                     // 自定义顶部组件
                     Visibility(
                       visible: showPositioned ||
-                          !playerController.mediaPlayer.value.isPlaying,
+                          !playerController.mediaPlayer.state.playing,
                       child: Positioned(
                         top: 0,
                         left: 0,
@@ -935,7 +932,7 @@ class _VideoPageState extends State<VideoPage>
                                     videoController.follow
                                         ? i18n.toast.favoriteToast
                                         : i18n.toast.dismissFavorite,
-                                    displayType: SmartToastType.last);
+                                    displayType: SmartToastType.onlyRefresh);
                               },
                               splashColor: Theme.of(context)
                                   .colorScheme
@@ -950,7 +947,7 @@ class _VideoPageState extends State<VideoPage>
                     // 自定义播放器底部组件
                     Visibility(
                       visible: showPositioned ||
-                          !playerController.mediaPlayer.value.isPlaying,
+                          !playerController.mediaPlayer.state.playing,
                       child: Positioned(
                         bottom: 0,
                         left: 0,
@@ -978,7 +975,7 @@ class _VideoPageState extends State<VideoPage>
                                       if (videoController.episode ==
                                           videoController.token.length) {
                                         SmartDialog.showToast('已经是最新一集',
-                                            displayType: SmartToastType.last);
+                                            displayType: SmartToastType.onlyRefresh);
                                         return;
                                       }
                                       SmartDialog.showToast(

@@ -5,7 +5,8 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   flutter_volume_controller
-  fvp
+  media_kit_libs_windows_video
+  media_kit_video
   screen_brightness_windows
   screen_pixel
   screen_retriever_windows

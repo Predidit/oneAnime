@@ -1,5 +1,8 @@
+import 'dart:io';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:mobx/mobx.dart';
-import 'package:video_player/video_player.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 import 'package:canvas_danmaku/canvas_danmaku.dart';
 import 'package:oneanime/utils/constans.dart';
 import 'package:flutter/foundation.dart';
@@ -16,7 +19,8 @@ abstract class _PlayerController with Store {
   String videoCookie = '';
   bool playResume = false;
   Box setting = GStorage.setting;
-  late VideoPlayerController mediaPlayer;
+  late Player mediaPlayer;
+  late VideoController videoController;
   late DanmakuController danmakuController;
 
   // 当前播放器状态
@@ -34,14 +38,7 @@ abstract class _PlayerController with Store {
       debugPrint('未找到已经存在的 player');
     }
     debugPrint('VideoURL开始初始化');
-    mediaPlayer = await createVideoController();
-    bool aotoPlay = setting.get(SettingBoxKey.autoPlay, defaultValue: true);
-    if (offset != 0 && playResume) {
-      await mediaPlayer.seekTo(Duration(seconds: offset));
-    }
-    if (aotoPlay) {
-      await mediaPlayer.play();
-    }
+    mediaPlayer = await createVideoController(offset: offset);
     danmakuController.clear();
     debugPrint('VideoURL初始化完成');
     dataStatus = 'loaded';
@@ -56,58 +53,86 @@ abstract class _PlayerController with Store {
     }
   }
 
-  Future<VideoPlayerController> createVideoController() async {
-    debugPrint('videoController 配置成功');
-
+  Future<Player> createVideoController({int offset = 0}) async {
     var httpHeaders = {
-      'user-agent':
-          Utils.getRandomUA(),
+      'user-agent': Utils.getRandomUA(),
       'referer': HttpString.baseUrl,
       'Cookie': videoCookie,
     };
+    bool hAenable = setting.get(SettingBoxKey.HAenable, defaultValue: true);
+    bool aotoPlay = setting.get(SettingBoxKey.autoPlay, defaultValue: true);
+    mediaPlayer = Player(
+      configuration: const PlayerConfiguration(
+        bufferSize: 15 * 1024 * 1024,
+      ),
+    );
 
-    mediaPlayer = VideoPlayerController.networkUrl(Uri.parse(videoUrl),
-        httpHeaders: httpHeaders);
-    await mediaPlayer.initialize();
+    var pp = mediaPlayer.platform as NativePlayer;
+    await pp.setProperty("af", "scaletempo2=max-speed=8");
+    if (Platform.isAndroid) {
+      await pp.setProperty("volume-max", "100");
+      await pp.setProperty("ao", "opensles");
+    }
+
+    await mediaPlayer.setAudioTrack(
+      AudioTrack.auto(),
+    );
+
+    videoController = VideoController(
+      mediaPlayer,
+      configuration: VideoControllerConfiguration(
+        enableHardwareAcceleration: hAenable,
+        androidAttachSurfaceAfterVideoParameters: false,
+      ),
+    );
+    mediaPlayer.setPlaylistMode(PlaylistMode.none);
+
+    // error handle
+    mediaPlayer.stream.error.listen((event) {
+      SmartDialog.showToast(
+        'Player intent error ${event.toString()} $videoUrl', displayType: SmartToastType.onlyRefresh, 
+      );
+    });
+
+    await mediaPlayer.open(
+      Media(videoUrl,
+          start: Duration(seconds: offset), httpHeaders: httpHeaders),
+      play: aotoPlay,
+    );
     return mediaPlayer;
   }
 
   Function get setRate {
-    return mediaPlayer.setPlaybackSpeed;
+    return mediaPlayer.setRate;
   }
 
   bool get playing {
-    return mediaPlayer.value.isPlaying;
+    return mediaPlayer.state.playing;
   }
 
   bool get buffering {
-    return mediaPlayer.value.isBuffering;
+    return mediaPlayer.state.buffering;
   }
 
   Duration get position {
-    return mediaPlayer.value.position;
+    return mediaPlayer.state.position;
   }
 
   Duration get buffer {
-    if (mediaPlayer.value.buffered.isEmpty) {
-      return Duration.zero;
-    }
-
-    Duration maxDuration = mediaPlayer.value.buffered[0].end;
-    return maxDuration;
+    return mediaPlayer.state.buffer;
   }
 
   Duration get duration {
-    return mediaPlayer.value.duration;
+    return mediaPlayer.state.duration;
   }
 
   bool get completed {
-    return mediaPlayer.value.isCompleted;
+    return mediaPlayer.state.completed;
   }
 
   Future seek(Duration duration) async {
     danmakuController.clear();
-    await mediaPlayer.seekTo(duration);
+    await mediaPlayer.seek(duration);
   }
 
   Future pause() async {
@@ -121,7 +146,7 @@ abstract class _PlayerController with Store {
   }
 
   Future playOrPause() async {
-    if (mediaPlayer.value.isPlaying) {
+    if (mediaPlayer.state.playing) {
       pause();
     } else {
       play();

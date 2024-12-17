@@ -3,7 +3,6 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:fvp/fvp.dart' as fvp;
 import 'package:hive/hive.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:oneanime/utils/storage.dart';
@@ -37,28 +36,6 @@ class _InitPageState extends State<InitPage> {
     if (autoUpdate) {
       update();
     }
-
-    /// mdk初始化
-    HAenable = setting.get(SettingBoxKey.HAenable, defaultValue: true);
-    if (HAenable) {
-      fvp.registerWith(options: {
-        'player': {
-          'avio.reconnect': '1',
-          'avio.reconnect_delay_max': '7',
-          'buffer': '2000+150000',
-        },
-      });
-    } else {
-      fvp.registerWith(options: {
-        'video.decoders': ['FFmpeg'],
-        'player': {
-          'avio.reconnect': '1',
-          'avio.reconnect_delay_max': '7',
-          'buffer': '2000+150000',
-        },
-      });
-    }
-
     _checkStatements();
   }
 
