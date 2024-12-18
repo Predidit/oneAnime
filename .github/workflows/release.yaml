@@ -139,11 +139,38 @@
             run: tar -zcvf oneAnime_linux_${{ env.tag }}.tar.gz -C build/linux/x64/release/bundle .
             shell: bash
 
+          - name: Download and extract linuxdeploy
+            run: |
+              wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+              chmod +x linuxdeploy-x86_64.AppImage
+              # Extract the AppImage
+              ./linuxdeploy-x86_64.AppImage --appimage-extract
+              # Rename for clarity
+              mv squashfs-root linuxdeploy
+
+          - name: Prepare AppDir
+            shell: bash
+            run: |
+              mkdir -p AppDir/usr/bin
+              cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
+              cp oneAnime.desktop AppDir/oneAnime.desktop
+              cp assets/images/logo/logo_rounded_160x160.png AppDir/icon.png
+
+          - name: Build AppImage
+            run: |
+              linuxdeploy/AppRun --appdir AppDir \
+                --desktop-file AppDir/oneAnime.desktop \
+                --icon-file AppDir/icon.png \
+                --output appimage
+              mv OneAnime-x86_64.AppImage oneAnime_linux_${{ env.tag }}.AppImage
+
           - name: Upload linux outputs
             uses: actions/upload-artifact@v4
             with:
               name: linux_outputs
-              path: oneAnime_linux_*.tar.gz
+              path: |
+                oneAnime_linux_*.tar.gz
+                oneAnime_linux_*.AppImage
 
       flutter-build-macos:
         name: "Release for Macos"
@@ -242,7 +269,7 @@
           - name: List files in linux_outputs directory
             run: ls -l linux_outputs   
           - name: Copy linux build file to root
-            run: cp linux_outputs/* oneAnime_linux_${{ env.tag }}.tar.gz
+            run: cp linux_outputs/* .
 
           - name: Download macos build file
             uses: actions/download-artifact@v4
@@ -301,3 +328,4 @@
                 oneAnime_macos_*.dmg
                 oneAnime_ios_*.ipa
                 oneAnime_linux_*.tar.gz
+                oneAnime_linux_*.AppImage
