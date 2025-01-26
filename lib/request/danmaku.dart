@@ -7,14 +7,14 @@ import 'package:flutter/material.dart' as material;
 import 'package:oneanime/bean/danmaku/danmaku_module.dart';
 import 'package:oneanime/bean/anime/anime_bangumi_info.dart';
 import 'package:oneanime/utils/utils.dart';
+import 'package:oneanime/utils/mortis.dart';
 
 class DanmakuRequest {
   // 获取动画疯sn集合, 需要进一步处理
   static getAniDanmakuList(String title) async {
     List<String> dataList = [];
     var httpHeaders = {
-      'user-agent':
-          Utils.getRandomUA(),
+      'user-agent': Utils.getRandomUA(),
       'referer': 'https://ani.gamer.com.tw/',
     };
     Map<String, String> keywordMap = {
@@ -45,16 +45,22 @@ class DanmakuRequest {
 
   //获取弹弹Play集合，需要进一步处理
   static getBangumiID(String title) async {
+    var path = Api.dandanAPISearch;
+    var endPoint = Api.dandanAPIDomain + path;
+    var timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     var httpHeaders = {
-      'user-agent':
-          Utils.getRandomUA(),
+      'user-agent': Utils.getRandomUA(),
       'referer': '',
+      'X-Auth': 1,
+      'X-AppId': mortis['id'],
+      'X-Timestamp': timestamp.toString(),
+      'X-Signature': Utils.generateDandanSignature(path, timestamp),
     };
     Map<String, String> keywordMap = {
       'keyword': title,
     };
 
-    final res = await Request().get(Api.dandanSearch,
+    final res = await Request().get(endPoint,
         data: keywordMap, options: Options(headers: httpHeaders));
     Map<String, dynamic> jsonData = res.data;
     List<dynamic> animes = jsonData['animes'];
@@ -67,7 +73,6 @@ class DanmakuRequest {
         minAnimeId = animeId;
       }
     }
-    // 这里猜测了弹弹Play的分集命名规则，例如上面的番剧ID为1758，第一集弹幕库ID大概率为17580001，但是此命名规则并没有体现在官方API文档里，保险的做法是请求 Api.dandanInfo
     return minAnimeId;
   }
 
@@ -76,21 +81,30 @@ class DanmakuRequest {
     if (bangumiID == 100000) {
       return danmakus;
     }
+    // 这里猜测了弹弹Play的分集命名规则，例如上面的番剧ID为1758，第一集弹幕库ID大概率为17580001，但是此命名规则并没有体现在官方API文档里，保险的做法是请求 Api.dandanInfo
+    var path = Api.dandanAPIComment +
+        bangumiID.toString() +
+        episode.toString().padLeft(4, '0');
+    var endPoint = Api.dandanAPIDomain + path;
+    var timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     var httpHeaders = {
-      'user-agent':
-          Utils.getRandomUA(),
+      'user-agent': Utils.getRandomUA(),
       'referer': '',
+      'X-Auth': 1,
+      'X-AppId': mortis['id'],
+      'X-Timestamp': timestamp.toString(),
+      'X-Signature': Utils.generateDandanSignature(path, timestamp),
     };
     Map<String, String> withRelated = {
       'withRelated': 'true',
     };
     material.debugPrint(
-        "弹幕请求最终URL ${"${Api.dandanAPI}$bangumiID${episode.toString().padLeft(4, '0')}"}");
+        "弹幕请求最终URL $endPoint");
     final res = await Request().get(
-        ("${Api.dandanAPI}$bangumiID${episode.toString().padLeft(4, '0')}"),
+        (endPoint),
         data: withRelated,
         options: Options(headers: httpHeaders));
-    
+
     Map<String, dynamic> jsonData = res.data;
     List<dynamic> comments = jsonData['comments'];
 
@@ -101,22 +115,24 @@ class DanmakuRequest {
     return danmakus;
   }
 
-  static getBangumiName (String title) async {
+  static getBangumiName(String title) async {
     // Bangumi API 文档要求的UA格式
     var httpHeaders = {
       'user-agent':
           'Predidit/oneAnime/${Api.version} (Android) (https://github.com/Predidit/oneAnime)',
       'referer': '',
     };
-    Map<String, String> keywordMap = {
-      'type': '2',
-      'responseGroup': 'small'
-    };
+    Map<String, String> keywordMap = {'type': '2', 'responseGroup': 'small'};
 
-    final res = await Request().get(Api.bangumiSearch + Uri.encodeComponent(title) ,
-        data: keywordMap, options: Options(headers: httpHeaders));
+    final res = await Request().get(
+        Api.bangumiSearch + Uri.encodeComponent(title),
+        data: keywordMap,
+        options: Options(headers: httpHeaders));
     Map<String, dynamic> jsonData = res.data;
-    BangumiInfo bangumiInfo = BangumiInfo.fromJson({"name": jsonData['list'][0]['name'], "name_cn": jsonData['list'][0]['name_cn']});
+    BangumiInfo bangumiInfo = BangumiInfo.fromJson({
+      "name": jsonData['list'][0]['name'],
+      "name_cn": jsonData['list'][0]['name_cn']
+    });
     return bangumiInfo;
   }
 }

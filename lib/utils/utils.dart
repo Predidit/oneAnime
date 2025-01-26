@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:convert';
 import 'package:hive/hive.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:dio/dio.dart';
@@ -11,6 +12,8 @@ import 'package:oneanime/utils/constans.dart';
 import 'package:screen_pixel/screen_pixel.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:crypto/crypto.dart';
+import 'package:oneanime/utils/mortis.dart';
 
 class Utils {
   static Future<bool> isLowResolution() async {
@@ -198,5 +201,14 @@ class Utils {
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+  }
+
+  static String generateDandanSignature(String path, int timestamp) {
+    String id = mortis['id']!;
+    String value = mortis['value']!;
+    String data = id + timestamp.toString() + path + value;
+    var bytes = utf8.encode(data);
+    var digest = sha256.convert(bytes);
+    return base64Encode(digest.bytes);
   }
 }

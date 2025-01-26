@@ -103,7 +103,7 @@ class Request {
 
   get(url, {data, options, cancelToken, extra}) async {
     Response response;
-    final Options options = Options();
+    options ??= Options();
     ResponseType resType = ResponseType.json;
     if (extra != null) {
       resType = extra!['resType'] ?? ResponseType.json;
