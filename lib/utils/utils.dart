@@ -14,6 +14,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:crypto/crypto.dart';
 import 'package:oneanime/utils/mortis.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Utils {
   static Future<bool> isLowResolution() async {
@@ -210,5 +211,10 @@ class Utils {
     var bytes = utf8.encode(data);
     var digest = sha256.convert(bytes);
     return base64Encode(digest.bytes);
+  }
+
+  static Future<String> getPlayerTempPath() async {
+    final directory = await getTemporaryDirectory();
+    return directory.path;
   }
 }
