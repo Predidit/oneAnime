@@ -52,6 +52,11 @@ class VideoRequest {
           final element = videoTags[i];
           token.add(element.attributes['data-apireq'] ?? '');
         }
+        final videoTitle =
+            document.getElementsByClassName('entry-title').first.text;
+        if (videoTitle.endsWith('[01]')) {
+          token = token.reversed.toList();
+        }
         debugPrint('从网页上成功捕获视频凭据 ${token[0]}');
         debugPrint('合集总长度 ${videoTags.length}');
       } else {
