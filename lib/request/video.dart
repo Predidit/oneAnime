@@ -44,6 +44,7 @@ class VideoRequest {
     List<String> token = [];
     final res = await Request().get(url);
     String resString = res.data.toString();
+    String firstTitle = '';
     try {
       var document = parse(resString);
       final videoTags = document.getElementsByTagName('video');
@@ -52,11 +53,7 @@ class VideoRequest {
           final element = videoTags[i];
           token.add(element.attributes['data-apireq'] ?? '');
         }
-        final videoTitle =
-            document.getElementsByClassName('entry-title').first.text;
-        if (videoTitle.endsWith('[01]')) {
-          token = token.reversed.toList();
-        }
+        firstTitle = document.getElementsByClassName('entry-title').first.text;
         debugPrint('从网页上成功捕获视频凭据 ${token[0]}');
         debugPrint('合集总长度 ${videoTags.length}');
       } else {
@@ -80,6 +77,9 @@ class VideoRequest {
             debugPrint('未从网页$p上找到视频源');
           }
         }
+      }
+      if (token.isNotEmpty && firstTitle.endsWith('[01]')) {
+        token = token.reversed.toList();
       }
     } catch (e) {
       debugPrint('其他错误 ${e.toString()}');
