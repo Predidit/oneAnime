@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.4.0+10400
+version: 1.4.1+10401
 
 environment:
   sdk: '>=3.2.6 <4.0.0'
@@ -74,10 +74,7 @@ dependencies:
 
   provider: any
 
-  flutter_open_chinese_convert: 
-    git:
-      url: https://github.com/Predidit/flutter_open_chinese_convert.git
-      ref: master
+  flutter_open_chinese_convert: ^0.6.0
   media_kit:
     git:
       url: https://github.com/Predidit/media-kit.git

@@ -411,12 +411,11 @@ packages:
   flutter_open_chinese_convert:
     dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: "6cfb0f57852bfbba0652b076e5eb5c47b888d5ae"
-      url: "https://github.com/Predidit/flutter_open_chinese_convert.git"
-    source: git
-    version: "0.5.1"
+      name: flutter_open_chinese_convert
+      sha256: "04561ced3dc66a28c394934186a4224a34f2c8912881d489015f0784f2cf8c70"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
