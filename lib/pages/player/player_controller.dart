@@ -92,6 +92,7 @@ abstract class _PlayerController with Store {
             )
           : VideoControllerConfiguration(
               enableHardwareAcceleration: hAenable,
+              hwdec: hAenable ? null : 'no',
               androidAttachSurfaceAfterVideoParameters: false,
             ),
     );
