@@ -84,10 +84,16 @@ abstract class _PlayerController with Store {
 
     videoController = VideoController(
       mediaPlayer,
-      configuration: VideoControllerConfiguration(
-        enableHardwareAcceleration: hAenable,
-        androidAttachSurfaceAfterVideoParameters: false,
-      ),
+      configuration: (Platform.isAndroid && hAenable)
+          ? const VideoControllerConfiguration(
+              vo: 'mediacodec_embed',
+              hwdec: 'mediacodec',
+              androidAttachSurfaceAfterVideoParameters: false,
+            )
+          : VideoControllerConfiguration(
+              enableHardwareAcceleration: hAenable,
+              androidAttachSurfaceAfterVideoParameters: false,
+            ),
     );
     mediaPlayer.setPlaylistMode(PlaylistMode.none);
 
