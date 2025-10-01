@@ -20,7 +20,7 @@ version: 1.4.1+10401
 
 environment:
   sdk: '>=3.2.6 <4.0.0'
-  flutter: 3.35.1
+  flutter: 3.35.5
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -54,7 +54,7 @@ dependencies:
   url_launcher: ^6.3.0
   device_info_plus: ^10.1.2
   flutter_launcher_icons: ^0.13.1
-  window_manager: ^0.4.2
+  window_manager: ^0.5.1
 
   slang: ^3.31.2
   slang_flutter: ^3.31.0
