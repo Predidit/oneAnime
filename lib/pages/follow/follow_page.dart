@@ -1,12 +1,10 @@
 import 'package:oneanime/pages/follow/follow_controller.dart';
-import 'package:oneanime/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/bean/anime/anime_card.dart';
 import 'package:oneanime/pages/menu/menu.dart';
-import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 import 'package:oneanime/i18n/strings.g.dart';
 
@@ -19,7 +17,7 @@ class FollowPage extends StatefulWidget {
 
 class _FollowPageState extends State<FollowPage>
     with AutomaticKeepAliveClientMixin {
-  dynamic navigationBarState;
+  late NavigationBarState navigationBarState;
   late Translations i18n;
   final ScrollController scrollController = ScrollController();
   final FollowController followController = Modular.get<FollowController>();
@@ -32,9 +30,7 @@ class _FollowPageState extends State<FollowPage>
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 在widget构建完成后调用的函数
-      navigationBarState = !Utils.isCompact()
-          ? Provider.of<SideNavigationBarState>(context, listen: false)
-          : Provider.of<NavigationBarState>(context, listen: false);
+      navigationBarState = Provider.of<NavigationBarState>(context, listen: false);
       navigationBarState.showNavigate();
     });
     followController.getFollowList();

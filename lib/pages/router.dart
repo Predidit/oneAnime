@@ -4,8 +4,6 @@ import 'package:oneanime/pages/timeline/timeline_module.dart';
 import 'package:oneanime/pages/my/my_module.dart';
 import 'package:oneanime/pages/follow/follow_module.dart';
 
-
- 
 class MenuRouteItem {
   final String path;
   final Module module;
@@ -46,11 +44,11 @@ final MenuRoute menu = MenuRoute([
     module: TimelineModule(),
   ),
   MenuRouteItem(
-    path: "/my",
-    module: MyModule(),
-  ),
-  MenuRouteItem(
     path: "/follow",
     module: FollowModule(),
+  ),
+  MenuRouteItem(
+    path: "/my",
+    module: MyModule(),
   ),
 ]);

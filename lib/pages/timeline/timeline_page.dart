@@ -8,9 +8,7 @@ import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/pages/menu/menu.dart';
-import 'package:oneanime/utils/utils.dart';
 import 'package:provider/provider.dart';
-import 'package:oneanime/pages/menu/side_menu.dart';
 import 'package:oneanime/bean/anime/anime_history.dart';
 import 'package:oneanime/pages/history/history_controller.dart';
 import 'package:oneanime/i18n/strings.g.dart';
@@ -29,7 +27,7 @@ class _TimelinePageState extends State<TimelinePage>
   final VideoController videoController = Modular.get<VideoController>();
   final PopularController popularController = Modular.get<PopularController>();
   final HistoryController historyController = Modular.get<HistoryController>();
-  dynamic navigationBarState;
+  late NavigationBarState navigationBarState;
   late Translations i18n;
   TabController? controller;
 
@@ -46,9 +44,7 @@ class _TimelinePageState extends State<TimelinePage>
   }
 
   void onBackPressed(BuildContext context) {
-    navigationBarState = !Utils.isCompact()
-        ? Provider.of<SideNavigationBarState>(context, listen: false)
-        : Provider.of<NavigationBarState>(context, listen: false);
+    navigationBarState = Provider.of<NavigationBarState>(context, listen: false);
     navigationBarState.showNavigate();
     navigationBarState.updateSelectedIndex(0);
     Modular.to.navigate('/tab/popular/');
@@ -235,10 +231,7 @@ class _TimelinePageState extends State<TimelinePage>
                     }
                     videoController.title = item.name ?? '';
                     SmartDialog.dismiss();
-                    navigationBarState = !Utils.isCompact()
-                        ? Provider.of<SideNavigationBarState>(context,
-                            listen: false)
-                        : Provider.of<NavigationBarState>(context,
+                    navigationBarState = Provider.of<NavigationBarState>(context,
                             listen: false);
                     Modular.to.pushNamed('/video/');
                   } else {

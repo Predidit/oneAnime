@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:oneanime/pages/menu/side_menu.dart';
-import 'package:oneanime/utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:oneanime/pages/menu/menu.dart';
 import 'package:oneanime/utils/storage.dart';
@@ -19,7 +17,7 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  dynamic navigationBarState;
+  late NavigationBarState navigationBarState;
   late Translations i18n;
   Box setting = GStorage.setting;
   late dynamic defaultDanmakuArea;
@@ -31,10 +29,7 @@ class _MyPageState extends State<MyPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // 在widget构建完成后调用的函数
-      navigationBarState = !Utils.isCompact()
-          ? Provider.of<SideNavigationBarState>(context, listen: false)
-          : Provider.of<NavigationBarState>(context, listen: false);
+      navigationBarState = Provider.of<NavigationBarState>(context, listen: false);
       navigationBarState.showNavigate();
     });
   }
