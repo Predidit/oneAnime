@@ -28,7 +28,7 @@ class BangumiPanel extends StatelessWidget {
           !Utils.isCompact()
               ? const SizedBox(height: 7)
               : Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 6),
+                  padding: const EdgeInsets.only(top: 10, bottom: 6, left: 8, right: 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -108,71 +108,74 @@ class BangumiPanel extends StatelessWidget {
                 ),
           Expanded(
             // width: Platform.isWindows ? 300: null,
-            child: GridView.builder(
-              controller: listViewScrollCtr,
-              scrollDirection: Axis.vertical, // 将滚动方向改为竖直
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount:
-                    (!Utils.isCompact() && !Utils.isTablet())
-                        ? 10
-                        : 3,
-                crossAxisSpacing: 10, // 间距
-                mainAxisSpacing: 5, // 间距
-                childAspectRatio: 1.7, // 子项宽高比
-              ),
-              itemCount: episodeLength,
-              itemBuilder: (BuildContext context, int i) {
-                return Container(
-                  // width: 150,
-                  margin: const EdgeInsets.only(bottom: 10), // 改为bottom间距
-                  child: Material(
-                    color: Theme.of(context).colorScheme.onInverseSurface,
-                    borderRadius: BorderRadius.circular(6),
-                    clipBehavior: Clip.hardEdge,
-                    child: InkWell(
-                      onTap: () {
-                        onChangeEpisode(i + 1);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                if (i == (currentEpisode - 1)) ...<Widget>[
-                                  Image.asset(
-                                    'assets/images/live.png',
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    height: 12,
+            child: Padding(
+              padding: !Utils.isCompact() ? const EdgeInsets.only(left: 0, right: 0) : const EdgeInsets.only(left: 8.0, right: 8.0),
+              child: GridView.builder(
+                controller: listViewScrollCtr,
+                scrollDirection: Axis.vertical, // 将滚动方向改为竖直
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount:
+                      (!Utils.isCompact() && !Utils.isTablet())
+                          ? 10
+                          : 3,
+                  crossAxisSpacing: 10, // 间距
+                  mainAxisSpacing: 5, // 间距
+                  childAspectRatio: 1.7, // 子项宽高比
+                ),
+                itemCount: episodeLength,
+                itemBuilder: (BuildContext context, int i) {
+                  return Container(
+                    // width: 150,
+                    margin: const EdgeInsets.only(bottom: 10), // 改为bottom间距
+                    child: Material(
+                      color: Theme.of(context).colorScheme.onInverseSurface,
+                      borderRadius: BorderRadius.circular(6),
+                      clipBehavior: Clip.hardEdge,
+                      child: InkWell(
+                        onTap: () {
+                          onChangeEpisode(i + 1);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                children: [
+                                  if (i == (currentEpisode - 1)) ...<Widget>[
+                                    Image.asset(
+                                      'assets/images/live.png',
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      height: 12,
+                                    ),
+                                    const SizedBox(width: 6)
+                                  ],
+                                  Text(
+                                    i18n.toast.currentEpisode(episode: i + 1),
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        color: i == (currentEpisode - 1)
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurface),
                                   ),
-                                  const SizedBox(width: 6)
+                                  const SizedBox(width: 2),
                                 ],
-                                Text(
-                                  i18n.toast.currentEpisode(episode: i + 1),
-                                  style: TextStyle(
-                                      fontSize: 13,
-                                      color: i == (currentEpisode - 1)
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .onSurface),
-                                ),
-                                const SizedBox(width: 2),
-                              ],
-                            ),
-                            const SizedBox(height: 3),
-                          ],
+                              ),
+                              const SizedBox(height: 3),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           )
         ],

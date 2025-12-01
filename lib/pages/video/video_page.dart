@@ -128,7 +128,8 @@ class _VideoPageState extends State<VideoPage>
 
   void _handleDanmaku() {
     if (videoController.danDanmakus.isEmpty) {
-      SmartDialog.showToast('当前剧集没有找到弹幕的说', displayType: SmartToastType.onlyRefresh);
+      SmartDialog.showToast('当前剧集没有找到弹幕的说',
+          displayType: SmartToastType.onlyRefresh);
       return;
     }
     danmakuController.clear();
@@ -471,59 +472,72 @@ class _VideoPageState extends State<VideoPage>
   @override
   Widget build(BuildContext context) {
     i18n = Translations.of(context);
-    return Observer(builder: (context) {
-      return PopScope(
-        canPop: false,
-        onPopInvoked: (bool didPop) async {
-          onBackPressed();
-        },
-        child: Scaffold(
-          body: SafeArea(
-              top: !videoController.androidFullscreen,
-              bottom: !videoController.androidFullscreen,
-              left: !videoController.androidFullscreen,
-              right: !videoController.androidFullscreen,
-              child: (Utils.isTablet() &&
-                      MediaQuery.of(context).size.height <
-                          MediaQuery.of(context).size.width)
-                  ? Row(
-                      children: [
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height,
-                            width: (!videoController.androidFullscreen)
-                                ? MediaQuery.of(context).size.height
-                                : MediaQuery.of(context).size.width,
-                            child: playerBody),
-                        videoController.androidFullscreen
-                            ? Container()
-                            : BangumiPanel(
-                                title: videoController.title,
-                                episodeLength: videoController.token.length,
-                                currentEpisode: videoController.episode,
-                                onChangeEpisode: videoController.changeEpisode,
-                              ),
-                      ],
-                    )
-                  : Column(
-                      children: [
-                        SizedBox(
-                            height: videoController.androidFullscreen
-                                ? MediaQuery.of(context).size.height
-                                : MediaQuery.of(context).size.width * 9 / 16,
-                            width: MediaQuery.of(context).size.width,
-                            child: playerBody),
-                        videoController.androidFullscreen
-                            ? Container()
-                            : BangumiPanel(
-                                title: videoController.title,
-                                episodeLength: videoController.token.length,
-                                currentEpisode: videoController.episode,
-                                onChangeEpisode: videoController.changeEpisode,
-                              ),
-                      ],
-                    )),
-        ),
-      );
+    return OrientationBuilder(builder: (context, orientation) {
+      return Observer(builder: (context) {
+        if (!Utils.isDesktop()) {
+          if (orientation == Orientation.landscape &&
+              !videoController.androidFullscreen) {
+            _handleFullscreen();
+          } else if (orientation == Orientation.portrait &&
+              videoController.androidFullscreen) {
+            _handleFullscreen();
+          }
+        }
+        return PopScope(
+          canPop: false,
+          onPopInvoked: (bool didPop) async {
+            onBackPressed();
+          },
+          child: Scaffold(
+            body: SafeArea(
+                top: !videoController.androidFullscreen,
+                bottom: !videoController.androidFullscreen,
+                left: !videoController.androidFullscreen,
+                right: !videoController.androidFullscreen,
+                child: (Utils.isTablet() &&
+                        MediaQuery.of(context).size.height <
+                            MediaQuery.of(context).size.width)
+                    ? Row(
+                        children: [
+                          SizedBox(
+                              height: MediaQuery.of(context).size.height,
+                              width: (!videoController.androidFullscreen)
+                                  ? MediaQuery.of(context).size.height
+                                  : MediaQuery.of(context).size.width,
+                              child: playerBody),
+                          videoController.androidFullscreen
+                              ? Container()
+                              : BangumiPanel(
+                                  title: videoController.title,
+                                  episodeLength: videoController.token.length,
+                                  currentEpisode: videoController.episode,
+                                  onChangeEpisode:
+                                      videoController.changeEpisode,
+                                ),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          SizedBox(
+                              height: videoController.androidFullscreen
+                                  ? MediaQuery.of(context).size.height
+                                  : MediaQuery.of(context).size.width * 9 / 16,
+                              width: MediaQuery.of(context).size.width,
+                              child: playerBody),
+                          videoController.androidFullscreen
+                              ? Container()
+                              : BangumiPanel(
+                                  title: videoController.title,
+                                  episodeLength: videoController.token.length,
+                                  currentEpisode: videoController.episode,
+                                  onChangeEpisode:
+                                      videoController.changeEpisode,
+                                ),
+                        ],
+                      )),
+          ),
+        );
+      });
     });
   }
 
@@ -975,7 +989,8 @@ class _VideoPageState extends State<VideoPage>
                                       if (videoController.episode ==
                                           videoController.token.length) {
                                         SmartDialog.showToast('已经是最新一集',
-                                            displayType: SmartToastType.onlyRefresh);
+                                            displayType:
+                                                SmartToastType.onlyRefresh);
                                         return;
                                       }
                                       SmartDialog.showToast(
