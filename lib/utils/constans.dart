@@ -30,3 +30,5 @@ const PageTransitionsTheme pageTransitionsTheme2024 = PageTransitionsTheme(
     TargetPlatform.windows: CupertinoPageTransitionsBuilder(),
   },
 );
+
+const String customAppFontFamily = "MI_Sans_Regular";

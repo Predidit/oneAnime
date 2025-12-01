@@ -11,6 +11,8 @@ import 'package:oneanime/utils/utils.dart';
 import 'package:oneanime/pages/error/error.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:oneanime/i18n/strings.g.dart';
+import 'package:provider/provider.dart';
+import 'package:oneanime/bean/settings/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,9 +56,11 @@ void main() async {
   Request();
   await Request.setCookie();
   runApp(TranslationProvider(
+      child: ChangeNotifierProvider(
+    create: (_) => ThemeProvider(),
     child: ModularApp(
       module: AppModule(),
       child: const AppWidget(),
     ),
-  ));
+  )));
 }

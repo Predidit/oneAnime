@@ -4,7 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:oneanime/bean/settings/theme_provider.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/bean/appbar/sys_app_bar.dart';
 import 'package:oneanime/bean/settings/color_type.dart';
@@ -12,6 +12,7 @@ import 'package:oneanime/bean/settings/settings.dart';
 import 'package:oneanime/utils/utils.dart';
 import 'package:oneanime/i18n/strings.g.dart';
 import 'package:oneanime/utils/constans.dart';
+import 'package:provider/provider.dart';
 
 class ThemeSettingsPage extends StatefulWidget {
   const ThemeSettingsPage({super.key});
@@ -28,15 +29,20 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
   late dynamic defaultThemeMode;
   late dynamic defaultThemeColor;
   late bool oledEnhance;
+  late bool defaultUseSystemFont;
   final PopularController popularController = Modular.get<PopularController>();
+  late final ThemeProvider themeProvider;
 
   @override
   void initState() {
     super.initState();
+    themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     defaultThemeMode =
         setting.get(SettingBoxKey.themeMode, defaultValue: 'system');
     defaultThemeColor =
         setting.get(SettingBoxKey.themeColor, defaultValue: 'default');
+    defaultUseSystemFont =
+        setting.get(SettingBoxKey.useSystemFont, defaultValue: false);
     oledEnhance = setting.get(SettingBoxKey.oledEnhance, defaultValue: false);
   }
 
@@ -48,14 +54,14 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
       colorSchemeSeed: color,
     );
     var oledDarkTheme = Utils.oledDarkTheme(defaultDarkTheme);
-    AdaptiveTheme.of(context).setTheme(
-      light: ThemeData(
+    themeProvider.setTheme(
+      ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
         pageTransitionsTheme: pageTransitionsTheme2024,
         colorSchemeSeed: color,
       ),
-      dark: oledEnhance ? oledDarkTheme : defaultDarkTheme,
+      oledEnhance ? oledDarkTheme : defaultDarkTheme,
     );
     defaultThemeColor = color?.value.toRadixString(16) ?? 'default';
     setting.put(SettingBoxKey.themeColor, defaultThemeColor);
@@ -68,13 +74,13 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
       pageTransitionsTheme: pageTransitionsTheme2024,
     );
     var oledDarkTheme = Utils.oledDarkTheme(defaultDarkTheme);
-    AdaptiveTheme.of(context).setTheme(
-      light: ThemeData(
+    themeProvider.setTheme(
+      ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
         pageTransitionsTheme: pageTransitionsTheme2024,
       ),
-      dark: oledEnhance ? oledDarkTheme : defaultDarkTheme,
+      oledEnhance ? oledDarkTheme : defaultDarkTheme,
     );
     defaultThemeColor = 'default';
     setting.put(SettingBoxKey.themeColor, 'default');
@@ -82,13 +88,13 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
 
   void updateTheme(String theme) async {
     if (theme == 'dark') {
-      AdaptiveTheme.of(context).setDark();
+      themeProvider.setThemeMode(ThemeMode.dark);
     }
     if (theme == 'light') {
-      AdaptiveTheme.of(context).setLight();
+      themeProvider.setThemeMode(ThemeMode.light);
     }
     if (theme == 'system') {
-      AdaptiveTheme.of(context).setSystem();
+      themeProvider.setThemeMode(ThemeMode.system);
     }
     await setting.put(SettingBoxKey.themeMode, theme);
     setState(() {
@@ -105,6 +111,12 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
       color = Color(int.parse(defaultThemeColor, radix: 16));
     }
     setTheme(color);
+  }
+
+  void updateFontFamily() {
+    defaultUseSystemFont = setting.get(SettingBoxKey.useSystemFont, defaultValue: false);
+    themeProvider.setFontFamily(defaultUseSystemFont);
+    setState(() {});
   }
 
   @override
@@ -274,6 +286,15 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                     .textTheme
                     .labelMedium!
                     .copyWith(color: Theme.of(context).colorScheme.outline)),
+          ),
+          InkWell(
+            child: SetSwitchItem(
+              title: i18n.my.themeSettings.useSystemFont,
+              subTitle: i18n.my.themeSettings.useSystemFont,
+              setKey: SettingBoxKey.useSystemFont,
+              callFn: (_) => {updateFontFamily()},
+              defaultVal: true,
+            ),
           ),
           InkWell(
             child: SetSwitchItem(

@@ -24,6 +24,7 @@ import 'package:oneanime/bean/appbar/drag_to_move_bar.dart' as dtb;
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/utils/utils.dart';
 import 'package:oneanime/i18n/strings.g.dart';
+import 'package:oneanime/utils/constans.dart';
 
 class VideoPage extends StatefulWidget {
   const VideoPage({super.key});
@@ -50,6 +51,7 @@ class _VideoPageState extends State<VideoPage>
   late int _duration;
   late double _fontSize;
   late double danmakuArea;
+  late bool _danmakuUseSystemFont;
 
   // 界面管理
   bool showPositioned = false;
@@ -177,6 +179,8 @@ class _VideoPageState extends State<VideoPage>
     _fontSize = setting.get(SettingBoxKey.danmakuFontSize,
         defaultValue: (Platform.isIOS || Platform.isAndroid) ? 16.0 : 25.0);
     danmakuArea = setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
+    _danmakuUseSystemFont =
+        setting.get(SettingBoxKey.useSystemFont, defaultValue: false);
     // 播放器初始化
     videoController.playerSpeed = 1.0;
     playerController.videoUrl = videoController.videoUrl;
@@ -895,6 +899,7 @@ class _VideoPageState extends State<VideoPage>
                             fontSize: _fontSize,
                             duration: _duration.toDouble(),
                             opacity: _opacity,
+                            fontFamily: _danmakuUseSystemFont ? null : customAppFontFamily,
                             strokeWidth: _showStroke ? 1.5 : 0.0,),
                       ),
                     ),

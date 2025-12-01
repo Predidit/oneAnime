@@ -83,5 +83,6 @@ class SettingBoxKey {
       displayMode = 'displayMode',
       /// deprecated
       isWideScreen = 'isWideScreen',
-      enableSystemProxy = 'enableSystemProxy';
+      enableSystemProxy = 'enableSystemProxy',
+      useSystemFont = 'useSystemFont';
 }

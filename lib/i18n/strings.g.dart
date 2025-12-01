@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 4
-/// Strings: 380 (95 per locale)
+/// Strings: 384 (96 per locale)
 ///
-/// Built on 2024-10-23 at 10:59 UTC
+/// Built on 2025-12-01 at 13:41 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -365,6 +365,7 @@ class _StringsMyThemeSettingsEn {
 	String get refreshRateWarning => 'Not working? Try to restart the app';
 	String get refreshRateAuto => 'Auto';
 	String get themeMode => 'Theme Mode';
+	String get useSystemFont => 'Use System Font';
 	String get themeModeSystem => 'System';
 	String get themeModeLight => 'Light';
 	String get themeModeDark => 'Dark';
@@ -646,6 +647,7 @@ class _StringsMyThemeSettingsZhCn implements _StringsMyThemeSettingsEn {
 	@override String get refreshRateWarning => '没有生效？重启应用试试';
 	@override String get refreshRateAuto => '自动';
 	@override String get themeMode => '主题模式';
+	@override String get useSystemFont => '使用系统字体';
 	@override String get themeModeSystem => '跟随系统';
 	@override String get themeModeLight => '浅色';
 	@override String get themeModeDark => '深色';
@@ -927,6 +929,7 @@ class _StringsMyThemeSettingsZhHk implements _StringsMyThemeSettingsEn {
 	@override String get refreshRateWarning => '沒有生效？重啟應用試試';
 	@override String get refreshRateAuto => '自動';
 	@override String get themeMode => '主題模式';
+	@override String get useSystemFont => '使用系統字體';
 	@override String get themeModeSystem => '跟隨系統';
 	@override String get themeModeLight => '淺色';
 	@override String get themeModeDark => '深色';
@@ -1208,6 +1211,7 @@ class _StringsMyThemeSettingsZhTw implements _StringsMyThemeSettingsEn {
 	@override String get refreshRateWarning => '沒有生效？重啟應用試試';
 	@override String get refreshRateAuto => '自動';
 	@override String get themeMode => '主題模式';
+	@override String get useSystemFont => '使用系統字體';
 	@override String get themeModeSystem => '跟隨系統';
 	@override String get themeModeLight => '淺色';
 	@override String get themeModeDark => '深色';
@@ -1329,6 +1333,7 @@ extension on Translations {
 			case 'my.themeSettings.refreshRateWarning': return 'Not working? Try to restart the app';
 			case 'my.themeSettings.refreshRateAuto': return 'Auto';
 			case 'my.themeSettings.themeMode': return 'Theme Mode';
+			case 'my.themeSettings.useSystemFont': return 'Use System Font';
 			case 'my.themeSettings.themeModeSystem': return 'System';
 			case 'my.themeSettings.themeModeLight': return 'Light';
 			case 'my.themeSettings.themeModeDark': return 'Dark';
@@ -1432,6 +1437,7 @@ extension on _StringsZhCn {
 			case 'my.themeSettings.refreshRateWarning': return '没有生效？重启应用试试';
 			case 'my.themeSettings.refreshRateAuto': return '自动';
 			case 'my.themeSettings.themeMode': return '主题模式';
+			case 'my.themeSettings.useSystemFont': return '使用系统字体';
 			case 'my.themeSettings.themeModeSystem': return '跟随系统';
 			case 'my.themeSettings.themeModeLight': return '浅色';
 			case 'my.themeSettings.themeModeDark': return '深色';
@@ -1535,6 +1541,7 @@ extension on _StringsZhHk {
 			case 'my.themeSettings.refreshRateWarning': return '沒有生效？重啟應用試試';
 			case 'my.themeSettings.refreshRateAuto': return '自動';
 			case 'my.themeSettings.themeMode': return '主題模式';
+			case 'my.themeSettings.useSystemFont': return '使用系統字體';
 			case 'my.themeSettings.themeModeSystem': return '跟隨系統';
 			case 'my.themeSettings.themeModeLight': return '淺色';
 			case 'my.themeSettings.themeModeDark': return '深色';
@@ -1638,6 +1645,7 @@ extension on _StringsZhTw {
 			case 'my.themeSettings.refreshRateWarning': return '沒有生效？重啟應用試試';
 			case 'my.themeSettings.refreshRateAuto': return '自動';
 			case 'my.themeSettings.themeMode': return '主題模式';
+			case 'my.themeSettings.useSystemFont': return '使用系統字體';
 			case 'my.themeSettings.themeModeSystem': return '跟隨系統';
 			case 'my.themeSettings.themeModeLight': return '淺色';
 			case 'my.themeSettings.themeModeDark': return '深色';

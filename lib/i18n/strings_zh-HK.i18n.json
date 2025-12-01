@@ -98,6 +98,7 @@
             "refreshRateWarning": "沒有生效？重啟應用試試",
             "refreshRateAuto": "自動",
             "themeMode": "主題模式",
+            "useSystemFont": "使用系統字體",
             "themeModeSystem": "跟隨系統",
             "themeModeLight": "淺色",
             "themeModeDark": "深色",

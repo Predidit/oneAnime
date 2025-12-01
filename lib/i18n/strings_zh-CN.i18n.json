@@ -98,6 +98,7 @@
             "refreshRateWarning": "没有生效？重启应用试试",
             "refreshRateAuto": "自动",
             "themeMode": "主题模式",
+            "useSystemFont": "使用系统字体",
             "themeModeSystem": "跟随系统",
             "themeModeLight": "浅色",
             "themeModeDark": "深色",

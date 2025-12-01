@@ -3,13 +3,14 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:hive/hive.dart';
 import 'package:oneanime/utils/utils.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/i18n/strings.g.dart';
 import 'package:oneanime/utils/constans.dart';
+import 'package:oneanime/bean/settings/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class AppWidget extends StatefulWidget {
   const AppWidget({super.key});
@@ -23,6 +24,7 @@ class _AppWidgetState extends State<AppWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeProvider themeProvider = Provider.of<ThemeProvider>(context);
     dynamic color;
     dynamic defaultThemeColor =
         setting.get(SettingBoxKey.themeColor, defaultValue: 'default');
@@ -33,31 +35,47 @@ class _AppWidgetState extends State<AppWidget> {
     }
     bool oledEnhance =
         setting.get(SettingBoxKey.oledEnhance, defaultValue: false);
+    bool useSystemFont =
+        setting.get(SettingBoxKey.useSystemFont, defaultValue: false);
+    final defaultThemeMode =
+        setting.get(SettingBoxKey.themeMode, defaultValue: 'system');
+    if (defaultThemeMode == 'dark') {
+      themeProvider.setThemeMode(ThemeMode.dark, notify: false);
+    }
+    if (defaultThemeMode == 'light') {
+      themeProvider.setThemeMode(ThemeMode.light, notify: false);
+    }
+    if (defaultThemeMode == 'system') {
+      themeProvider.setThemeMode(ThemeMode.system, notify: false);
+    }
+    themeProvider.setFontFamily(useSystemFont, notify: false);
     var defaultDarkTheme = ThemeData(
         useMaterial3: true,
+        fontFamily: themeProvider.currentFontFamily,
         brightness: Brightness.dark,
-        pageTransitionsTheme: pageTransitionsTheme2024,
-        colorSchemeSeed: color);
+        colorSchemeSeed: color,
+        pageTransitionsTheme: pageTransitionsTheme2024);
     var oledDarkTheme = Utils.oledDarkTheme(defaultDarkTheme);
-    var app = AdaptiveTheme(
-      light: ThemeData(
+    themeProvider.setTheme(
+      ThemeData(
           useMaterial3: true,
+          fontFamily: themeProvider.currentFontFamily,
           brightness: Brightness.light,
-          pageTransitionsTheme: pageTransitionsTheme2024,
-          colorSchemeSeed: color),
-      dark: oledEnhance ? oledDarkTheme : defaultDarkTheme,
-      initial: AdaptiveThemeMode.system,
-      builder: (theme, darkTheme) => MaterialApp.router(
-        title: "oneAnime",
-        locale: TranslationProvider.of(context).flutterLocale, 
-        supportedLocales: AppLocaleUtils.supportedLocales,
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        theme: theme,
-        darkTheme: darkTheme,
-        routerConfig: Modular.routerConfig,
-        builder: FlutterSmartDialog.init(),
-        // navigatorObservers: [Asuka.asukaHeroController],
-      ),
+          colorSchemeSeed: color,
+          pageTransitionsTheme: pageTransitionsTheme2024),
+      oledEnhance ? oledDarkTheme : defaultDarkTheme,
+      notify: false,
+    );
+    var app = MaterialApp.router(
+      title: "oneAnime",
+      locale: TranslationProvider.of(context).flutterLocale,
+      supportedLocales: AppLocaleUtils.supportedLocales,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      theme: themeProvider.light,
+      darkTheme: themeProvider.dark,
+      themeMode: themeProvider.themeMode,
+      routerConfig: Modular.routerConfig,
+      builder: FlutterSmartDialog.init(),
     );
     Modular.setObservers([FlutterSmartDialog.observer]);
 
