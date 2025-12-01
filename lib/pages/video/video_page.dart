@@ -616,7 +616,7 @@ class _VideoPageState extends State<VideoPage>
                     if (event.logicalKey == LogicalKeyboardKey.escape) {
                       if (videoController.androidFullscreen) {
                         try {
-                          danmakuController.onClear();
+                          danmakuController.clear();
                         } catch (_) {}
                         Utils.exitFullScreen();
                         videoController.androidFullscreen =
@@ -893,9 +893,9 @@ class _VideoPageState extends State<VideoPage>
                         },
                         option: DanmakuOption(
                             fontSize: _fontSize,
-                            duration: _duration,
+                            duration: _duration.toDouble(),
                             opacity: _opacity,
-                            showStroke: _showStroke),
+                            strokeWidth: _showStroke ? 1.5 : 0.0,),
                       ),
                     ),
 
