@@ -9,8 +9,8 @@ import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:oneanime/pages/history/history_controller.dart';
 import 'package:oneanime/pages/video/video_module.dart';
 import 'package:oneanime/pages/history/history_module.dart';
+import 'package:oneanime/pages/settings/setting_module.dart';
 import 'package:oneanime/pages/error/error.dart';
-
 
 class IndexModule extends Module {
   @override
@@ -27,19 +27,22 @@ class IndexModule extends Module {
 
   @override
   void routes(r) {
-    r.child("/",
-        child: (_) => const InitPage(),
-        children: [
-          ChildRoute(
-            "/error",
-            child: (_) => const ErrorPage('未知错误')
-          ),
-        ],
-        transition: TransitionType.noTransition);
+    r.child(
+      "/",
+      child: (_) => const InitPage(),
+      transition: TransitionType.noTransition,
+      children: [
+        ChildRoute("/error", child: (_) => const ErrorPage('未知错误')),
+      ],
+    );
     r.child("/tab", child: (_) {
       return const IndexPage();
-    }, children: menu.routes, transition: TransitionType.noTransition);
-    r.module("/video", module: VideoModule(), transition: TransitionType.noTransition);
-    r.module("/history", module: HistoryModule(), transition: TransitionType.noTransition);
+    },
+        transition: TransitionType.fadeIn,
+        duration: const Duration(milliseconds: 70),
+        children: menu.routes);
+    r.module("/video", module: VideoModule());
+    r.module("/history", module: HistoryModule());
+    r.module("/settings", module: SettingsModule());
   }
 }

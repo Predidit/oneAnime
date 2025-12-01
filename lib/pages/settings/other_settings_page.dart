@@ -34,10 +34,6 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
         setting.get(SettingBoxKey.enableSystemProxy, defaultValue: false);
   }
 
-  void onBackPressed(BuildContext context) {
-    Modular.to.navigate('/tab/my/');
-  }
-
   // 设置代理
   void twoFADialog() {
     var systemProxyHost = '';
@@ -129,58 +125,54 @@ class _OtherSettingsPageState extends State<OtherSettingsPage> {
   @override
   Widget build(BuildContext context) {
     i18n = Translations.of(context);
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        onBackPressed(context);
-      },
-      child: Scaffold(
-        appBar: SysAppBar(title: Text(i18n.my.otherSettings.title)),
-        body: Column(
-          children: [
-            (popularController.libopencc != '' || Platform.isAndroid || Platform.isIOS)
-                ? InkWell(
-                    child: SetSwitchItem(
-                      title: i18n.my.otherSettings.searchEnhace,
-                      subTitle: i18n.my.otherSettings.searchEnhaceSubtitle,
-                      setKey: SettingBoxKey.searchEnhanceEnable,
-                      defaultVal: true,
-                    ),
-                  )
-                : Container(),
-            ListTile(
-              enableFeedback: true,
-              onTap: () => twoFADialog(),
-              title: Text(i18n.my.otherSettings.proxySettings),
-              trailing: Transform.scale(
-                alignment: Alignment.centerRight,
-                scale: 0.8,
-              ),
+    return Scaffold(
+      appBar: SysAppBar(title: Text(i18n.my.otherSettings.title)),
+      body: Column(
+        children: [
+          (popularController.libopencc != '' ||
+                  Platform.isAndroid ||
+                  Platform.isIOS)
+              ? InkWell(
+                  child: SetSwitchItem(
+                    title: i18n.my.otherSettings.searchEnhace,
+                    subTitle: i18n.my.otherSettings.searchEnhaceSubtitle,
+                    setKey: SettingBoxKey.searchEnhanceEnable,
+                    defaultVal: true,
+                  ),
+                )
+              : Container(),
+          ListTile(
+            enableFeedback: true,
+            onTap: () => twoFADialog(),
+            title: Text(i18n.my.otherSettings.proxySettings),
+            trailing: Transform.scale(
+              alignment: Alignment.centerRight,
+              scale: 0.8,
             ),
-            InkWell(
-              child: SetSwitchItem(
-                title: i18n.my.otherSettings.proxyEnable,
-                callFn: (_) {
-                  enableSystemProxy = !enableSystemProxy;
-                  if (enableSystemProxy) {
-                    Request.setProxy();
-                  } else {
-                    Request.disableProxy();
-                  }
-                },
-                setKey: SettingBoxKey.enableSystemProxy,
-                defaultVal: false,
-              ),
+          ),
+          InkWell(
+            child: SetSwitchItem(
+              title: i18n.my.otherSettings.proxyEnable,
+              callFn: (_) {
+                enableSystemProxy = !enableSystemProxy;
+                if (enableSystemProxy) {
+                  Request.setProxy();
+                } else {
+                  Request.disableProxy();
+                }
+              },
+              setKey: SettingBoxKey.enableSystemProxy,
+              defaultVal: false,
             ),
-            InkWell(
-              child: SetSwitchItem(
-                title: i18n.my.otherSettings.autoUpdate,
-                setKey: SettingBoxKey.autoUpdate,
-                defaultVal: false,
-              ),
-            )
-          ],
-        ),
+          ),
+          InkWell(
+            child: SetSwitchItem(
+              title: i18n.my.otherSettings.autoUpdate,
+              setKey: SettingBoxKey.autoUpdate,
+              defaultVal: false,
+            ),
+          )
+        ],
       ),
     );
   }

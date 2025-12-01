@@ -75,7 +75,7 @@ class _MyPageState extends State<MyPage> {
             ),
             ListTile(
               onTap: () async {
-                Modular.to.pushNamed('/tab/my/player');
+                Modular.to.pushNamed('/settings/player');
               },
               dense: false,
               title: Text(i18n.my.playerSettings.title),
@@ -83,7 +83,7 @@ class _MyPageState extends State<MyPage> {
             ),
             ListTile(
               onTap: () async {
-                Modular.to.pushNamed('/tab/my/danmaku');
+                Modular.to.pushNamed('/settings/danmaku');
               },
               dense: false,
               title: Text(i18n.my.danmakuSettings.title),
@@ -91,7 +91,7 @@ class _MyPageState extends State<MyPage> {
             ),
             ListTile(
               onTap: () async {
-                Modular.to.pushNamed('/tab/my/theme');
+                Modular.to.pushNamed('/settings/theme');
               },
               dense: false,
               title: Text(i18n.my.themeSettings.title),
@@ -99,7 +99,7 @@ class _MyPageState extends State<MyPage> {
             ),
             ListTile(
               onTap: () async {
-                Modular.to.pushNamed('/tab/my/other');
+                Modular.to.pushNamed('/settings/other');
               },
               dense: false,
               title: Text(i18n.my.otherSettings.title),
@@ -107,7 +107,7 @@ class _MyPageState extends State<MyPage> {
             ),
             ListTile(
               onTap: () {
-                Modular.to.pushNamed('/tab/my/about');
+                Modular.to.pushNamed('/settings/about');
               },
               dense: false,
               title: Text(i18n.my.about.title),

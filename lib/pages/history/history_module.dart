@@ -10,6 +10,6 @@ class HistoryModule extends Module {
 
   @override
   void routes(r) {
-    r.child("/", child: (_) => const HistoryPage(), transition: TransitionType.noTransition);
+    r.child("/", child: (_) => const HistoryPage());
   }
 }

@@ -9,6 +9,7 @@ import 'package:hive/hive.dart';
 import 'package:oneanime/utils/utils.dart';
 import 'package:oneanime/utils/storage.dart';
 import 'package:oneanime/i18n/strings.g.dart';
+import 'package:oneanime/utils/constans.dart';
 
 class AppWidget extends StatefulWidget {
   const AppWidget({super.key});
@@ -35,12 +36,14 @@ class _AppWidgetState extends State<AppWidget> {
     var defaultDarkTheme = ThemeData(
         useMaterial3: true,
         brightness: Brightness.dark,
+        pageTransitionsTheme: pageTransitionsTheme2024,
         colorSchemeSeed: color);
     var oledDarkTheme = Utils.oledDarkTheme(defaultDarkTheme);
     var app = AdaptiveTheme(
       light: ThemeData(
           useMaterial3: true,
           brightness: Brightness.light,
+          pageTransitionsTheme: pageTransitionsTheme2024,
           colorSchemeSeed: color),
       dark: oledEnhance ? oledDarkTheme : defaultDarkTheme,
       initial: AdaptiveThemeMode.system,

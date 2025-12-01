@@ -5,18 +5,17 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 class AboutModule extends Module {
   @override
-  void binds(i) {
-    
-  }
+  void binds(i) {}
 
   @override
   void routes(r) {
     r.child("/", child: (_) => const AboutPage());
-    r.child("/license",
-        child: (_) => const LicensePage(
-              applicationName: 'oneAnime',
-              applicationVersion: Api.version,
-            ),
-        transition: TransitionType.noTransition);
+    r.child(
+      "/license",
+      child: (_) => const LicensePage(
+        applicationName: 'oneAnime',
+        applicationVersion: Api.version,
+      ),
+    );
   }
 }

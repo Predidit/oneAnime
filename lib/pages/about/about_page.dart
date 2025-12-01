@@ -28,73 +28,63 @@ class _AboutPageState extends State<AboutPage> {
     super.initState();
   }
 
-  void onBackPressed(BuildContext context) {
-    Modular.to.navigate('/tab/my/');
-  }
-
   @override
   Widget build(BuildContext context) {
     i18n = Translations.of(context);
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        onBackPressed(context);
-      },
-      child: Scaffold(
-        appBar: SysAppBar(title: Text(i18n.my.about.title)),
-        body: Column(
-          children: [
-            ListTile(
-              title: Text(i18n.my.about.openSourceLicense),
-              subtitle: Text(i18n.my.about.openSourceLicenseSubtitle,
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
-              onTap: () {
-                Modular.to.pushNamed('/tab/my/about/license');
-              },
-            ),
-            ListTile(
-              onTap: () {
-                launchUrl(Uri.parse(Api.sourceUrl),
-                    mode: LaunchMode.externalApplication);
-              },
-              dense: false,
-              title: Text(i18n.my.about.GithubRepo),
-              trailing: Text('Github',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
-            ),
-            ListTile(
-              onTap: () {
-                launchUrl(Uri.parse(Api.dandanIndex),
-                    mode: LaunchMode.externalApplication);
-              },
-              dense: false,
-              title: Text(i18n.my.about.danmakuSource),
-              trailing: Text('DanDanPlay',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
-            ),
-            ListTile(
-              onTap: () {
-                _mineController.checkUpdata();
-              },
-              dense: false,
-              title: Text(i18n.my.about.checkUpdate),
-              trailing: Text('${i18n.my.about.currentVersion} ${Api.version}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
-            ),
-          ],
-        ),
+    return Scaffold(
+      appBar: SysAppBar(title: Text(i18n.my.about.title)),
+      body: Column(
+        children: [
+          ListTile(
+            title: Text(i18n.my.about.openSourceLicense),
+            subtitle: Text(i18n.my.about.openSourceLicenseSubtitle,
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium!
+                    .copyWith(color: Theme.of(context).colorScheme.outline)),
+            onTap: () {
+              Modular.to.pushNamed('/settings/about/license');
+            },
+          ),
+          ListTile(
+            onTap: () {
+              launchUrl(Uri.parse(Api.sourceUrl),
+                  mode: LaunchMode.externalApplication);
+            },
+            dense: false,
+            title: Text(i18n.my.about.GithubRepo),
+            trailing: Text('Github',
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium!
+                    .copyWith(color: Theme.of(context).colorScheme.outline)),
+          ),
+          ListTile(
+            onTap: () {
+              launchUrl(Uri.parse(Api.dandanIndex),
+                  mode: LaunchMode.externalApplication);
+            },
+            dense: false,
+            title: Text(i18n.my.about.danmakuSource),
+            trailing: Text('DanDanPlay',
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium!
+                    .copyWith(color: Theme.of(context).colorScheme.outline)),
+          ),
+          ListTile(
+            onTap: () {
+              _mineController.checkUpdata();
+            },
+            dense: false,
+            title: Text(i18n.my.about.checkUpdate),
+            trailing: Text('${i18n.my.about.currentVersion} ${Api.version}',
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium!
+                    .copyWith(color: Theme.of(context).colorScheme.outline)),
+          ),
+        ],
       ),
     );
   }

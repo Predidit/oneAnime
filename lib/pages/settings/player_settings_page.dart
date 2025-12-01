@@ -25,47 +25,37 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
     super.initState();
   }
 
-  void onBackPressed(BuildContext context) {
-    Modular.to.navigate('/tab/my/');
-  }
-
   @override
   Widget build(BuildContext context) {
     i18n = Translations.of(context);
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        onBackPressed(context);
-      },
-      child: Scaffold(
-        appBar: SysAppBar(title: Text(i18n.my.playerSettings.title)),
-        body: Column(
-          children: [
-            InkWell(
-              child: SetSwitchItem(
-                title: i18n.my.playerSettings.hardwareAcceleration,
-                setKey: SettingBoxKey.HAenable,
-                defaultVal: true,
-                needReboot: false,
-              ),
+    return Scaffold(
+      appBar: SysAppBar(title: Text(i18n.my.playerSettings.title)),
+      body: Column(
+        children: [
+          InkWell(
+            child: SetSwitchItem(
+              title: i18n.my.playerSettings.hardwareAcceleration,
+              setKey: SettingBoxKey.HAenable,
+              defaultVal: true,
+              needReboot: false,
             ),
-            InkWell(
-              child: SetSwitchItem(
-                title: i18n.my.playerSettings.autoPlay,
-                setKey: SettingBoxKey.autoPlay,
-                defaultVal: true,
-              ),
+          ),
+          InkWell(
+            child: SetSwitchItem(
+              title: i18n.my.playerSettings.autoPlay,
+              setKey: SettingBoxKey.autoPlay,
+              defaultVal: true,
             ),
-            InkWell(
-              child: SetSwitchItem(
-                title: i18n.my.playerSettings.autoJump,
-                subTitle: i18n.my.playerSettings.autoJumpSubtitle,
-                setKey: SettingBoxKey.playResume,
-                defaultVal: false,
-              ),
+          ),
+          InkWell(
+            child: SetSwitchItem(
+              title: i18n.my.playerSettings.autoJump,
+              subTitle: i18n.my.playerSettings.autoJumpSubtitle,
+              setKey: SettingBoxKey.playResume,
+              defaultVal: false,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

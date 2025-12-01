@@ -11,6 +11,7 @@ import 'package:oneanime/bean/settings/color_type.dart';
 import 'package:oneanime/bean/settings/settings.dart';
 import 'package:oneanime/utils/utils.dart';
 import 'package:oneanime/i18n/strings.g.dart';
+import 'package:oneanime/utils/constans.dart';
 
 class ThemeSettingsPage extends StatefulWidget {
   const ThemeSettingsPage({super.key});
@@ -39,14 +40,11 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
     oledEnhance = setting.get(SettingBoxKey.oledEnhance, defaultValue: false);
   }
 
-  void onBackPressed(BuildContext context) {
-    Modular.to.navigate('/tab/my/');
-  }
-
   void setTheme(Color? color) {
     var defaultDarkTheme = ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
+      pageTransitionsTheme: pageTransitionsTheme2024,
       colorSchemeSeed: color,
     );
     var oledDarkTheme = Utils.oledDarkTheme(defaultDarkTheme);
@@ -54,6 +52,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
       light: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
+        pageTransitionsTheme: pageTransitionsTheme2024,
         colorSchemeSeed: color,
       ),
       dark: oledEnhance ? oledDarkTheme : defaultDarkTheme,
@@ -66,12 +65,14 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
     var defaultDarkTheme = ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
+      pageTransitionsTheme: pageTransitionsTheme2024,
     );
     var oledDarkTheme = Utils.oledDarkTheme(defaultDarkTheme);
     AdaptiveTheme.of(context).setTheme(
       light: ThemeData(
         useMaterial3: true,
         brightness: Brightness.light,
+        pageTransitionsTheme: pageTransitionsTheme2024,
       ),
       dark: oledEnhance ? oledDarkTheme : defaultDarkTheme,
     );
@@ -109,192 +110,191 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
   @override
   Widget build(BuildContext context) {
     i18n = Translations.of(context);
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        onBackPressed(context);
-      },
-      child: Scaffold(
-        appBar: SysAppBar(title: Text(i18n.my.themeSettings.title)),
-        body: Column(
-          children: [
-            ListTile(
-              onTap: () async {
-                final List<Map<String, dynamic>> colorThemes = colorThemeTypes;
-                SmartDialog.show(
-                    useAnimation: false,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(i18n.my.themeSettings.colorPalette),
-                        content: StatefulBuilder(builder:
-                            (BuildContext context, StateSetter setState) {
-                          return Wrap(
-                            alignment: WrapAlignment.center,
-                            spacing: 22,
-                            runSpacing: 18,
-                            children: [
-                              ...colorThemes.map(
-                                (e) {
-                                  final index = colorThemes.indexOf(e);
-                                  return GestureDetector(
-                                    onTap: () {
-                                      index == 0
-                                          ? resetTheme()
-                                          : setTheme(e['color']);
-                                      SmartDialog.dismiss();
-                                    },
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          width: 46,
-                                          height: 46,
-                                          decoration: BoxDecoration(
+    return Scaffold(
+      appBar: SysAppBar(title: Text(i18n.my.themeSettings.title)),
+      body: Column(
+        children: [
+          ListTile(
+            onTap: () async {
+              final List<Map<String, dynamic>> colorThemes = colorThemeTypes;
+              SmartDialog.show(
+                  useAnimation: false,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(i18n.my.themeSettings.colorPalette),
+                      content: StatefulBuilder(builder:
+                          (BuildContext context, StateSetter setState) {
+                        return Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 22,
+                          runSpacing: 18,
+                          children: [
+                            ...colorThemes.map(
+                              (e) {
+                                final index = colorThemes.indexOf(e);
+                                return GestureDetector(
+                                  onTap: () {
+                                    index == 0
+                                        ? resetTheme()
+                                        : setTheme(e['color']);
+                                    SmartDialog.dismiss();
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: 46,
+                                        height: 46,
+                                        decoration: BoxDecoration(
+                                          color: e['color'].withOpacity(0.8),
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          border: Border.all(
+                                            width: 2,
                                             color: e['color'].withOpacity(0.8),
-                                            borderRadius:
-                                                BorderRadius.circular(50),
-                                            border: Border.all(
-                                              width: 2,
-                                              color:
-                                                  e['color'].withOpacity(0.8),
-                                            ),
-                                          ),
-                                          child: const AnimatedOpacity(
-                                            opacity: 0,
-                                            duration:
-                                                Duration(milliseconds: 200),
-                                            child: Icon(
-                                              Icons.done,
-                                              color: Colors.black,
-                                              size: 20,
-                                            ),
                                           ),
                                         ),
-                                        const SizedBox(height: 3),
-                                        Text(
-                                          e['label'],
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .outline,
+                                        child: const AnimatedOpacity(
+                                          opacity: 0,
+                                          duration: Duration(milliseconds: 200),
+                                          child: Icon(
+                                            Icons.done,
+                                            color: Colors.black,
+                                            size: 20,
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              )
+                                      ),
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        e['label'],
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outline,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            )
+                          ],
+                        );
+                      }),
+                    );
+                  });
+            },
+            dense: false,
+            title: Text(i18n.my.themeSettings.colorPalette),
+          ),
+          Platform.isAndroid
+              ? ListTile(
+                  onTap: () async {
+                    Modular.to.pushNamed('/settings/theme/display');
+                  },
+                  dense: false,
+                  title: Text(i18n.my.themeSettings.refreshRate),
+                  // trailing: const Icon(Icons.navigate_next),
+                )
+              : Container(),
+          ListTile(
+            onTap: () {
+              SmartDialog.show(
+                  useAnimation: false,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(i18n.my.themeSettings.themeMode),
+                      content: StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return Wrap(
+                            spacing: 8,
+                            runSpacing: 2,
+                            children: [
+                              defaultThemeMode == 'system'
+                                  ? FilledButton(
+                                      onPressed: () {
+                                        updateTheme('system');
+                                        SmartDialog.dismiss();
+                                      },
+                                      child: Text(i18n
+                                          .my.themeSettings.themeModeSystem))
+                                  : FilledButton.tonal(
+                                      onPressed: () {
+                                        updateTheme('system');
+                                        SmartDialog.dismiss();
+                                      },
+                                      child: Text(i18n
+                                          .my.themeSettings.themeModeSystem)),
+                              defaultThemeMode == 'light'
+                                  ? FilledButton(
+                                      onPressed: () {
+                                        updateTheme('light');
+                                        SmartDialog.dismiss();
+                                      },
+                                      child: Text(
+                                          i18n.my.themeSettings.themeModeLight))
+                                  : FilledButton.tonal(
+                                      onPressed: () {
+                                        updateTheme('light');
+                                        SmartDialog.dismiss();
+                                      },
+                                      child: Text(i18n
+                                          .my.themeSettings.themeModeLight)),
+                              defaultThemeMode == 'dark'
+                                  ? FilledButton(
+                                      onPressed: () {
+                                        updateTheme('dark');
+                                        SmartDialog.dismiss();
+                                      },
+                                      child: Text(
+                                          i18n.my.themeSettings.themeModeDark))
+                                  : FilledButton.tonal(
+                                      onPressed: () {
+                                        updateTheme('dark');
+                                        SmartDialog.dismiss();
+                                      },
+                                      child: Text(
+                                          i18n.my.themeSettings.themeModeDark)),
                             ],
                           );
-                        }),
-                      );
-                    });
-              },
-              dense: false,
-              title: Text(i18n.my.themeSettings.colorPalette),
+                        },
+                      ),
+                    );
+                  });
+            },
+            dense: false,
+            title: Text(i18n.my.themeSettings.themeMode),
+            subtitle: Text(
+                defaultThemeMode == 'light'
+                    ? i18n.my.themeSettings.themeModeLight
+                    : (defaultThemeMode == 'dark'
+                        ? i18n.my.themeSettings.themeModeDark
+                        : i18n.my.themeSettings.themeModeSystem),
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium!
+                    .copyWith(color: Theme.of(context).colorScheme.outline)),
+          ),
+          InkWell(
+            child: SetSwitchItem(
+              title: i18n.my.themeSettings.OLEDEnhance,
+              subTitle: i18n.my.themeSettings.OLEDEnhanceSubtitle,
+              setKey: SettingBoxKey.oledEnhance,
+              callFn: (_) => {updateOledEnhance()},
+              defaultVal: false,
             ),
-            Platform.isAndroid
-                ? ListTile(
-                    onTap: () async {
-                      Modular.to.pushNamed('/tab/my/theme/display');
-                    },
-                    dense: false,
-                    title: Text(i18n.my.themeSettings.refreshRate),
-                    // trailing: const Icon(Icons.navigate_next),
-                  )
-                : Container(),
-            ListTile(
-              onTap: () {
-                SmartDialog.show(
-                    useAnimation: false,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(i18n.my.themeSettings.themeMode),
-                        content: StatefulBuilder(
-                          builder:
-                              (BuildContext context, StateSetter setState) {
-                            return Wrap(
-                              spacing: 8,
-                              runSpacing: 2,
-                              children: [
-                                defaultThemeMode == 'system'
-                                    ? FilledButton(
-                                        onPressed: () {
-                                          updateTheme('system');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: Text(i18n.my.themeSettings.themeModeSystem))
-                                    : FilledButton.tonal(
-                                        onPressed: () {
-                                          updateTheme('system');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: Text(i18n.my.themeSettings.themeModeSystem)),
-                                defaultThemeMode == 'light'
-                                    ? FilledButton(
-                                        onPressed: () {
-                                          updateTheme('light');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: Text(i18n.my.themeSettings.themeModeLight))
-                                    : FilledButton.tonal(
-                                        onPressed: () {
-                                          updateTheme('light');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: Text(i18n.my.themeSettings.themeModeLight)),
-                                defaultThemeMode == 'dark'
-                                    ? FilledButton(
-                                        onPressed: () {
-                                          updateTheme('dark');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: Text(i18n.my.themeSettings.themeModeDark))
-                                    : FilledButton.tonal(
-                                        onPressed: () {
-                                          updateTheme('dark');
-                                          SmartDialog.dismiss();
-                                        },
-                                        child: Text(i18n.my.themeSettings.themeModeDark)),
-                              ],
-                            );
-                          },
-                        ),
-                      );
-                    });
-              },
-              dense: false,
-              title: Text(i18n.my.themeSettings.themeMode),
-              subtitle: Text(
-                  defaultThemeMode == 'light'
-                      ? i18n.my.themeSettings.themeModeLight
-                      : (defaultThemeMode == 'dark' ? i18n.my.themeSettings.themeModeDark : i18n.my.themeSettings.themeModeSystem),
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
-            ),
-            InkWell(
-              child: SetSwitchItem(
-                title: i18n.my.themeSettings.OLEDEnhance,
-                subTitle: i18n.my.themeSettings.OLEDEnhanceSubtitle,
-                setKey: SettingBoxKey.oledEnhance,
-                callFn: (_) => {updateOledEnhance()},
-                defaultVal: false,
-              ),
-            ),
-            !Utils.isCompact()
-                ? InkWell(
-                    child: SetSwitchItem(
-                      title: i18n.my.themeSettings.alwaysOntop,
-                      subTitle: i18n.my.themeSettings.alwaysOntopSubtitle,
-                      setKey: SettingBoxKey.alwaysOntop,
-                      defaultVal: true,
-                    ),
-                  )
-                : Container(),
-          ],
-        ),
+          ),
+          !Utils.isCompact()
+              ? InkWell(
+                  child: SetSwitchItem(
+                    title: i18n.my.themeSettings.alwaysOntop,
+                    subTitle: i18n.my.themeSettings.alwaysOntopSubtitle,
+                    setKey: SettingBoxKey.alwaysOntop,
+                    defaultVal: true,
+                  ),
+                )
+              : Container(),
+        ],
       ),
     );
   }
