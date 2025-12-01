@@ -124,18 +124,6 @@ class _InitPageState extends State<InitPage> {
 
   @override
   Widget build(BuildContext context) {
-    /// 适配平板设备
-    Box setting = GStorage.setting;
-    bool isWideScreen = MediaQuery.of(context).size.shortestSide >= 600 &&
-        (MediaQuery.of(context).size.shortestSide /
-                MediaQuery.of(context).size.longestSide >=
-            9 / 16);
-    if (isWideScreen) {
-      debugPrint('当前设备宽屏');
-    } else {
-      debugPrint('当前设备非宽屏');
-    }
-    setting.put(SettingBoxKey.isWideScreen, isWideScreen);
     return const RouterOutlet();
   }
 }

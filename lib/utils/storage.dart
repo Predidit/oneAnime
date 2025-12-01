@@ -81,6 +81,7 @@ class SettingBoxKey {
       playResume = 'playResume',
       oledEnhance = 'oledEnhance',
       displayMode = 'displayMode',
+      /// deprecated
       isWideScreen = 'isWideScreen',
       enableSystemProxy = 'enableSystemProxy';
 }
