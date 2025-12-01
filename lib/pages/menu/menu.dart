@@ -112,6 +112,7 @@ class _ScaffoldMenu extends State<ScaffoldMenu> {
               groupAlignment: 1.0,
               leading: FloatingActionButton(
                 elevation: 0,
+                heroTag: null,
                 onPressed: () {
                   mineController.checkUpdata();
                 },
