@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/pages/router.dart';
 import 'package:provider/provider.dart';
+import 'package:oneanime/pages/my/my_controller.dart';
 
 class ScaffoldMenu extends StatefulWidget {
   const ScaffoldMenu({super.key});
@@ -39,6 +40,7 @@ class NavigationBarState extends ChangeNotifier {
 
 class _ScaffoldMenu extends State<ScaffoldMenu> {
   final PageController _page = PageController();
+  final mineController = Modular.get<MyController>();
 
   @override
   Widget build(BuildContext context) {
@@ -110,11 +112,10 @@ class _ScaffoldMenu extends State<ScaffoldMenu> {
               groupAlignment: 1.0,
               leading: FloatingActionButton(
                 elevation: 0,
-                heroTag: null,
                 onPressed: () {
-                  Modular.to.pushNamed('/search/');
+                  mineController.checkUpdata();
                 },
-                child: const Icon(Icons.search),
+                child: const Icon(Icons.cloud_outlined),
               ),
               labelType: NavigationRailLabelType.selected,
               destinations: const <NavigationRailDestination>[
@@ -150,16 +151,8 @@ class _ScaffoldMenu extends State<ScaffoldMenu> {
             child: Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16.0),
-                  bottomLeft: Radius.circular(16.0),
-                ),
               ),
               child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16.0),
-                  bottomLeft: Radius.circular(16.0),
-                ),
                 child: PageView.builder(
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: menu.size,

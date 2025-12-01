@@ -176,6 +176,7 @@ class _PopularPageState extends State<PopularPage>
                           scrollController.jumpTo(0.0);
                           popularController.scrollOffset = 0.0;
                         },
+                        heroTag: null,
                         child: const Icon(Icons.arrow_upward),
                       ),
                     ),
@@ -188,6 +189,7 @@ class _PopularPageState extends State<PopularPage>
                         await popularController.getAnimeList();
                         SmartDialog.showToast(i18n.toast.refreshAnimeListWithSuccess);
                       },
+                      heroTag: null,
                       child: const Icon(Icons.refresh),
                     ),
                   ],
@@ -197,6 +199,7 @@ class _PopularPageState extends State<PopularPage>
                     scrollController.jumpTo(0.0);
                     popularController.scrollOffset = 0.0;
                   },
+                  heroTag: null,
                   child: const Icon(Icons.arrow_upward),
                 ),
         ),

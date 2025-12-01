@@ -207,8 +207,12 @@ class _VideoPageState extends State<VideoPage>
     } catch (e) {
       debugPrint(e.toString());
     }
-    historyController.updateHistory(
-        videoController.link, videoController.currentPosition.inSeconds);
+    try {
+      historyController.updateHistory(
+          videoController.link, videoController.currentPosition.inSeconds);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
     videoController.playing = false;
     videoController.currentPosition = Duration.zero;
     videoController.duration = Duration.zero;
