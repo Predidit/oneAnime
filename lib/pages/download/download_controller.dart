@@ -393,8 +393,8 @@ abstract class _DownloadController with Store {
   Future<void> pauseTask(local.DownloadTask task) async {
     try {
       final bgTask = await FileDownloader().database.recordForId(task.taskId);
-      if (bgTask != null) {
-        await FileDownloader().pause(bgTask.task);
+      if (bgTask != null && bgTask.task is DownloadTask) {
+        await FileDownloader().pause(bgTask.task as DownloadTask);
       }
       _updateTaskStatus(task, 'paused');
     } catch (e) {
@@ -407,10 +407,11 @@ abstract class _DownloadController with Store {
     if (task.isPaused || task.isFailed) {
       try {
         final bgTask = await FileDownloader().database.recordForId(task.taskId);
-        if (bgTask != null) {
-          final canResume = await FileDownloader().taskCanResume(bgTask.task);
+        if (bgTask != null && bgTask.task is DownloadTask) {
+          final dlTask = bgTask.task as DownloadTask;
+          final canResume = await FileDownloader().taskCanResume(dlTask);
           if (canResume) {
-            await FileDownloader().resume(bgTask.task);
+            await FileDownloader().resume(dlTask);
           } else {
             // Re-enqueue if can't resume
             await retryTask(task);
@@ -532,7 +533,7 @@ abstract class _DownloadController with Store {
     }
   }
 
-  DownloadTask? getTaskForEpisode(int link, int episode) {
+  local.DownloadTask? getTaskForEpisode(int link, int episode) {
     try {
       return tasks.firstWhere(
         (t) => t.link == link && t.episode == episode,
