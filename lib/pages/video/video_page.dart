@@ -521,6 +521,8 @@ class _VideoPageState extends State<VideoPage>
                                   currentEpisode: videoController.episode,
                                   onChangeEpisode:
                                       videoController.changeEpisode,
+                                  animeLink: videoController.link,
+                                  tokens: videoController.token,
                                 ),
                         ],
                       )
@@ -540,6 +542,8 @@ class _VideoPageState extends State<VideoPage>
                                   currentEpisode: videoController.episode,
                                   onChangeEpisode:
                                       videoController.changeEpisode,
+                                  animeLink: videoController.link,
+                                  tokens: videoController.token,
                                 ),
                         ],
                       )),

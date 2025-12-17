@@ -2,6 +2,8 @@ import 'package:oneanime/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:oneanime/i18n/strings.g.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:oneanime/pages/download/download_controller.dart';
 
 class BangumiPanel extends StatelessWidget {
   const BangumiPanel({
@@ -10,17 +12,22 @@ class BangumiPanel extends StatelessWidget {
     required this.episodeLength,
     required this.currentEpisode,
     required this.onChangeEpisode,
+    this.animeLink,
+    this.tokens,
   });
 
   final String title;
   final int episodeLength;
   final int currentEpisode;
   final Future<void> Function(int episode) onChangeEpisode;
+  final int? animeLink;
+  final List<String>? tokens;
 
   @override
   Widget build(BuildContext context) {
     final Translations i18n = Translations.of(context);
     final ScrollController listViewScrollCtr = ScrollController();
+    final DownloadController downloadController = Modular.get<DownloadController>();
 
     return Expanded(
       child: Column(
@@ -124,6 +131,12 @@ class BangumiPanel extends StatelessWidget {
                 ),
                 itemCount: episodeLength,
                 itemBuilder: (BuildContext context, int i) {
+                  final episode = i + 1;
+                  final isDownloaded = animeLink != null && 
+                      downloadController.isEpisodeDownloaded(animeLink!, episode);
+                  final task = animeLink != null ? 
+                      downloadController.getTaskForEpisode(animeLink!, episode) : null;
+                  
                   return Container(
                     // width: 150,
                     margin: const EdgeInsets.only(bottom: 10), // 改为bottom间距
@@ -133,43 +146,76 @@ class BangumiPanel extends StatelessWidget {
                       clipBehavior: Clip.hardEdge,
                       child: InkWell(
                         onTap: () {
-                          onChangeEpisode(i + 1);
+                          onChangeEpisode(episode);
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                children: [
-                                  if (i == (currentEpisode - 1)) ...<Widget>[
-                                    Image.asset(
-                                      'assets/images/live.png',
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      height: 12,
-                                    ),
-                                    const SizedBox(width: 6)
-                                  ],
-                                  Text(
-                                    i18n.toast.currentEpisode(episode: i + 1),
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        color: i == (currentEpisode - 1)
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .onSurface),
+                        onLongPress: animeLink != null && tokens != null && episode <= tokens!.length
+                            ? () {
+                                _showDownloadMenu(
+                                  context,
+                                  downloadController,
+                                  episode,
+                                  isDownloaded,
+                                  task,
+                                  i18n,
+                                );
+                              }
+                            : null,
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: [
+                                      if (i == (currentEpisode - 1)) ...<Widget>[
+                                        Image.asset(
+                                          'assets/images/live.png',
+                                          color:
+                                              Theme.of(context).colorScheme.primary,
+                                          height: 12,
+                                        ),
+                                        const SizedBox(width: 6)
+                                      ],
+                                      Expanded(
+                                        child: Text(
+                                          i18n.toast.currentEpisode(episode: episode),
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              color: i == (currentEpisode - 1)
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 2),
+                                      if (isDownloaded)
+                                        Icon(
+                                          Icons.download_done,
+                                          size: 16,
+                                          color: Theme.of(context).colorScheme.primary,
+                                        )
+                                      else if (task != null && task.isDownloading)
+                                        SizedBox(
+                                          width: 16,
+                                          height: 16,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            value: task.progress > 0 ? task.progress : null,
+                                          ),
+                                        ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 2),
+                                  const SizedBox(height: 3),
                                 ],
                               ),
-                              const SizedBox(height: 3),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -180,6 +226,83 @@ class BangumiPanel extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+
+  void _showDownloadMenu(
+    BuildContext context,
+    DownloadController downloadController,
+    int episode,
+    bool isDownloaded,
+    dynamic task,
+    Translations i18n,
+  ) {
+    if (animeLink == null || tokens == null || episode > tokens!.length) return;
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (!isDownloaded && task == null)
+                ListTile(
+                  leading: const Icon(Icons.download),
+                  title: Text('Download Episode $episode'),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    final token = tokens![tokens!.length - episode];
+                    final result = await downloadController.enqueueEpisode(
+                      link: animeLink!,
+                      title: title,
+                      episode: episode,
+                      token: token,
+                    );
+                    SmartDialog.showToast(result);
+                  },
+                ),
+              if (task != null && task.isDownloading)
+                ListTile(
+                  leading: const Icon(Icons.pause),
+                  title: Text(i18n.my.downloads.pause),
+                  onTap: () {
+                    Navigator.pop(context);
+                    downloadController.pauseTask(task);
+                  },
+                ),
+              if (task != null && (task.isPaused || task.isFailed))
+                ListTile(
+                  leading: const Icon(Icons.play_arrow),
+                  title: Text(i18n.my.downloads.resume),
+                  onTap: () {
+                    Navigator.pop(context);
+                    downloadController.resumeTask(task);
+                  },
+                ),
+              if (isDownloaded)
+                ListTile(
+                  leading: const Icon(Icons.delete),
+                  title: Text(i18n.my.downloads.delete),
+                  onTap: () {
+                    Navigator.pop(context);
+                    downloadController.deleteTask(task);
+                    SmartDialog.showToast('Download deleted');
+                  },
+                ),
+              if (task != null && !isDownloaded)
+                ListTile(
+                  leading: const Icon(Icons.cancel),
+                  title: Text(i18n.my.downloads.cancel),
+                  onTap: () {
+                    Navigator.pop(context);
+                    downloadController.cancelTask(task);
+                  },
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -7,8 +7,10 @@ import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/timeline/timeline_controller.dart';
 import 'package:oneanime/pages/my/my_controller.dart';
 import 'package:oneanime/pages/history/history_controller.dart';
+import 'package:oneanime/pages/download/download_controller.dart';
 import 'package:oneanime/pages/video/video_module.dart';
 import 'package:oneanime/pages/history/history_module.dart';
+import 'package:oneanime/pages/download/download_module.dart';
 import 'package:oneanime/pages/settings/setting_module.dart';
 import 'package:oneanime/pages/error/error.dart';
 
@@ -23,6 +25,7 @@ class IndexModule extends Module {
     i.addSingleton(TimelineController.new);
     i.addSingleton(MyController.new);
     i.addSingleton(HistoryController.new);
+    i.addSingleton(DownloadController.new);
   }
 
   @override
@@ -43,6 +46,7 @@ class IndexModule extends Module {
         children: menu.routes);
     r.module("/video", module: VideoModule());
     r.module("/history", module: HistoryModule());
+    r.module("/download", module: DownloadModule());
     r.module("/settings", module: SettingsModule());
   }
 }
