@@ -11,6 +11,7 @@ import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:oneanime/pages/player/player_item.dart';
+import 'package:oneanime/pages/download/download_controller.dart';
 import 'package:oneanime/bean/danmaku/danmaku_module.dart';
 import 'package:oneanime/bean/anime/anime_panel.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -43,6 +44,7 @@ class _VideoPageState extends State<VideoPage>
   final PopularController popularController = Modular.get<PopularController>();
   final PlayerController playerController = Modular.get<PlayerController>();
   final HistoryController historyController = Modular.get<HistoryController>();
+  final DownloadController downloadController = Modular.get<DownloadController>();
 
   // 弹幕
   final _danmuKey = GlobalKey();
@@ -966,6 +968,29 @@ class _VideoPageState extends State<VideoPage>
                                   .tertiary
                                   .withOpacity(0.5),
                             ),
+                            Observer(builder: (context) {
+                              final currentEpisode = videoController.episode;
+                              final isDownloaded = downloadController.isEpisodeDownloaded(
+                                  videoController.link, currentEpisode);
+                              final task = downloadController.getTaskForEpisode(
+                                  videoController.link, currentEpisode);
+                              
+                              return IconButton(
+                                icon: Icon(
+                                  _getDownloadIconForHeader(isDownloaded, task),
+                                  color: Colors.white,
+                                ),
+                                onPressed: () => _handleHeaderDownloadTap(
+                                  isDownloaded,
+                                  task,
+                                  currentEpisode,
+                                ),
+                                splashColor: Theme.of(context)
+                                    .colorScheme
+                                    .tertiary
+                                    .withOpacity(0.5),
+                              );
+                            }),
                           ],
                         ),
                       ),
@@ -1108,6 +1133,111 @@ class _VideoPageState extends State<VideoPage>
           ),
         ),
       ),
+    );
+  }
+
+  IconData _getDownloadIconForHeader(bool isDownloaded, dynamic task) {
+    if (isDownloaded) {
+      return Icons.download_done;
+    } else if (task != null && task.isDownloading) {
+      return Icons.downloading;
+    } else if (task != null && (task.isPaused || task.isFailed)) {
+      return Icons.download;
+    } else if (task != null && task.isQueued) {
+      return Icons.schedule;
+    }
+    return Icons.download;
+  }
+
+  void _handleHeaderDownloadTap(bool isDownloaded, dynamic task, int currentEpisode) {
+    // Check if we have valid token for current episode
+    if (videoController.token.isEmpty || currentEpisode > videoController.token.length) {
+      SmartDialog.showToast('Episode not available for download');
+      return;
+    }
+
+    // Hybrid behavior: if not downloaded and no task, start download directly
+    if (!isDownloaded && task == null) {
+      final token = videoController.token[videoController.token.length - currentEpisode];
+      downloadController.enqueueEpisode(
+        link: videoController.link,
+        title: videoController.title,
+        episode: currentEpisode,
+        token: token,
+      ).then((result) {
+        SmartDialog.showToast(result);
+      });
+    } else {
+      // Otherwise, show action menu
+      _showHeaderDownloadMenu(isDownloaded, task, currentEpisode);
+    }
+  }
+
+  void _showHeaderDownloadMenu(bool isDownloaded, dynamic task, int currentEpisode) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (!isDownloaded && task == null)
+                ListTile(
+                  leading: const Icon(Icons.download),
+                  title: Text('Download Episode $currentEpisode'),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    final token = videoController.token[videoController.token.length - currentEpisode];
+                    final result = await downloadController.enqueueEpisode(
+                      link: videoController.link,
+                      title: videoController.title,
+                      episode: currentEpisode,
+                      token: token,
+                    );
+                    SmartDialog.showToast(result);
+                  },
+                ),
+              if (task != null && task.isDownloading)
+                ListTile(
+                  leading: const Icon(Icons.pause),
+                  title: Text(i18n.my.downloads.pause),
+                  onTap: () {
+                    Navigator.pop(context);
+                    downloadController.pauseTask(task);
+                  },
+                ),
+              if (task != null && (task.isPaused || task.isFailed))
+                ListTile(
+                  leading: const Icon(Icons.play_arrow),
+                  title: Text(i18n.my.downloads.resume),
+                  onTap: () {
+                    Navigator.pop(context);
+                    downloadController.resumeTask(task);
+                  },
+                ),
+              if (isDownloaded)
+                ListTile(
+                  leading: const Icon(Icons.delete),
+                  title: Text(i18n.my.downloads.delete),
+                  onTap: () {
+                    Navigator.pop(context);
+                    downloadController.deleteTask(task);
+                    SmartDialog.showToast('Download deleted');
+                  },
+                ),
+              if (task != null && !isDownloaded)
+                ListTile(
+                  leading: const Icon(Icons.cancel),
+                  title: Text(i18n.my.downloads.cancel),
+                  onTap: () {
+                    Navigator.pop(context);
+                    downloadController.cancelTask(task);
+                  },
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -17,6 +17,7 @@ class DownloadController = _DownloadController with _$DownloadController;
 abstract class _DownloadController with Store {
   final Dio _dio = Dio();
   CancelToken? _currentCancelToken;
+  bool _initialized = false;
   
   @observable
   ObservableList<DownloadTask> tasks = ObservableList<DownloadTask>.of([]);
@@ -27,7 +28,14 @@ abstract class _DownloadController with Store {
   @observable
   bool isProcessing = false;
 
+  _DownloadController() {
+    // Auto-initialize on first access
+    init();
+  }
+
   Future<void> init() async {
+    if (_initialized) return;
+    _initialized = true;
     await loadTasks();
     // Resume any interrupted downloads
     resumeQueue();
