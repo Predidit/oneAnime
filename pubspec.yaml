@@ -71,6 +71,7 @@ dependencies:
   ffi: ^2.1.0
 
   provider: any
+  background_downloader: ^8.10.2
 
   flutter_open_chinese_convert: ^0.6.0
   media_kit:

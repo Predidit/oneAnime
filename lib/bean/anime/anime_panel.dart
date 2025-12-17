@@ -163,86 +163,90 @@ class BangumiPanel extends StatelessWidget {
                                   );
                                 }
                               : null,
-                          child: Stack(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Row(
-                                      children: [
-                                        if (i == (currentEpisode - 1)) ...<Widget>[
-                                          Image.asset(
-                                            'assets/images/live.png',
-                                            color:
-                                                Theme.of(context).colorScheme.primary,
-                                            height: 12,
-                                          ),
-                                          const SizedBox(width: 6)
-                                        ],
-                                        Expanded(
-                                          child: Text(
-                                            i18n.toast.currentEpisode(episode: episode),
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                color: i == (currentEpisode - 1)
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .primary
-                                                    : Theme.of(context)
-                                                        .colorScheme
-                                                        .onSurface),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 2),
-                                        if (isDownloaded)
-                                          Icon(
-                                            Icons.download_done,
-                                            size: 16,
-                                            color: Theme.of(context).colorScheme.primary,
-                                          )
-                                        else if (task != null && task.isDownloading)
-                                          SizedBox(
-                                            width: 16,
-                                            height: 16,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              value: task.progress > 0 ? task.progress : null,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 6),
+                            child: Row(
+                              children: [
+                                // Episode label column
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Row(
+                                        children: [
+                                          if (i == (currentEpisode - 1)) ...<Widget>[
+                                            Image.asset(
+                                              'assets/images/live.png',
+                                              color:
+                                                  Theme.of(context).colorScheme.primary,
+                                              height: 12,
+                                            ),
+                                            const SizedBox(width: 6)
+                                          ],
+                                          Expanded(
+                                            child: Text(
+                                              i18n.toast.currentEpisode(episode: episode),
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: i == (currentEpisode - 1)
+                                                      ? Theme.of(context)
+                                                          .colorScheme
+                                                          .primary
+                                                      : Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurface),
                                             ),
                                           ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 3),
-                                  ],
-                                ),
-                              ),
-                              // Download button positioned at bottom-right
-                              if (animeLink != null && tokens != null && episode <= tokens!.length)
-                                Positioned(
-                                  bottom: 0,
-                                  right: 0,
-                                  child: IconButton(
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(),
-                                    iconSize: 18,
-                                    icon: Icon(
-                                      _getDownloadIcon(isDownloaded, task),
-                                      size: 18,
-                                      color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
-                                    ),
-                                    onPressed: () => _handleDownloadTap(
-                                      context,
-                                      downloadController,
-                                      episode,
-                                      isDownloaded,
-                                      task,
-                                      i18n,
-                                    ),
+                                        ],
+                                      ),
+                                      // Status indicator (small icon below text)
+                                      if (isDownloaded || (task != null && task.isDownloading))
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 2),
+                                          child: isDownloaded
+                                              ? Icon(
+                                                  Icons.download_done,
+                                                  size: 14,
+                                                  color: Theme.of(context).colorScheme.primary,
+                                                )
+                                              : SizedBox(
+                                                  width: 14,
+                                                  height: 14,
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    value: task!.progress > 0 ? task.progress : null,
+                                                  ),
+                                                ),
+                                        ),
+                                    ],
                                   ),
                                 ),
-                            ],
+                                // Download action button - 48x48 tap target for mobile
+                                if (animeLink != null && tokens != null && episode <= tokens!.length)
+                                  SizedBox(
+                                    width: 48,
+                                    height: 48,
+                                    child: IconButton(
+                                      padding: const EdgeInsets.all(12),
+                                      icon: Icon(
+                                        _getDownloadIcon(isDownloaded, task),
+                                        size: 20,
+                                      ),
+                                      color: Theme.of(context).colorScheme.primary,
+                                      onPressed: () => _handleDownloadTap(
+                                        context,
+                                        downloadController,
+                                        episode,
+                                        isDownloaded,
+                                        task,
+                                        i18n,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
