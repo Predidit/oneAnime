@@ -44,6 +44,12 @@
           - name: Get Flutter dependencies
             run: flutter pub get
             shell: bash
+          - name: Generate i18n translations
+            run: dart run slang
+            shell: bash
+          - name: Generate MobX code
+            run: flutter pub run build_runner build --delete-conflicting-outputs
+            shell: bash
           - name: Inject DanDan API Credentials
             run: |
               sed -i "s/kvpx7qkqjh/${{ secrets.DANDANAPI_APPID }}/g" lib/utils/mortis.dart
@@ -85,6 +91,10 @@
               distribution: 'temurin'
               java-version: '18'
           - run: flutter pub get
+          - name: Generate i18n translations
+            run: dart run slang
+          - name: Generate MobX code
+            run: flutter pub run build_runner build --delete-conflicting-outputs
           - name: Inject DanDan API Credentials
             env:
               DANDANAPI_APPID: ${{ secrets.DANDANAPI_APPID }}
@@ -134,6 +144,12 @@
               flutter-version-file: pubspec.yaml
           - name: Get Flutter dependencies
             run: flutter pub get
+            shell: bash
+          - name: Generate i18n translations
+            run: dart run slang
+            shell: bash
+          - name: Generate MobX code
+            run: flutter pub run build_runner build --delete-conflicting-outputs
             shell: bash
           - name: Inject DanDan API Credentials
             run: |
@@ -205,6 +221,10 @@
               channel: stable
               flutter-version-file: pubspec.yaml
           - run: flutter pub get
+          - name: Generate i18n translations
+            run: dart run slang
+          - name: Generate MobX code
+            run: flutter pub run build_runner build --delete-conflicting-outputs
           - name: Inject DanDan API Credentials
             run: |
               sed -i '' "s/kvpx7qkqjh/${{ secrets.DANDANAPI_APPID }}/g" lib/utils/mortis.dart
@@ -236,6 +256,10 @@
               channel: stable
               flutter-version-file: pubspec.yaml
           - run: flutter pub get
+          - name: Generate i18n translations
+            run: dart run slang
+          - name: Generate MobX code
+            run: flutter pub run build_runner build --delete-conflicting-outputs
           - name: Inject DanDan API Credentials
             run: |
               sed -i '' "s/kvpx7qkqjh/${{ secrets.DANDANAPI_APPID }}/g" lib/utils/mortis.dart
