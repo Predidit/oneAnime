@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -9,6 +10,7 @@ import 'package:oneanime/i18n/strings.g.dart';
 import 'package:oneanime/utils/utils.dart';
 import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DownloadPage extends StatefulWidget {
   const DownloadPage({super.key});
@@ -83,16 +85,32 @@ class _DownloadPageState extends State<DownloadPage> {
     );
   }
 
+  Future<void> _openDownloadDirectory() async {
+    try {
+      final dir = await downloadController.getDownloadDirectory();
+      final uri = Uri.file(dir.path);
+      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!ok) {
+        await Clipboard.setData(ClipboardData(text: dir.path));
+        SmartDialog.showToast('无法打开目录，已复制路径：${dir.path}');
+      }
+    } catch (e) {
+      SmartDialog.showToast('打开目录失败：${e.toString()}');
+    }
+  }
+
   Future<void> _playDownloadedEpisode(DownloadTask task) async {
     SmartDialog.showLoading(msg: i18n.toast.loading);
     try {
       // Set video controller state for offline playback
+      videoController.token = [];
       videoController.link = task.link!;
       videoController.title = task.title!;
       videoController.episode = task.episode!;
       videoController.videoUrl = task.savePath!;
       videoController.videoCookie = '';
       videoController.offset = 0;
+      videoController.androidFullscreen = false;
       
       // Try to get anime info
       final animeInfo = popularController.lookupAnime(task.title ?? "");
@@ -112,7 +130,16 @@ class _DownloadPageState extends State<DownloadPage> {
     return PopScope(
       canPop: true,
       child: Scaffold(
-        appBar: SysAppBar(title: Text(i18n.my.downloads.title)),
+        appBar: SysAppBar(
+          title: Text(i18n.my.downloads.title),
+          actions: [
+            IconButton(
+              tooltip: '打开下载目录',
+              onPressed: _openDownloadDirectory,
+              icon: const Icon(Icons.folder_open),
+            ),
+          ],
+        ),
         body: Observer(builder: (context) {
           if (downloadController.tasks.isEmpty) {
             return Center(

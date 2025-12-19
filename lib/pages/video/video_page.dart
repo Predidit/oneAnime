@@ -312,42 +312,55 @@ class _VideoPageState extends State<VideoPage>
 
   // 切换选集
   void showChangeChapter() {
+    final List<int> episodeItems = videoController.token.isNotEmpty
+        ? List<int>.generate(videoController.token.length, (i) => i + 1)
+        : downloadController.getDownloadedEpisodesForAnime(videoController.link);
+
+    if (episodeItems.isEmpty) {
+      SmartDialog.showToast('没有可切换的剧集');
+      return;
+    }
+
+    final size = MediaQuery.sizeOf(context);
+    final dialogWidth = (size.width * 0.95).clamp(320.0, 760.0);
+    final dialogHeight = (size.height * 0.7).clamp(240.0, 640.0);
     SmartDialog.show(
         useAnimation: false,
         builder: (context) {
           return AlertDialog(
-            title: const Text('切换选集'),
-            content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              return Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  for (int i = 1;
-                      i <= videoController.token.length;
-                      i++) ...<Widget>[
-                    if (i == videoController.episode) ...<Widget>[
-                      FilledButton(
-                        onPressed: () async {
-                          SmartDialog.dismiss();
-                        },
-                        child: Text(
-                            i18n.toast.currentEpisode(episode: i.toString())),
-                      ),
-                    ] else ...[
-                      FilledButton.tonal(
-                        onPressed: () async {
-                          videoController.changeEpisode(i);
-                          SmartDialog.dismiss();
-                        },
-                        child: Text(
-                            i18n.toast.currentEpisode(episode: i.toString())),
-                      ),
-                    ]
-                  ]
-                ],
-              );
-            }),
+            title: Text(i18n.video.changeEpisode),
+            content: SizedBox(
+              width: dialogWidth,
+              height: dialogHeight,
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 160,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 2.8,
+                ),
+                itemCount: episodeItems.length,
+                itemBuilder: (BuildContext context, int idx) {
+                  final episode = episodeItems[idx];
+                  final isCurrent = episode == videoController.episode;
+                  final label =
+                      i18n.toast.currentEpisode(episode: episode.toString());
+                  if (isCurrent) {
+                    return FilledButton(
+                      onPressed: () => SmartDialog.dismiss(),
+                      child: Text(label),
+                    );
+                  }
+                  return FilledButton.tonal(
+                    onPressed: () async {
+                      await videoController.changeEpisode(episode);
+                      SmartDialog.dismiss();
+                    },
+                    child: Text(label),
+                  );
+                },
+              ),
+            ),
           );
         });
   }
@@ -484,6 +497,25 @@ class _VideoPageState extends State<VideoPage>
     i18n = Translations.of(context);
     return OrientationBuilder(builder: (context, orientation) {
       return Observer(builder: (context) {
+        final bool hasTokens = videoController.token.isNotEmpty;
+        List<int>? panelEpisodes;
+        int panelEpisodeLength;
+        List<String>? panelTokens;
+        if (hasTokens) {
+          panelEpisodes = null;
+          panelEpisodeLength = videoController.token.length;
+          panelTokens = videoController.token;
+        } else {
+          final episodes =
+              downloadController.getDownloadedEpisodesForAnime(videoController.link);
+          if (episodes.isEmpty) {
+            episodes.add(videoController.episode);
+          }
+          panelEpisodes = episodes;
+          panelEpisodeLength = episodes.length;
+          panelTokens = null;
+        }
+
         if (!Utils.isDesktop()) {
           if (orientation == Orientation.landscape &&
               !videoController.androidFullscreen) {
@@ -519,12 +551,13 @@ class _VideoPageState extends State<VideoPage>
                               ? Container()
                               : BangumiPanel(
                                   title: videoController.title,
-                                  episodeLength: videoController.token.length,
+                                  episodeLength: panelEpisodeLength,
+                                  episodes: panelEpisodes,
                                   currentEpisode: videoController.episode,
                                   onChangeEpisode:
                                       videoController.changeEpisode,
                                   animeLink: videoController.link,
-                                  tokens: videoController.token,
+                                  tokens: panelTokens,
                                 ),
                         ],
                       )
@@ -540,12 +573,13 @@ class _VideoPageState extends State<VideoPage>
                               ? Container()
                               : BangumiPanel(
                                   title: videoController.title,
-                                  episodeLength: videoController.token.length,
+                                  episodeLength: panelEpisodeLength,
+                                  episodes: panelEpisodes,
                                   currentEpisode: videoController.episode,
                                   onChangeEpisode:
                                       videoController.changeEpisode,
                                   animeLink: videoController.link,
-                                  tokens: videoController.token,
+                                  tokens: panelTokens,
                                 ),
                         ],
                       )),

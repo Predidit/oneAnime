@@ -375,6 +375,23 @@ abstract class _DownloadController with Store {
     return downloadDir;
   }
 
+  /// Public accessor for the app's downloads directory.
+  Future<Directory> getDownloadDirectory() => _getDownloadDirectory();
+
+  /// Returns downloaded (completed + file exists) episode numbers for given anime.
+  List<int> getDownloadedEpisodesForAnime(int link) {
+    final episodes = <int>{};
+    for (final task in tasks) {
+      final ep = task.episode;
+      if (task.link != link || ep == null) continue;
+      if (isEpisodeDownloaded(link, ep)) {
+        episodes.add(ep);
+      }
+    }
+    final sorted = episodes.toList()..sort();
+    return sorted;
+  }
+
   String _generateFileName(String? title, int? episode, int timestamp) {
     final sanitizedTitle = title?.replaceAll(RegExp(r'[^\w\s-]'), '').replaceAll(' ', '_') ?? 'anime';
     return '${sanitizedTitle}_ep${episode}_$timestamp.mp4';
