@@ -72,6 +72,24 @@
             "title": "History",
             "empty": "Ah Lie (⊙.⊙) There is no viewing record."
         },
+        "downloads": {
+            "title": "Downloads",
+            "empty": "No downloads yet",
+            "downloading": "Downloading",
+            "queued": "Queued",
+            "paused": "Paused",
+            "completed": "Completed",
+            "failed": "Failed",
+            "pause": "Pause",
+            "resume": "Resume",
+            "retry": "Retry",
+            "delete": "Delete",
+            "cancel": "Cancel",
+            "play": "Play",
+            "clearCompleted": "Clear Completed",
+            "confirmDelete": "Delete this download?",
+            "confirmClearCompleted": "Delete all completed downloads?"
+        },
         "playerSettings": {
             "title": "Player Settings",
             "hardwareAcceleration": "Hardware Acceleration",

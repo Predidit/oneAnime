@@ -1,5 +1,6 @@
 import UIKit
 import Flutter
+import UserNotifications
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -8,6 +9,10 @@ import Flutter
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
+    
+    // Set notification delegate for background_downloader
+    UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
+    
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

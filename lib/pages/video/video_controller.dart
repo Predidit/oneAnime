@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oneanime/bean/anime/anime_bangumi_info.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:oneanime/request/danmaku.dart';
 import 'package:oneanime/bean/danmaku/danmaku_module.dart';
 import 'package:oneanime/utils/storage.dart';
+import 'package:oneanime/pages/download/download_controller.dart';
 import 'package:hive/hive.dart';
 
 part 'video_controller.g.dart';
@@ -88,12 +90,28 @@ abstract class _VideoController with Store {
     final PlayerController playerController = Modular.get<PlayerController>();
     final PopularController popularController =
         Modular.get<PopularController>();
+    final DownloadController downloadController = Modular.get<DownloadController>();
+    
     popularController.updateAnimeProgress(episode, title);
-    var result = await VideoRequest.getVideoLink(token[token.length - episode]);
-    videoUrl = result['link'];
-    videoCookie = result['cookie'];
-    playerController.videoUrl = videoUrl;
-    playerController.videoCookie = videoCookie;
+    
+    // Check if episode is downloaded locally
+    final localPath = downloadController.getLocalPath(link, episode);
+    if (localPath != null && File(localPath).existsSync()) {
+      // Use local file
+      debugPrint('Playing from local file: $localPath');
+      videoUrl = localPath;
+      videoCookie = '';
+      playerController.videoUrl = videoUrl;
+      playerController.videoCookie = '';
+    } else {
+      // Download from server
+      var result = await VideoRequest.getVideoLink(token[token.length - episode]);
+      videoUrl = result['link'];
+      videoCookie = result['cookie'];
+      playerController.videoUrl = videoUrl;
+      playerController.videoCookie = videoCookie;
+    }
+    
     this.episode = episode;
     playing = false;
     currentPosition = Duration.zero;
