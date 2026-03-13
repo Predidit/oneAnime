@@ -70,6 +70,14 @@ class _MyPageState extends State<MyPage> {
             ),
             ListTile(
               onTap: () async {
+                Modular.to.pushNamed('/download/');
+              },
+              dense: false,
+              title: Text(i18n.my.downloads.title),
+              // trailing: const Icon(Icons.navigate_next),
+            ),
+            ListTile(
+              onTap: () async {
                 Modular.to.pushNamed('/settings/player');
               },
               dense: false,

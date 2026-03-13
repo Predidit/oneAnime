@@ -72,6 +72,24 @@
             "title": "历史记录",
             "empty": "啊咧（⊙.⊙） 没有观看记录的说"
         },
+        "downloads": {
+            "title": "番剧下载",
+            "empty": "还没有下载任务",
+            "downloading": "下载中",
+            "queued": "等待中",
+            "paused": "已暂停",
+            "completed": "已完成",
+            "failed": "失败",
+            "pause": "暂停",
+            "resume": "继续",
+            "retry": "重试",
+            "delete": "删除",
+            "cancel": "取消",
+            "play": "播放",
+            "clearCompleted": "清除已完成",
+            "confirmDelete": "确定要删除此下载吗？",
+            "confirmClearCompleted": "确定要清除所有已完成的下载吗？"
+        },
         "playerSettings": {
             "title": "播放设置",
             "hardwareAcceleration": "硬件解码",

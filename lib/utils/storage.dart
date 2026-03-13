@@ -5,6 +5,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:oneanime/bean/anime/anime_info.dart';
 import 'package:oneanime/bean/anime/anime_history.dart';
+import 'package:oneanime/bean/download/download_task.dart';
+import 'package:oneanime/bean/download/download_anime.dart';
 
 class GStorage {
   static late final Box<dynamic> localCache;
@@ -12,6 +14,8 @@ class GStorage {
   static late final Box<dynamic> setting;
   static late final Box<AnimeInfo> listCahce;
   static late final Box<AnimeHistory> history;
+  static late final Box<DownloadTask> downloadTasks;
+  static late final Box<DownloadAnime> downloadAnime;
 
   static Future<void> init() async {
     final Directory dir = await getApplicationSupportDirectory();
@@ -22,6 +26,8 @@ class GStorage {
     setting = await Hive.openBox('setting');
     listCahce = await Hive.openBox<AnimeInfo>('anime_info_box');
     history = await Hive.openBox('history');
+    downloadTasks = await Hive.openBox<DownloadTask>('download_tasks');
+    downloadAnime = await Hive.openBox<DownloadAnime>('download_anime');
 
     // 本地缓存
     localCache = await Hive.openBox(
@@ -37,6 +43,8 @@ class GStorage {
   static void regAdapter() {
     Hive.registerAdapter(AnimeInfoAdapter());
     Hive.registerAdapter(AnimeHistoryAdapter());
+    Hive.registerAdapter(DownloadTaskAdapter());
+    Hive.registerAdapter(DownloadAnimeAdapter());
   }
 
   static Future<void> close() async {
@@ -46,6 +54,10 @@ class GStorage {
     localCache.close();
     setting.compact();
     setting.close();
+    downloadTasks.compact();
+    downloadTasks.close();
+    downloadAnime.compact();
+    downloadAnime.close();
   }
 }
 

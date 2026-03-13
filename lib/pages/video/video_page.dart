@@ -11,6 +11,7 @@ import 'package:oneanime/pages/video/video_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 import 'package:oneanime/pages/player/player_controller.dart';
 import 'package:oneanime/pages/player/player_item.dart';
+import 'package:oneanime/pages/download/download_controller.dart';
 import 'package:oneanime/bean/danmaku/danmaku_module.dart';
 import 'package:oneanime/bean/anime/anime_panel.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -43,6 +44,7 @@ class _VideoPageState extends State<VideoPage>
   final PopularController popularController = Modular.get<PopularController>();
   final PlayerController playerController = Modular.get<PlayerController>();
   final HistoryController historyController = Modular.get<HistoryController>();
+  final DownloadController downloadController = Modular.get<DownloadController>();
 
   // 弹幕
   final _danmuKey = GlobalKey();
@@ -310,42 +312,55 @@ class _VideoPageState extends State<VideoPage>
 
   // 切换选集
   void showChangeChapter() {
+    final List<int> episodeItems = videoController.token.isNotEmpty
+        ? List<int>.generate(videoController.token.length, (i) => i + 1)
+        : downloadController.getDownloadedEpisodesForAnime(videoController.link);
+
+    if (episodeItems.isEmpty) {
+      SmartDialog.showToast('没有可切换的剧集');
+      return;
+    }
+
+    final size = MediaQuery.sizeOf(context);
+    final dialogWidth = (size.width * 0.95).clamp(320.0, 760.0);
+    final dialogHeight = (size.height * 0.7).clamp(240.0, 640.0);
     SmartDialog.show(
         useAnimation: false,
         builder: (context) {
           return AlertDialog(
-            title: const Text('切换选集'),
-            content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              return Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  for (int i = 1;
-                      i <= videoController.token.length;
-                      i++) ...<Widget>[
-                    if (i == videoController.episode) ...<Widget>[
-                      FilledButton(
-                        onPressed: () async {
-                          SmartDialog.dismiss();
-                        },
-                        child: Text(
-                            i18n.toast.currentEpisode(episode: i.toString())),
-                      ),
-                    ] else ...[
-                      FilledButton.tonal(
-                        onPressed: () async {
-                          videoController.changeEpisode(i);
-                          SmartDialog.dismiss();
-                        },
-                        child: Text(
-                            i18n.toast.currentEpisode(episode: i.toString())),
-                      ),
-                    ]
-                  ]
-                ],
-              );
-            }),
+            title: Text(i18n.video.changeEpisode),
+            content: SizedBox(
+              width: dialogWidth,
+              height: dialogHeight,
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 160,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 2.8,
+                ),
+                itemCount: episodeItems.length,
+                itemBuilder: (BuildContext context, int idx) {
+                  final episode = episodeItems[idx];
+                  final isCurrent = episode == videoController.episode;
+                  final label =
+                      i18n.toast.currentEpisode(episode: episode.toString());
+                  if (isCurrent) {
+                    return FilledButton(
+                      onPressed: () => SmartDialog.dismiss(),
+                      child: Text(label),
+                    );
+                  }
+                  return FilledButton.tonal(
+                    onPressed: () async {
+                      await videoController.changeEpisode(episode);
+                      SmartDialog.dismiss();
+                    },
+                    child: Text(label),
+                  );
+                },
+              ),
+            ),
           );
         });
   }
@@ -482,6 +497,25 @@ class _VideoPageState extends State<VideoPage>
     i18n = Translations.of(context);
     return OrientationBuilder(builder: (context, orientation) {
       return Observer(builder: (context) {
+        final bool hasTokens = videoController.token.isNotEmpty;
+        List<int>? panelEpisodes;
+        int panelEpisodeLength;
+        List<String>? panelTokens;
+        if (hasTokens) {
+          panelEpisodes = null;
+          panelEpisodeLength = videoController.token.length;
+          panelTokens = videoController.token;
+        } else {
+          final episodes =
+              downloadController.getDownloadedEpisodesForAnime(videoController.link);
+          if (episodes.isEmpty) {
+            episodes.add(videoController.episode);
+          }
+          panelEpisodes = episodes;
+          panelEpisodeLength = episodes.length;
+          panelTokens = null;
+        }
+
         if (!Utils.isDesktop()) {
           if (orientation == Orientation.landscape &&
               !videoController.androidFullscreen) {
@@ -517,10 +551,13 @@ class _VideoPageState extends State<VideoPage>
                               ? Container()
                               : BangumiPanel(
                                   title: videoController.title,
-                                  episodeLength: videoController.token.length,
+                                  episodeLength: panelEpisodeLength,
+                                  episodes: panelEpisodes,
                                   currentEpisode: videoController.episode,
                                   onChangeEpisode:
                                       videoController.changeEpisode,
+                                  animeLink: videoController.link,
+                                  tokens: panelTokens,
                                 ),
                         ],
                       )
@@ -536,10 +573,13 @@ class _VideoPageState extends State<VideoPage>
                               ? Container()
                               : BangumiPanel(
                                   title: videoController.title,
-                                  episodeLength: videoController.token.length,
+                                  episodeLength: panelEpisodeLength,
+                                  episodes: panelEpisodes,
                                   currentEpisode: videoController.episode,
                                   onChangeEpisode:
                                       videoController.changeEpisode,
+                                  animeLink: videoController.link,
+                                  tokens: panelTokens,
                                 ),
                         ],
                       )),
@@ -962,6 +1002,29 @@ class _VideoPageState extends State<VideoPage>
                                   .tertiary
                                   .withOpacity(0.5),
                             ),
+                            Observer(builder: (context) {
+                              final currentEpisode = videoController.episode;
+                              final isDownloaded = downloadController.isEpisodeDownloaded(
+                                  videoController.link, currentEpisode);
+                              final task = downloadController.getTaskForEpisode(
+                                  videoController.link, currentEpisode);
+                              
+                              return IconButton(
+                                icon: Icon(
+                                  _getDownloadIconForHeader(isDownloaded, task),
+                                  color: Colors.white,
+                                ),
+                                onPressed: () => _handleHeaderDownloadTap(
+                                  isDownloaded,
+                                  task,
+                                  currentEpisode,
+                                ),
+                                splashColor: Theme.of(context)
+                                    .colorScheme
+                                    .tertiary
+                                    .withOpacity(0.5),
+                              );
+                            }),
                           ],
                         ),
                       ),
@@ -1104,6 +1167,111 @@ class _VideoPageState extends State<VideoPage>
           ),
         ),
       ),
+    );
+  }
+
+  IconData _getDownloadIconForHeader(bool isDownloaded, dynamic task) {
+    if (isDownloaded) {
+      return Icons.download_done;
+    } else if (task != null && task.isDownloading) {
+      return Icons.downloading;
+    } else if (task != null && (task.isPaused || task.isFailed)) {
+      return Icons.download;
+    } else if (task != null && task.isQueued) {
+      return Icons.schedule;
+    }
+    return Icons.download;
+  }
+
+  void _handleHeaderDownloadTap(bool isDownloaded, dynamic task, int currentEpisode) {
+    // Check if we have valid token for current episode
+    if (videoController.token.isEmpty || currentEpisode > videoController.token.length) {
+      SmartDialog.showToast('Episode not available for download');
+      return;
+    }
+
+    // Hybrid behavior: if not downloaded and no task, start download directly
+    if (!isDownloaded && task == null) {
+      final token = videoController.token[videoController.token.length - currentEpisode];
+      downloadController.enqueueEpisode(
+        link: videoController.link,
+        title: videoController.title,
+        episode: currentEpisode,
+        token: token,
+      ).then((result) {
+        SmartDialog.showToast(result);
+      });
+    } else {
+      // Otherwise, show action menu
+      _showHeaderDownloadMenu(isDownloaded, task, currentEpisode);
+    }
+  }
+
+  void _showHeaderDownloadMenu(bool isDownloaded, dynamic task, int currentEpisode) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (!isDownloaded && task == null)
+                ListTile(
+                  leading: const Icon(Icons.download),
+                  title: Text('Download Episode $currentEpisode'),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    final token = videoController.token[videoController.token.length - currentEpisode];
+                    final result = await downloadController.enqueueEpisode(
+                      link: videoController.link,
+                      title: videoController.title,
+                      episode: currentEpisode,
+                      token: token,
+                    );
+                    SmartDialog.showToast(result);
+                  },
+                ),
+              if (task != null && task.isDownloading)
+                ListTile(
+                  leading: const Icon(Icons.pause),
+                  title: Text(i18n.my.downloads.pause),
+                  onTap: () {
+                    Navigator.pop(context);
+                    downloadController.pauseTask(task);
+                  },
+                ),
+              if (task != null && (task.isPaused || task.isFailed))
+                ListTile(
+                  leading: const Icon(Icons.play_arrow),
+                  title: Text(i18n.my.downloads.resume),
+                  onTap: () {
+                    Navigator.pop(context);
+                    downloadController.resumeTask(task);
+                  },
+                ),
+              if (isDownloaded)
+                ListTile(
+                  leading: const Icon(Icons.delete),
+                  title: Text(i18n.my.downloads.delete),
+                  onTap: () {
+                    Navigator.pop(context);
+                    downloadController.deleteTask(task);
+                    SmartDialog.showToast('Download deleted');
+                  },
+                ),
+              if (task != null && !isDownloaded)
+                ListTile(
+                  leading: const Icon(Icons.cancel),
+                  title: Text(i18n.my.downloads.cancel),
+                  onTap: () {
+                    Navigator.pop(context);
+                    downloadController.cancelTask(task);
+                  },
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
