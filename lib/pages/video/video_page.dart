@@ -65,6 +65,10 @@ class _VideoPageState extends State<VideoPage>
   Timer? mouseScrollerTimer;
 
   bool isPopping = false;
+  Offset? _doubleTapPosition;
+  bool showDoubleTapFeedback = false;
+  String _doubleTapFeedbackText = '';
+  Timer? _doubleTapFeedbackTimer;
 
   void _handleTap() {
     setState(() {
@@ -102,15 +106,53 @@ class _VideoPageState extends State<VideoPage>
     });
   }
 
+  void _showDoubleTapFeedback(String text) {
+    setState(() {
+      showDoubleTapFeedback = true;
+      _doubleTapFeedbackText = text;
+    });
+    _doubleTapFeedbackTimer?.cancel();
+    _doubleTapFeedbackTimer = Timer(const Duration(seconds: 1), () {
+      if (mounted) {
+        setState(() {
+          showDoubleTapFeedback = false;
+        });
+      }
+      _doubleTapFeedbackTimer = null;
+    });
+  }
+
   void _handleShortSeek() {
     try {
       if (playerTimer != null) {
         playerTimer!.cancel();
       }
-      videoController.currentPosition =
-          Duration(seconds: videoController.currentPosition.inSeconds + 10);
+      final int seekSecs =
+          setting.get(SettingBoxKey.doubleTapSeekDuration, defaultValue: 10);
+      videoController.currentPosition = Duration(
+          seconds: videoController.currentPosition.inSeconds + seekSecs);
       playerController.seek(videoController.currentPosition);
       playerTimer = getPlayerTimer();
+      _showDoubleTapFeedback(i18n.video.seekForward(seconds: seekSecs));
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  void _handleBackwardSeek() {
+    try {
+      if (playerTimer != null) {
+        playerTimer!.cancel();
+      }
+      final int seekSecs =
+          setting.get(SettingBoxKey.doubleTapSeekDuration, defaultValue: 10);
+      final int newSeconds =
+          videoController.currentPosition.inSeconds - seekSecs;
+      videoController.currentPosition =
+          Duration(seconds: newSeconds < 0 ? 0 : newSeconds);
+      playerController.seek(videoController.currentPosition);
+      playerTimer = getPlayerTimer();
+      _showDoubleTapFeedback(i18n.video.seekBackward(seconds: seekSecs));
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -666,9 +708,37 @@ class _VideoPageState extends State<VideoPage>
                             onTap: () {
                               _handleTap();
                             },
+                            onDoubleTapDown: (TapDownDetails details) {
+                              _doubleTapPosition = details.localPosition;
+                            },
                             onDoubleTap: () {
-                              _handleTap();
-                              _handleShortSeek();
+                              if (_doubleTapPosition == null) return;
+                              final double width =
+                                  MediaQuery.of(context).size.width;
+                              final double x = _doubleTapPosition!.dx;
+                              if (x < width / 3) {
+                                // Left zone: seek backward
+                                _handleBackwardSeek();
+                              } else if (x > width * 2 / 3) {
+                                // Right zone: seek forward
+                                _handleShortSeek();
+                              } else {
+                                // Middle zone: toggle play/pause
+                                final bool wasPlaying =
+                                    playerController.playing;
+                                _handleTap();
+                                if (wasPlaying) {
+                                  playerController.pause();
+                                  videoController.playing = false;
+                                  _showDoubleTapFeedback(
+                                      i18n.video.doubleTapPause);
+                                } else {
+                                  playerController.play();
+                                  videoController.playing = true;
+                                  _showDoubleTapFeedback(
+                                      i18n.video.doubleTapPlay);
+                                }
+                              }
                             },
                             onLongPressStart: (_) {
                               setState(() {
@@ -780,8 +850,18 @@ class _VideoPageState extends State<VideoPage>
                                       videoController.currentPosition.compareTo(
                                                   playerController.position) >
                                               0
-                                          ? '快进 ${videoController.currentPosition.inSeconds - playerController.position.inSeconds} 秒'
-                                          : '快退 ${playerController.position.inSeconds - videoController.currentPosition.inSeconds} 秒',
+                                          ? i18n.video.seekForward(
+                                              seconds: videoController
+                                                      .currentPosition
+                                                      .inSeconds -
+                                                  playerController
+                                                      .position.inSeconds)
+                                          : i18n.video.seekBackward(
+                                              seconds: playerController
+                                                      .position.inSeconds -
+                                                  videoController
+                                                      .currentPosition
+                                                      .inSeconds),
                                       style: const TextStyle(
                                         color: Colors.white,
                                       ),
@@ -896,13 +976,36 @@ class _VideoPageState extends State<VideoPage>
                           debugPrint('弹幕控制器创建成功');
                         },
                         option: DanmakuOption(
-                            fontSize: _fontSize,
-                            duration: _duration.toDouble(),
-                            opacity: _opacity,
-                            fontFamily: _danmakuUseSystemFont ? null : customAppFontFamily,
-                            strokeWidth: _showStroke ? 1.5 : 0.0,),
+                          fontSize: _fontSize,
+                          duration: _duration.toDouble(),
+                          opacity: _opacity,
+                          fontFamily: _danmakuUseSystemFont
+                              ? null
+                              : customAppFontFamily,
+                          strokeWidth: _showStroke ? 1.5 : 0.0,
+                        ),
                       ),
                     ),
+
+                    // 双击操作提示
+                    if (showDoubleTapFeedback)
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 10.0),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.6),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Text(
+                            _doubleTapFeedbackText,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                        ),
+                      ),
 
                     // 自定义顶部组件
                     Visibility(
