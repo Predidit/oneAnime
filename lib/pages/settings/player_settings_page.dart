@@ -18,11 +18,21 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
   dynamic navigationBarState;
   Box setting = GStorage.setting;
   late Translations i18n;
+  late int _seekDuration;
   final PopularController popularController = Modular.get<PopularController>();
 
   @override
   void initState() {
     super.initState();
+    _seekDuration =
+        setting.get(SettingBoxKey.doubleTapSeekDuration, defaultValue: 10);
+  }
+
+  void _updateSeekDuration(int value) async {
+    await setting.put(SettingBoxKey.doubleTapSeekDuration, value);
+    setState(() {
+      _seekDuration = value;
+    });
   }
 
   @override
@@ -53,6 +63,34 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               subTitle: i18n.my.playerSettings.autoJumpSubtitle,
               setKey: SettingBoxKey.playResume,
               defaultVal: false,
+            ),
+          ),
+          ListTile(
+            dense: false,
+            title: Text(i18n.my.playerSettings.doubleTapSeekDuration),
+            subtitle: Row(
+              children: [
+                Expanded(
+                  child: Slider(
+                    value: _seekDuration.toDouble(),
+                    min: 5,
+                    max: 20,
+                    divisions: 3,
+                    label: '$_seekDuration s',
+                    onChanged: (double value) {
+                      _updateSeekDuration(value.toInt());
+                    },
+                  ),
+                ),
+                Text(
+                  '$_seekDuration s',
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.outline),
+                ),
+                const SizedBox(width: 8),
+              ],
             ),
           ),
         ],
