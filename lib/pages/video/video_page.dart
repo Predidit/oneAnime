@@ -725,6 +725,12 @@ class _VideoPageState extends State<VideoPage>
                               if (!videoController.androidFullscreen) {
                                 return;
                               }
+                              // 亮度/音量手势开关
+                              if (!setting.get(
+                                  SettingBoxKey.brightnessVolumeGesture,
+                                  defaultValue: true)) {
+                                return;
+                              }
                               if (tapPosition < sectionWidth) {
                                 // 左边区域
                                 setState(() {
