@@ -84,5 +84,6 @@ class SettingBoxKey {
       /// deprecated
       isWideScreen = 'isWideScreen',
       enableSystemProxy = 'enableSystemProxy',
-      useSystemFont = 'useSystemFont';
+      useSystemFont = 'useSystemFont',
+      brightnessVolumeGesture = 'brightnessVolumeGesture';
 }
