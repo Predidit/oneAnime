@@ -55,10 +55,6 @@ class _VideoPageState extends State<VideoPage>
 
   // 界面管理
   bool showPositioned = false;
-  bool showPosition = false;
-  bool showBrightness = false;
-  bool showVolume = false;
-  bool showPlaySpeed = false;
 
   Timer? hideTimer;
   Timer? playerTimer;
@@ -66,9 +62,27 @@ class _VideoPageState extends State<VideoPage>
 
   bool isPopping = false;
   Offset? _doubleTapPosition;
-  bool showDoubleTapFeedback = false;
-  String _doubleTapFeedbackText = '';
-  Timer? _doubleTapFeedbackTimer;
+  Widget? _overlayWidget;
+  Timer? _overlayTimer;
+
+  void _showOverlay(Widget child, {bool autoDismiss = true}) {
+    _overlayTimer?.cancel();
+    setState(() {
+      _overlayWidget = child;
+    });
+    if (autoDismiss) {
+      _overlayTimer = Timer(const Duration(seconds: 1), () {
+        if (mounted) setState(() => _overlayWidget = null);
+        _overlayTimer = null;
+      });
+    }
+  }
+
+  void _hideOverlay() {
+    _overlayTimer?.cancel();
+    _overlayTimer = null;
+    setState(() => _overlayWidget = null);
+  }
 
   void _handleTap() {
     setState(() {
@@ -89,36 +103,17 @@ class _VideoPageState extends State<VideoPage>
   }
 
   void _handleMouseScroller() {
-    setState(() {
-      showVolume = true;
-    });
-    if (mouseScrollerTimer != null) {
-      mouseScrollerTimer!.cancel();
-    }
-
+    _showOverlay(
+      Row(mainAxisSize: MainAxisSize.min, children: [
+        const Icon(Icons.volume_down, color: Colors.white),
+        Text(' ${(videoController.volume * 100).toInt()}%',
+            style: const TextStyle(color: Colors.white)),
+      ]),
+    );
+    if (mouseScrollerTimer != null) mouseScrollerTimer!.cancel();
     mouseScrollerTimer = Timer(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          showVolume = false;
-        });
-      }
+      if (mounted) _hideOverlay();
       mouseScrollerTimer = null;
-    });
-  }
-
-  void _showDoubleTapFeedback(String text) {
-    setState(() {
-      showDoubleTapFeedback = true;
-      _doubleTapFeedbackText = text;
-    });
-    _doubleTapFeedbackTimer?.cancel();
-    _doubleTapFeedbackTimer = Timer(const Duration(seconds: 1), () {
-      if (mounted) {
-        setState(() {
-          showDoubleTapFeedback = false;
-        });
-      }
-      _doubleTapFeedbackTimer = null;
     });
   }
 
@@ -133,7 +128,8 @@ class _VideoPageState extends State<VideoPage>
           seconds: videoController.currentPosition.inSeconds + seekSecs);
       playerController.seek(videoController.currentPosition);
       playerTimer = getPlayerTimer();
-      _showDoubleTapFeedback(i18n.video.seekForward(seconds: seekSecs));
+      _showOverlay(Text(i18n.video.seekForward(seconds: seekSecs),
+          style: const TextStyle(color: Colors.white)));
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -152,7 +148,8 @@ class _VideoPageState extends State<VideoPage>
           Duration(seconds: newSeconds < 0 ? 0 : newSeconds);
       playerController.seek(videoController.currentPosition);
       playerTimer = getPlayerTimer();
-      _showDoubleTapFeedback(i18n.video.seekBackward(seconds: seekSecs));
+      _showOverlay(Text(i18n.video.seekBackward(seconds: seekSecs),
+          style: const TextStyle(color: Colors.white)));
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -730,35 +727,41 @@ class _VideoPageState extends State<VideoPage>
                                 if (wasPlaying) {
                                   playerController.pause();
                                   videoController.playing = false;
-                                  _showDoubleTapFeedback(
-                                      i18n.video.doubleTapPause);
+                                  _showOverlay(Text(i18n.video.doubleTapPause,
+                                      style: const TextStyle(
+                                          color: Colors.white)));
                                 } else {
                                   playerController.play();
                                   videoController.playing = true;
-                                  _showDoubleTapFeedback(
-                                      i18n.video.doubleTapPlay);
+                                  _showOverlay(Text(i18n.video.doubleTapPlay,
+                                      style: const TextStyle(
+                                          color: Colors.white)));
                                 }
                               }
                             },
                             onLongPressStart: (_) {
-                              setState(() {
-                                showPlaySpeed = true;
-                              });
+                              _showOverlay(
+                                const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.fast_forward,
+                                        color: Colors.white),
+                                    Text(' 倍速播放',
+                                        style: TextStyle(color: Colors.white)),
+                                  ],
+                                ),
+                                autoDismiss: false,
+                              );
                               videoController.setPlaybackSpeed(
                                   videoController.playerSpeed * 2.5);
                             },
                             onLongPressEnd: (_) {
-                              setState(() {
-                                showPlaySpeed = false;
-                              });
+                              _hideOverlay();
                               videoController.setPlaybackSpeed(
                                   videoController.playerSpeed / 2.5);
                             },
                             onHorizontalDragUpdate:
                                 (DragUpdateDetails details) {
-                              setState(() {
-                                showPosition = true;
-                              });
                               if (playerTimer != null) {
                                 // debugPrint('检测到拖动, 定时器取消');
                                 playerTimer!.cancel();
@@ -770,15 +773,32 @@ class _VideoPageState extends State<VideoPage>
                                   milliseconds: videoController
                                           .currentPosition.inMilliseconds +
                                       (details.delta.dx * scale).round());
+                              _showOverlay(
+                                Text(
+                                  videoController.currentPosition.compareTo(
+                                              playerController.position) >
+                                          0
+                                      ? i18n.video.seekForward(
+                                          seconds: videoController
+                                                  .currentPosition.inSeconds -
+                                              playerController
+                                                  .position.inSeconds)
+                                      : i18n.video.seekBackward(
+                                          seconds: playerController
+                                                  .position.inSeconds -
+                                              videoController
+                                                  .currentPosition.inSeconds),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                autoDismiss: false,
+                              );
                             },
                             onHorizontalDragEnd: (DragEndDetails details) {
                               playerController
                                   .seek(videoController.currentPosition);
                               playerController.play();
                               playerTimer = getPlayerTimer();
-                              setState(() {
-                                showPosition = false;
-                              });
+                              _hideOverlay();
                             },
                             onVerticalDragUpdate:
                                 (DragUpdateDetails details) async {
@@ -797,9 +817,6 @@ class _VideoPageState extends State<VideoPage>
                               }
                               if (tapPosition < sectionWidth) {
                                 // 左边区域
-                                setState(() {
-                                  showBrightness = true;
-                                });
                                 try {
                                   videoController.brightness =
                                       await ScreenBrightness().current;
@@ -812,152 +829,63 @@ class _VideoPageState extends State<VideoPage>
                                 final double result =
                                     brightness.clamp(0.0, 1.0);
                                 setBrightness(result);
+                                _showOverlay(
+                                  Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.brightness_7,
+                                            color: Colors.white),
+                                        Text(
+                                            ' ${(videoController.brightness * 100).toInt()} %',
+                                            style: const TextStyle(
+                                                color: Colors.white)),
+                                      ]),
+                                  autoDismiss: false,
+                                );
                               } else {
                                 // 右边区域
-                                setState(() {
-                                  showVolume = true;
-                                });
                                 final double level = (totalHeight) * 3;
                                 final double volume =
                                     videoController.volume - delta / level;
                                 final double result = volume.clamp(0.0, 1.0);
                                 setVolume(result);
                                 videoController.volume = result;
+                                _showOverlay(
+                                  Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.volume_down,
+                                            color: Colors.white),
+                                        Text(
+                                            ' ${(videoController.volume * 100).toInt()}%',
+                                            style: const TextStyle(
+                                                color: Colors.white)),
+                                      ]),
+                                  autoDismiss: false,
+                                );
                               }
                             },
                             onVerticalDragEnd: (DragEndDetails details) {
-                              setState(() {
-                                showBrightness = false;
-                                showVolume = false;
-                              });
+                              _hideOverlay();
                             })),
-                    // 顶部进度条
-                    Positioned(
+                    // 统一信息气泡
+                    if (_overlayWidget != null)
+                      Positioned(
                         top: 25,
-                        width: 200,
-                        child: showPosition
-                            ? Wrap(
-                                alignment: WrapAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    padding: const EdgeInsets.all(8.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.5),
-                                      borderRadius:
-                                          BorderRadius.circular(8.0), // 圆角
-                                    ),
-                                    child: Text(
-                                      videoController.currentPosition.compareTo(
-                                                  playerController.position) >
-                                              0
-                                          ? i18n.video.seekForward(
-                                              seconds: videoController
-                                                      .currentPosition
-                                                      .inSeconds -
-                                                  playerController
-                                                      .position.inSeconds)
-                                          : i18n.video.seekBackward(
-                                              seconds: playerController
-                                                      .position.inSeconds -
-                                                  videoController
-                                                      .currentPosition
-                                                      .inSeconds),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Container()),
-                    // 顶部播放速度条
-                    Positioned(
-                        top: 25,
-                        child: showPlaySpeed
-                            ? Wrap(
-                                alignment: WrapAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    padding: const EdgeInsets.all(8.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.5),
-                                      borderRadius:
-                                          BorderRadius.circular(8.0), // 圆角
-                                    ),
-                                    child: const Row(
-                                      children: <Widget>[
-                                        Icon(Icons.fast_forward,
-                                            color: Colors.white),
-                                        Text(
-                                          ' 倍速播放',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Container()),
-                    // 亮度条
-                    Positioned(
-                        top: 25,
-                        child: showBrightness
-                            ? Wrap(
-                                alignment: WrapAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.5),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0), // 圆角
-                                      ),
-                                      child: Row(
-                                        children: <Widget>[
-                                          const Icon(Icons.brightness_7,
-                                              color: Colors.white),
-                                          Text(
-                                            ' ${(videoController.brightness * 100).toInt()} %',
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                ],
-                              )
-                            : Container()),
-                    // 音量条
-                    Positioned(
-                        top: 25,
-                        child: showVolume
-                            ? Wrap(
-                                alignment: WrapAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.5),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0), // 圆角
-                                      ),
-                                      child: Row(
-                                        children: <Widget>[
-                                          const Icon(Icons.volume_down,
-                                              color: Colors.white),
-                                          Text(
-                                            ' ${(videoController.volume * 100).toInt()}%',
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                ],
-                              )
-                            : Container()),
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 8.0),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: _overlayWidget,
+                          ),
+                        ),
+                      ),
                     Positioned(
                       top: 0,
                       left: 0,
@@ -986,26 +914,6 @@ class _VideoPageState extends State<VideoPage>
                         ),
                       ),
                     ),
-
-                    // 双击操作提示
-                    if (showDoubleTapFeedback)
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 10.0),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.6),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Text(
-                            _doubleTapFeedbackText,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ),
-                      ),
 
                     // 自定义顶部组件
                     Visibility(
