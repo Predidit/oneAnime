@@ -10,7 +10,7 @@ class ApiInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {    
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
     handler.next(response);
   }
 
@@ -43,6 +43,8 @@ class ApiInterceptor extends Interceptor {
         return 'Receive response timeout, please check your network settings';
       case DioExceptionType.sendTimeout:
         return '';
+      case DioExceptionType.transformTimeout:
+        return 'Response processing timeout, please try again later';
       case DioExceptionType.unknown:
         final String res = await checkConnect();
         return '$res or unknown error';
@@ -50,8 +52,7 @@ class ApiInterceptor extends Interceptor {
   }
 
   static Future<String> checkConnect() async {
-    final connectivityResult =
-        await Connectivity().checkConnectivity();
+    final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult.contains(ConnectivityResult.mobile)) {
       return 'Using mobile data';
     }
