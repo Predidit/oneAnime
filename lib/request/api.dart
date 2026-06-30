@@ -8,7 +8,7 @@ class Api {
   static const String sourceUrl = "https://github.com/Predidit/oneAnime";
   static const String aniDanmakuAPI = "https://ani.gamer.com.tw/ajax/danmuGet.php";
   static const String aniSearch = "https://ani.gamer.com.tw/search.php";
-  static const String bangumiSearch = "https://api.bgm.tv/search/subject/";
+  static const String bangumiSearch = "https://api.bgmapi.com/search/subject/";
   // danmaku
   static const String dandanIndex = 'https://www.dandanplay.com/';
   static const String dandanAPIDomain = 'https://api.dandanplay.net';
