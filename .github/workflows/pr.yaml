@@ -156,6 +156,8 @@
             with:
               channel: stable
               flutter-version-file: pubspec.yaml
+          - name: Patch Flutter macOS AOT FFI retention
+            run: dart tool/patch_flutter_macos_aot.dart
           - run: flutter pub get
           - name: Inject DanDan API Credentials
             run: |
