@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 4
-/// Strings: 384 (96 per locale)
+/// Strings: 404 (101 per locale)
 ///
-/// Built on 2025-12-01 at 13:41 UTC
+/// Built on 2026-05-02 at 02:19 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -226,6 +226,10 @@ class _StringsVideoEn {
 	String playingCollection({required Object title}) => 'Playing: ${title}';
 	String get changeEpisode => 'Change Episode';
 	String episodeTotal({required Object total}) => 'total ${total} episodes';
+	String seekForward({required Object seconds}) => 'Fast forward ${seconds} s';
+	String seekBackward({required Object seconds}) => 'Rewind ${seconds} s';
+	String get doubleTapPause => 'Paused';
+	String get doubleTapPlay => 'Playing';
 }
 
 // Path: anime
@@ -331,6 +335,7 @@ class _StringsMyPlayerSettingsEn {
 	String get autoPlay => 'Auto Play';
 	String get autoJump => 'Auto Jump';
 	String get autoJumpSubtitle => 'Jump to the position where you stopped last time';
+	String get doubleTapSeekDuration => 'Double Tap fast forward/rewind seconds';
 }
 
 // Path: my.danmakuSettings
@@ -508,6 +513,10 @@ class _StringsVideoZhCn implements _StringsVideoEn {
 	@override String playingCollection({required Object title}) => '正在播放 ${title}';
 	@override String get changeEpisode => '切换选集';
 	@override String episodeTotal({required Object total}) => '全 ${total} 话';
+	@override String seekForward({required Object seconds}) => '快进 ${seconds} 秒';
+	@override String seekBackward({required Object seconds}) => '快退 ${seconds} 秒';
+	@override String get doubleTapPause => '暂停';
+	@override String get doubleTapPlay => '播放';
 }
 
 // Path: anime
@@ -612,6 +621,7 @@ class _StringsMyPlayerSettingsZhCn implements _StringsMyPlayerSettingsEn {
 	@override String get hardwareAcceleration => '硬件解码';
 	@override String get autoPlay => '自动播放';
 	@override String get autoJump => '自动跳转';
+	@override String get doubleTapSeekDuration => '双击跳转时长';
 	@override String get autoJumpSubtitle => '跳转到上次播放位置';
 }
 
@@ -790,6 +800,10 @@ class _StringsVideoZhHk implements _StringsVideoEn {
 	@override String playingCollection({required Object title}) => '正在播放 ${title}';
 	@override String get changeEpisode => '切換選集';
 	@override String episodeTotal({required Object total}) => '全 ${total} 話';
+	@override String seekForward({required Object seconds}) => '快進 ${seconds} 秒';
+	@override String seekBackward({required Object seconds}) => '快退 ${seconds} 秒';
+	@override String get doubleTapPause => '暫停';
+	@override String get doubleTapPlay => '播放';
 }
 
 // Path: anime
@@ -894,6 +908,7 @@ class _StringsMyPlayerSettingsZhHk implements _StringsMyPlayerSettingsEn {
 	@override String get hardwareAcceleration => '硬件解碼';
 	@override String get autoPlay => '自動播放';
 	@override String get autoJump => '自動跳轉';
+	@override String get doubleTapSeekDuration => '雙擊跳轉時長';
 	@override String get autoJumpSubtitle => '跳轉到上次播放位置';
 }
 
@@ -1072,6 +1087,10 @@ class _StringsVideoZhTw implements _StringsVideoEn {
 	@override String playingCollection({required Object title}) => '正在播放 ${title}';
 	@override String get changeEpisode => '切換選集';
 	@override String episodeTotal({required Object total}) => '全 ${total} 話';
+	@override String seekForward({required Object seconds}) => '快進 ${seconds} 秒';
+	@override String seekBackward({required Object seconds}) => '快退 ${seconds} 秒';
+	@override String get doubleTapPause => '暫停';
+	@override String get doubleTapPlay => '播放';
 }
 
 // Path: anime
@@ -1176,6 +1195,7 @@ class _StringsMyPlayerSettingsZhTw implements _StringsMyPlayerSettingsEn {
 	@override String get hardwareAcceleration => '硬件解碼';
 	@override String get autoPlay => '自動播放';
 	@override String get autoJump => '自動跳轉';
+	@override String get doubleTapSeekDuration => '雙擊跳轉時長';
 	@override String get autoJumpSubtitle => '跳轉到上次播放位置';
 }
 
@@ -1291,6 +1311,10 @@ extension on Translations {
 			case 'video.playingCollection': return ({required Object title}) => 'Playing: ${title}';
 			case 'video.changeEpisode': return 'Change Episode';
 			case 'video.episodeTotal': return ({required Object total}) => 'total ${total} episodes';
+			case 'video.seekForward': return ({required Object seconds}) => 'Fast forward ${seconds} s';
+			case 'video.seekBackward': return ({required Object seconds}) => 'Rewind ${seconds} s';
+			case 'video.doubleTapPause': return 'Paused';
+			case 'video.doubleTapPlay': return 'Playing';
 			case 'anime.anime': return 'Anime';
 			case 'anime.serializing': return 'Serializing';
 			case 'anime.OVA': return 'OVA';
@@ -1317,6 +1341,7 @@ extension on Translations {
 			case 'my.playerSettings.autoPlay': return 'Auto Play';
 			case 'my.playerSettings.autoJump': return 'Auto Jump';
 			case 'my.playerSettings.autoJumpSubtitle': return 'Jump to the position where you stopped last time';
+			case 'my.playerSettings.doubleTapSeekDuration': return 'Double Tap fast forward/rewind seconds';
 			case 'my.danmakuSettings.title': return 'Danmaku Settings';
 			case 'my.danmakuSettings.defaultEnable': return 'Default Enable';
 			case 'my.danmakuSettings.defaultEnableSubtitle': return 'Whether to enable danmaku by default';
@@ -1395,6 +1420,10 @@ extension on _StringsZhCn {
 			case 'video.playingCollection': return ({required Object title}) => '正在播放 ${title}';
 			case 'video.changeEpisode': return '切换选集';
 			case 'video.episodeTotal': return ({required Object total}) => '全 ${total} 话';
+			case 'video.seekForward': return ({required Object seconds}) => '快进 ${seconds} 秒';
+			case 'video.seekBackward': return ({required Object seconds}) => '快退 ${seconds} 秒';
+			case 'video.doubleTapPause': return '暂停';
+			case 'video.doubleTapPlay': return '播放';
 			case 'anime.anime': return '新番';
 			case 'anime.serializing': return '连载中';
 			case 'anime.OVA': return 'OVA';
@@ -1420,6 +1449,7 @@ extension on _StringsZhCn {
 			case 'my.playerSettings.hardwareAcceleration': return '硬件解码';
 			case 'my.playerSettings.autoPlay': return '自动播放';
 			case 'my.playerSettings.autoJump': return '自动跳转';
+			case 'my.playerSettings.doubleTapSeekDuration': return '双击跳转时长';
 			case 'my.playerSettings.autoJumpSubtitle': return '跳转到上次播放位置';
 			case 'my.danmakuSettings.title': return '弹幕设置';
 			case 'my.danmakuSettings.defaultEnable': return '默认开启';
@@ -1499,6 +1529,10 @@ extension on _StringsZhHk {
 			case 'video.playingCollection': return ({required Object title}) => '正在播放 ${title}';
 			case 'video.changeEpisode': return '切換選集';
 			case 'video.episodeTotal': return ({required Object total}) => '全 ${total} 話';
+			case 'video.seekForward': return ({required Object seconds}) => '快進 ${seconds} 秒';
+			case 'video.seekBackward': return ({required Object seconds}) => '快退 ${seconds} 秒';
+			case 'video.doubleTapPause': return '暫停';
+			case 'video.doubleTapPlay': return '播放';
 			case 'anime.anime': return '新番';
 			case 'anime.serializing': return '連載中';
 			case 'anime.OVA': return 'OVA';
@@ -1524,6 +1558,7 @@ extension on _StringsZhHk {
 			case 'my.playerSettings.hardwareAcceleration': return '硬件解碼';
 			case 'my.playerSettings.autoPlay': return '自動播放';
 			case 'my.playerSettings.autoJump': return '自動跳轉';
+			case 'my.playerSettings.doubleTapSeekDuration': return '雙擊跳轉時長';
 			case 'my.playerSettings.autoJumpSubtitle': return '跳轉到上次播放位置';
 			case 'my.danmakuSettings.title': return '彈幕設置';
 			case 'my.danmakuSettings.defaultEnable': return '默認開啟';
@@ -1603,6 +1638,10 @@ extension on _StringsZhTw {
 			case 'video.playingCollection': return ({required Object title}) => '正在播放 ${title}';
 			case 'video.changeEpisode': return '切換選集';
 			case 'video.episodeTotal': return ({required Object total}) => '全 ${total} 話';
+			case 'video.seekForward': return ({required Object seconds}) => '快進 ${seconds} 秒';
+			case 'video.seekBackward': return ({required Object seconds}) => '快退 ${seconds} 秒';
+			case 'video.doubleTapPause': return '暫停';
+			case 'video.doubleTapPlay': return '播放';
 			case 'anime.anime': return '新番';
 			case 'anime.serializing': return '連載中';
 			case 'anime.OVA': return 'OVA';
@@ -1628,6 +1667,7 @@ extension on _StringsZhTw {
 			case 'my.playerSettings.hardwareAcceleration': return '硬件解碼';
 			case 'my.playerSettings.autoPlay': return '自動播放';
 			case 'my.playerSettings.autoJump': return '自動跳轉';
+			case 'my.playerSettings.doubleTapSeekDuration': return '雙擊跳轉時長';
 			case 'my.playerSettings.autoJumpSubtitle': return '跳轉到上次播放位置';
 			case 'my.danmakuSettings.title': return '彈幕設置';
 			case 'my.danmakuSettings.defaultEnable': return '默認開啟';

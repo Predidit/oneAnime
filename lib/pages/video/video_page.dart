@@ -55,16 +55,34 @@ class _VideoPageState extends State<VideoPage>
 
   // 界面管理
   bool showPositioned = false;
-  bool showPosition = false;
-  bool showBrightness = false;
-  bool showVolume = false;
-  bool showPlaySpeed = false;
 
   Timer? hideTimer;
   Timer? playerTimer;
   Timer? mouseScrollerTimer;
 
   bool isPopping = false;
+  Offset? _doubleTapPosition;
+  Widget? _overlayWidget;
+  Timer? _overlayTimer;
+
+  void _showOverlay(Widget child, {bool autoDismiss = true}) {
+    _overlayTimer?.cancel();
+    setState(() {
+      _overlayWidget = child;
+    });
+    if (autoDismiss) {
+      _overlayTimer = Timer(const Duration(seconds: 1), () {
+        if (mounted) setState(() => _overlayWidget = null);
+        _overlayTimer = null;
+      });
+    }
+  }
+
+  void _hideOverlay() {
+    _overlayTimer?.cancel();
+    _overlayTimer = null;
+    setState(() => _overlayWidget = null);
+  }
 
   void _handleTap() {
     setState(() {
@@ -85,19 +103,16 @@ class _VideoPageState extends State<VideoPage>
   }
 
   void _handleMouseScroller() {
-    setState(() {
-      showVolume = true;
-    });
-    if (mouseScrollerTimer != null) {
-      mouseScrollerTimer!.cancel();
-    }
-
+    _showOverlay(
+      Row(mainAxisSize: MainAxisSize.min, children: [
+        const Icon(Icons.volume_down, color: Colors.white),
+        Text(' ${(videoController.volume * 100).toInt()}%',
+            style: const TextStyle(color: Colors.white)),
+      ]),
+    );
+    if (mouseScrollerTimer != null) mouseScrollerTimer!.cancel();
     mouseScrollerTimer = Timer(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          showVolume = false;
-        });
-      }
+      if (mounted) _hideOverlay();
       mouseScrollerTimer = null;
     });
   }
@@ -107,10 +122,34 @@ class _VideoPageState extends State<VideoPage>
       if (playerTimer != null) {
         playerTimer!.cancel();
       }
-      videoController.currentPosition =
-          Duration(seconds: videoController.currentPosition.inSeconds + 10);
+      final int seekSecs =
+          setting.get(SettingBoxKey.doubleTapSeekDuration, defaultValue: 10);
+      videoController.currentPosition = Duration(
+          seconds: videoController.currentPosition.inSeconds + seekSecs);
       playerController.seek(videoController.currentPosition);
       playerTimer = getPlayerTimer();
+      _showOverlay(Text(i18n.video.seekForward(seconds: seekSecs),
+          style: const TextStyle(color: Colors.white)));
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  void _handleBackwardSeek() {
+    try {
+      if (playerTimer != null) {
+        playerTimer!.cancel();
+      }
+      final int seekSecs =
+          setting.get(SettingBoxKey.doubleTapSeekDuration, defaultValue: 10);
+      final int newSeconds =
+          videoController.currentPosition.inSeconds - seekSecs;
+      videoController.currentPosition =
+          Duration(seconds: newSeconds < 0 ? 0 : newSeconds);
+      playerController.seek(videoController.currentPosition);
+      playerTimer = getPlayerTimer();
+      _showOverlay(Text(i18n.video.seekBackward(seconds: seekSecs),
+          style: const TextStyle(color: Colors.white)));
     } catch (e) {
       debugPrint(e.toString());
     }
@@ -666,29 +705,63 @@ class _VideoPageState extends State<VideoPage>
                             onTap: () {
                               _handleTap();
                             },
+                            onDoubleTapDown: (TapDownDetails details) {
+                              _doubleTapPosition = details.localPosition;
+                            },
                             onDoubleTap: () {
-                              _handleTap();
-                              _handleShortSeek();
+                              if (_doubleTapPosition == null) return;
+                              final double width =
+                                  MediaQuery.of(context).size.width;
+                              final double x = _doubleTapPosition!.dx;
+                              if (x < width / 3) {
+                                // Left zone: seek backward
+                                _handleBackwardSeek();
+                              } else if (x > width * 2 / 3) {
+                                // Right zone: seek forward
+                                _handleShortSeek();
+                              } else {
+                                // Middle zone: toggle play/pause
+                                final bool wasPlaying =
+                                    playerController.playing;
+                                _handleTap();
+                                if (wasPlaying) {
+                                  playerController.pause();
+                                  videoController.playing = false;
+                                  _showOverlay(Text(i18n.video.doubleTapPause,
+                                      style: const TextStyle(
+                                          color: Colors.white)));
+                                } else {
+                                  playerController.play();
+                                  videoController.playing = true;
+                                  _showOverlay(Text(i18n.video.doubleTapPlay,
+                                      style: const TextStyle(
+                                          color: Colors.white)));
+                                }
+                              }
                             },
                             onLongPressStart: (_) {
-                              setState(() {
-                                showPlaySpeed = true;
-                              });
+                              _showOverlay(
+                                const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.fast_forward,
+                                        color: Colors.white),
+                                    Text(' 倍速播放',
+                                        style: TextStyle(color: Colors.white)),
+                                  ],
+                                ),
+                                autoDismiss: false,
+                              );
                               videoController.setPlaybackSpeed(
                                   videoController.playerSpeed * 2.5);
                             },
                             onLongPressEnd: (_) {
-                              setState(() {
-                                showPlaySpeed = false;
-                              });
+                              _hideOverlay();
                               videoController.setPlaybackSpeed(
                                   videoController.playerSpeed / 2.5);
                             },
                             onHorizontalDragUpdate:
                                 (DragUpdateDetails details) {
-                              setState(() {
-                                showPosition = true;
-                              });
                               if (playerTimer != null) {
                                 // debugPrint('检测到拖动, 定时器取消');
                                 playerTimer!.cancel();
@@ -700,15 +773,32 @@ class _VideoPageState extends State<VideoPage>
                                   milliseconds: videoController
                                           .currentPosition.inMilliseconds +
                                       (details.delta.dx * scale).round());
+                              _showOverlay(
+                                Text(
+                                  videoController.currentPosition.compareTo(
+                                              playerController.position) >
+                                          0
+                                      ? i18n.video.seekForward(
+                                          seconds: videoController
+                                                  .currentPosition.inSeconds -
+                                              playerController
+                                                  .position.inSeconds)
+                                      : i18n.video.seekBackward(
+                                          seconds: playerController
+                                                  .position.inSeconds -
+                                              videoController
+                                                  .currentPosition.inSeconds),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                autoDismiss: false,
+                              );
                             },
                             onHorizontalDragEnd: (DragEndDetails details) {
                               playerController
                                   .seek(videoController.currentPosition);
                               playerController.play();
                               playerTimer = getPlayerTimer();
-                              setState(() {
-                                showPosition = false;
-                              });
+                              _hideOverlay();
                             },
                             onVerticalDragUpdate:
                                 (DragUpdateDetails details) async {
@@ -727,9 +817,6 @@ class _VideoPageState extends State<VideoPage>
                               }
                               if (tapPosition < sectionWidth) {
                                 // 左边区域
-                                setState(() {
-                                  showBrightness = true;
-                                });
                                 try {
                                   videoController.brightness =
                                       await ScreenBrightness().current;
@@ -742,142 +829,63 @@ class _VideoPageState extends State<VideoPage>
                                 final double result =
                                     brightness.clamp(0.0, 1.0);
                                 setBrightness(result);
+                                _showOverlay(
+                                  Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.brightness_7,
+                                            color: Colors.white),
+                                        Text(
+                                            ' ${(videoController.brightness * 100).toInt()} %',
+                                            style: const TextStyle(
+                                                color: Colors.white)),
+                                      ]),
+                                  autoDismiss: false,
+                                );
                               } else {
                                 // 右边区域
-                                setState(() {
-                                  showVolume = true;
-                                });
                                 final double level = (totalHeight) * 3;
                                 final double volume =
                                     videoController.volume - delta / level;
                                 final double result = volume.clamp(0.0, 1.0);
                                 setVolume(result);
                                 videoController.volume = result;
+                                _showOverlay(
+                                  Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.volume_down,
+                                            color: Colors.white),
+                                        Text(
+                                            ' ${(videoController.volume * 100).toInt()}%',
+                                            style: const TextStyle(
+                                                color: Colors.white)),
+                                      ]),
+                                  autoDismiss: false,
+                                );
                               }
                             },
                             onVerticalDragEnd: (DragEndDetails details) {
-                              setState(() {
-                                showBrightness = false;
-                                showVolume = false;
-                              });
+                              _hideOverlay();
                             })),
-                    // 顶部进度条
-                    Positioned(
+                    // 统一信息气泡
+                    if (_overlayWidget != null)
+                      Positioned(
                         top: 25,
-                        width: 200,
-                        child: showPosition
-                            ? Wrap(
-                                alignment: WrapAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    padding: const EdgeInsets.all(8.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.5),
-                                      borderRadius:
-                                          BorderRadius.circular(8.0), // 圆角
-                                    ),
-                                    child: Text(
-                                      videoController.currentPosition.compareTo(
-                                                  playerController.position) >
-                                              0
-                                          ? '快进 ${videoController.currentPosition.inSeconds - playerController.position.inSeconds} 秒'
-                                          : '快退 ${playerController.position.inSeconds - videoController.currentPosition.inSeconds} 秒',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Container()),
-                    // 顶部播放速度条
-                    Positioned(
-                        top: 25,
-                        child: showPlaySpeed
-                            ? Wrap(
-                                alignment: WrapAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    padding: const EdgeInsets.all(8.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.5),
-                                      borderRadius:
-                                          BorderRadius.circular(8.0), // 圆角
-                                    ),
-                                    child: const Row(
-                                      children: <Widget>[
-                                        Icon(Icons.fast_forward,
-                                            color: Colors.white),
-                                        Text(
-                                          ' 倍速播放',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Container()),
-                    // 亮度条
-                    Positioned(
-                        top: 25,
-                        child: showBrightness
-                            ? Wrap(
-                                alignment: WrapAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.5),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0), // 圆角
-                                      ),
-                                      child: Row(
-                                        children: <Widget>[
-                                          const Icon(Icons.brightness_7,
-                                              color: Colors.white),
-                                          Text(
-                                            ' ${(videoController.brightness * 100).toInt()} %',
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                ],
-                              )
-                            : Container()),
-                    // 音量条
-                    Positioned(
-                        top: 25,
-                        child: showVolume
-                            ? Wrap(
-                                alignment: WrapAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.5),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0), // 圆角
-                                      ),
-                                      child: Row(
-                                        children: <Widget>[
-                                          const Icon(Icons.volume_down,
-                                              color: Colors.white),
-                                          Text(
-                                            ' ${(videoController.volume * 100).toInt()}%',
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                ],
-                              )
-                            : Container()),
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 8.0),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: _overlayWidget,
+                          ),
+                        ),
+                      ),
                     Positioned(
                       top: 0,
                       left: 0,
@@ -896,11 +904,14 @@ class _VideoPageState extends State<VideoPage>
                           debugPrint('弹幕控制器创建成功');
                         },
                         option: DanmakuOption(
-                            fontSize: _fontSize,
-                            duration: _duration.toDouble(),
-                            opacity: _opacity,
-                            fontFamily: _danmakuUseSystemFont ? null : customAppFontFamily,
-                            strokeWidth: _showStroke ? 1.5 : 0.0,),
+                          fontSize: _fontSize,
+                          duration: _duration.toDouble(),
+                          opacity: _opacity,
+                          fontFamily: _danmakuUseSystemFont
+                              ? null
+                              : customAppFontFamily,
+                          strokeWidth: _showStroke ? 1.5 : 0.0,
+                        ),
                       ),
                     ),
 

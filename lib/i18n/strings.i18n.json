@@ -36,7 +36,11 @@
         "collection": "Collection ",
         "playingCollection": "Playing: $title",
         "changeEpisode": "Change Episode",
-        "episodeTotal": "total $total episodes"
+        "episodeTotal": "total $total episodes",
+        "seekForward": "Fast forward $seconds s",
+        "seekBackward": "Rewind $seconds s",
+        "doubleTapPause": "Paused",
+        "doubleTapPlay": "Playing"
     },
     "anime": {
         "anime": "Anime",
@@ -77,7 +81,8 @@
             "hardwareAcceleration": "Hardware Acceleration",
             "autoPlay": "Auto Play",
             "autoJump": "Auto Jump",
-            "autoJumpSubtitle": "Jump to the position where you stopped last time"
+            "autoJumpSubtitle": "Jump to the position where you stopped last time",
+            "doubleTapSeekDuration": "Double Tap fast forward/rewind seconds"
         },
         "danmakuSettings": {
             "title": "Danmaku Settings",

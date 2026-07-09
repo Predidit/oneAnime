@@ -36,7 +36,11 @@
         "collection": "合集 ",
         "playingCollection": "正在播放 $title",
         "changeEpisode": "切换选集",
-        "episodeTotal": "全 $total 话"
+        "episodeTotal": "全 $total 话",
+        "seekForward": "快进 $seconds 秒",
+        "seekBackward": "快退 $seconds 秒",
+        "doubleTapPause": "暂停",
+        "doubleTapPlay": "播放"
     },
     "anime": {
         "anime": "新番",
@@ -77,6 +81,7 @@
             "hardwareAcceleration": "硬件解码",
             "autoPlay": "自动播放",
             "autoJump": "自动跳转",
+            "doubleTapSeekDuration": "双击跳转时长",
             "autoJumpSubtitle": "跳转到上次播放位置"
         },
         "danmakuSettings": {
