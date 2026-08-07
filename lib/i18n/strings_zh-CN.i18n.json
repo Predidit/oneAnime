@@ -77,7 +77,9 @@
             "hardwareAcceleration": "硬件解码",
             "autoPlay": "自动播放",
             "autoJump": "自动跳转",
-            "autoJumpSubtitle": "跳转到上次播放位置"
+            "autoJumpSubtitle": "跳转到上次播放位置",
+            "brightnessVolumeGesture": "亮度音量手势",
+            "brightnessVolumeGestureSubtitle": "在播放界面上下滑动调节亮度和音量"
         },
         "danmakuSettings": {
             "title": "弹幕设置",

@@ -77,7 +77,9 @@
             "hardwareAcceleration": "Hardware Acceleration",
             "autoPlay": "Auto Play",
             "autoJump": "Auto Jump",
-            "autoJumpSubtitle": "Jump to the position where you stopped last time"
+            "autoJumpSubtitle": "Jump to the position where you stopped last time",
+            "brightnessVolumeGesture": "Brightness & Volume Gesture",
+            "brightnessVolumeGestureSubtitle": "Swipe up and down on the playing screen to adjust brightness and volume"
         },
         "danmakuSettings": {
             "title": "Danmaku Settings",

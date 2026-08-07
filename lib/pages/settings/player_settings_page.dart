@@ -55,6 +55,14 @@ class _PlayerSettingsPageState extends State<PlayerSettingsPage> {
               defaultVal: false,
             ),
           ),
+          InkWell(
+            child: SetSwitchItem(
+              title: i18n.my.playerSettings.brightnessVolumeGesture,
+              subTitle: i18n.my.playerSettings.brightnessVolumeGestureSubtitle,
+              setKey: SettingBoxKey.brightnessVolumeGesture,
+              defaultVal: true,
+            ),
+          ),
         ],
       ),
     );

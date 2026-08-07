@@ -4,9 +4,9 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 4
-/// Strings: 384 (96 per locale)
+/// Strings: 392 (98 per locale)
 ///
-/// Built on 2025-12-01 at 13:41 UTC
+/// Built on 2026-05-02 at 01:31 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -331,6 +331,8 @@ class _StringsMyPlayerSettingsEn {
 	String get autoPlay => 'Auto Play';
 	String get autoJump => 'Auto Jump';
 	String get autoJumpSubtitle => 'Jump to the position where you stopped last time';
+	String get brightnessVolumeGesture => 'Brightness & Volume Gesture';
+	String get brightnessVolumeGestureSubtitle => 'Swipe up and down on the playing screen to adjust brightness and volume';
 }
 
 // Path: my.danmakuSettings
@@ -613,6 +615,8 @@ class _StringsMyPlayerSettingsZhCn implements _StringsMyPlayerSettingsEn {
 	@override String get autoPlay => '自动播放';
 	@override String get autoJump => '自动跳转';
 	@override String get autoJumpSubtitle => '跳转到上次播放位置';
+	@override String get brightnessVolumeGesture => '亮度音量手势';
+	@override String get brightnessVolumeGestureSubtitle => '在播放界面上下滑动调节亮度和音量';
 }
 
 // Path: my.danmakuSettings
@@ -895,6 +899,8 @@ class _StringsMyPlayerSettingsZhHk implements _StringsMyPlayerSettingsEn {
 	@override String get autoPlay => '自動播放';
 	@override String get autoJump => '自動跳轉';
 	@override String get autoJumpSubtitle => '跳轉到上次播放位置';
+	@override String get brightnessVolumeGesture => '亮度音量手勢';
+	@override String get brightnessVolumeGestureSubtitle => '在播放界面上下滑動調節亮度和音量';
 }
 
 // Path: my.danmakuSettings
@@ -1177,6 +1183,8 @@ class _StringsMyPlayerSettingsZhTw implements _StringsMyPlayerSettingsEn {
 	@override String get autoPlay => '自動播放';
 	@override String get autoJump => '自動跳轉';
 	@override String get autoJumpSubtitle => '跳轉到上次播放位置';
+	@override String get brightnessVolumeGesture => '亮度音量手勢';
+	@override String get brightnessVolumeGestureSubtitle => '在播放界面上下滑動調節亮度和音量';
 }
 
 // Path: my.danmakuSettings
@@ -1317,6 +1325,8 @@ extension on Translations {
 			case 'my.playerSettings.autoPlay': return 'Auto Play';
 			case 'my.playerSettings.autoJump': return 'Auto Jump';
 			case 'my.playerSettings.autoJumpSubtitle': return 'Jump to the position where you stopped last time';
+			case 'my.playerSettings.brightnessVolumeGesture': return 'Brightness & Volume Gesture';
+			case 'my.playerSettings.brightnessVolumeGestureSubtitle': return 'Swipe up and down on the playing screen to adjust brightness and volume';
 			case 'my.danmakuSettings.title': return 'Danmaku Settings';
 			case 'my.danmakuSettings.defaultEnable': return 'Default Enable';
 			case 'my.danmakuSettings.defaultEnableSubtitle': return 'Whether to enable danmaku by default';
@@ -1421,6 +1431,8 @@ extension on _StringsZhCn {
 			case 'my.playerSettings.autoPlay': return '自动播放';
 			case 'my.playerSettings.autoJump': return '自动跳转';
 			case 'my.playerSettings.autoJumpSubtitle': return '跳转到上次播放位置';
+			case 'my.playerSettings.brightnessVolumeGesture': return '亮度音量手势';
+			case 'my.playerSettings.brightnessVolumeGestureSubtitle': return '在播放界面上下滑动调节亮度和音量';
 			case 'my.danmakuSettings.title': return '弹幕设置';
 			case 'my.danmakuSettings.defaultEnable': return '默认开启';
 			case 'my.danmakuSettings.defaultEnableSubtitle': return '默认是否随视频播放弹幕';
@@ -1525,6 +1537,8 @@ extension on _StringsZhHk {
 			case 'my.playerSettings.autoPlay': return '自動播放';
 			case 'my.playerSettings.autoJump': return '自動跳轉';
 			case 'my.playerSettings.autoJumpSubtitle': return '跳轉到上次播放位置';
+			case 'my.playerSettings.brightnessVolumeGesture': return '亮度音量手勢';
+			case 'my.playerSettings.brightnessVolumeGestureSubtitle': return '在播放界面上下滑動調節亮度和音量';
 			case 'my.danmakuSettings.title': return '彈幕設置';
 			case 'my.danmakuSettings.defaultEnable': return '默認開啟';
 			case 'my.danmakuSettings.defaultEnableSubtitle': return '默認是否隨視頻播放彈幕';
@@ -1629,6 +1643,8 @@ extension on _StringsZhTw {
 			case 'my.playerSettings.autoPlay': return '自動播放';
 			case 'my.playerSettings.autoJump': return '自動跳轉';
 			case 'my.playerSettings.autoJumpSubtitle': return '跳轉到上次播放位置';
+			case 'my.playerSettings.brightnessVolumeGesture': return '亮度音量手勢';
+			case 'my.playerSettings.brightnessVolumeGestureSubtitle': return '在播放界面上下滑動調節亮度和音量';
 			case 'my.danmakuSettings.title': return '彈幕設置';
 			case 'my.danmakuSettings.defaultEnable': return '默認開啟';
 			case 'my.danmakuSettings.defaultEnableSubtitle': return '默認是否隨視頻播放彈幕';
