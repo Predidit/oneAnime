@@ -11,22 +11,34 @@ import 'package:oneanime/pages/timeline/timeline_controller.dart';
 import 'package:oneanime/pages/popular/popular_controller.dart';
 
 class ListRequest {
+  static List<AnimeInfo> parseAnimeList(dynamic data) {
+    if (data is! List) {
+      return [];
+    }
+
+    final List<AnimeInfo> animeList = [];
+    for (final item in data) {
+      // Anime1 uses ID 0 for entries hosted on its adult site.
+      if (item is List &&
+          item.length >= 6 &&
+          item[0] is int &&
+          item[0] > 0 &&
+          item.sublist(1, 6).every((field) => field is String)) {
+        animeList.add(AnimeInfo.fromList(item));
+      }
+    }
+    return animeList;
+  }
+
   static Future getAnimeList() async {
-    List<AnimeInfo> list = [];
     List<AnimeInfo> newList = [];
     final res = await Request().get(Api.animeList);
     final resJson = res.data;
-    if (resJson is List) {
-      for (var item in resJson) {
-        // 0 means that it is 🔞
-        if (item is List && item[0] > 0) {
-          list.add(AnimeInfo.fromList(item));
-        }
-      }
-    } else {
+    final List<AnimeInfo> list = parseAnimeList(resJson);
+    if (resJson is! List) {
       debugPrint('非法的Json ${res.toString()}');
     }
-    
+
     final PopularController popularController =
         Modular.get<PopularController>();
 
@@ -37,8 +49,8 @@ class ListRequest {
       newList.clear();
       newList.addAll(list);
       for (var oldAnime in oldlist) {
-        var index = newList
-            .indexWhere((newAnime) => newAnime.name == oldAnime.name);
+        var index =
+            newList.indexWhere((newAnime) => newAnime.name == oldAnime.name);
         if (index != -1) {
           newList[index].follow = oldAnime.follow;
           newList[index].progress = oldAnime.progress;
@@ -64,7 +76,7 @@ class ListRequest {
 
   static Future getAnimeScedule(DateTime selectedDate) async {
     List<AnimeSchedule> schedules = [];
-    final season = AnimeSeason(selectedDate).toString(); 
+    final season = AnimeSeason(selectedDate).toString();
     final link = Api.domain + season;
 
     final TimelineController timelineController =

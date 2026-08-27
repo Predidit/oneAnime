@@ -2,7 +2,7 @@ import 'package:oneanime/utils/constans.dart';
 
 class Api {
   static const String domain = '${HttpString.baseUrl}/';
-  static const String animeList = 'https://d1zquzjgwo9yb.cloudfront.net/';
+  static const String animeList = '${domain}animelist.json';
   static const String videoAPI = 'https://v.anime1.me/api';
   static const String version = '1.4.6';
   static const String sourceUrl = "https://github.com/Predidit/oneAnime";
@@ -15,5 +15,5 @@ class Api {
   static const String dandanAPIBgmtv = "/api/v2/bangumi/bgmtv/";
   // github update
   static const String latestApp =
-      'https://api.github.com/repos/Predidit/oneAnime/releases/latest'; 
+      'https://api.github.com/repos/Predidit/oneAnime/releases/latest';
 }
