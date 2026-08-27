@@ -1,6 +1,6 @@
 plugins {
     id "com.android.application"
-    id "kotlin-android"
+    id "org.jetbrains.kotlin.android"
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -25,9 +25,8 @@ if (flutterVersionName == null) {
 android {
     namespace "com.example.oneanime"
     compileSdkVersion flutter.compileSdkVersion
-    // Pin ndk version to 21.3.6528147 to fix android build warning
-    // The build warning throws by gradle plugin, when the ndk is older than gradle plugin required version
-    ndkVersion "27.2.12479018"
+    // Use the highest NDK required by Android plugins (currently `jni`).
+    ndkVersion "28.2.13676358"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
