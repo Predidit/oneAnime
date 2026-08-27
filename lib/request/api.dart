@@ -1,10 +1,11 @@
+import 'package:flutter/services.dart' show appBuildName;
 import 'package:oneanime/utils/constans.dart';
 
 class Api {
   static const String domain = '${HttpString.baseUrl}/';
   static const String animeList = '${domain}animelist.json';
   static const String videoAPI = 'https://v.anime1.me/api';
-  static const String version = '1.4.6';
+  static const String version = appBuildName ?? '0.0.0';
   static const String sourceUrl = "https://github.com/Predidit/oneAnime";
   static const String bangumiSearch = "https://api.bgmapi.com/search/subject/";
   // danmaku
