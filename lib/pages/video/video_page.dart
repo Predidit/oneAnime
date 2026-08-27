@@ -244,7 +244,6 @@ class _VideoPageState extends State<VideoPage>
     await playerController.init(videoController.offset);
     videoController.offset = 0;
     try {
-      videoController.danDanmakus.clear();
       await videoController.getDanDanmaku(
           videoController.title, videoController.episode);
     } catch (e) {
