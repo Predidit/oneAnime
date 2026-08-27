@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -66,6 +67,18 @@ class _VideoPageState extends State<VideoPage>
 
   bool isPopping = false;
 
+  /// Kept free for the episode panel, which cannot shrink below its header.
+  static const double _minPanelExtent = 200;
+
+  bool _windowFullscreen = false;
+  Orientation? _syncedOrientation;
+
+  /// Never stored on mobile, orientation is the single source of truth, so
+  /// leaving fullscreen cannot feed back into the rotation that derives it.
+  bool get isFullscreen => Utils.isDesktop()
+      ? _windowFullscreen
+      : MediaQuery.orientationOf(context) == Orientation.landscape;
+
   void _handleTap() {
     setState(() {
       showPositioned = true;
@@ -116,16 +129,53 @@ class _VideoPageState extends State<VideoPage>
     }
   }
 
-  void _handleFullscreen() {
-    if (videoController.androidFullscreen) {
+  Future<void> _handleFullscreen() async {
+    if (!Utils.isDesktop()) {
+      await (isFullscreen ? Utils.verticalScreen() : Utils.landScape());
+      return;
+    }
+    setState(() {
+      _windowFullscreen = !_windowFullscreen;
+    });
+    await _applyFullscreen(_windowFullscreen);
+  }
+
+  Future<void> _applyFullscreen(bool fullscreen) async {
+    if (!fullscreen) {
       try {
         danmakuController.clear();
       } catch (_) {}
-      Utils.exitFullScreen();
-    } else {
-      Utils.enterFullScreen();
     }
-    videoController.androidFullscreen = !videoController.androidFullscreen;
+    await Utils.setFullScreen(fullscreen);
+  }
+
+  /// The layout follows [MediaQuery] on its own; this only carries the
+  /// imperative side effects, skipped unless the orientation really changed.
+  void _syncFullscreenWithOrientation() {
+    if (Utils.isDesktop() || !mounted) {
+      return;
+    }
+    final Orientation orientation =
+        MediaQueryData.fromView(View.of(context)).orientation;
+    if (orientation == _syncedOrientation) {
+      return;
+    }
+    _syncedOrientation = orientation;
+    _applyFullscreen(orientation == Orientation.landscape);
+  }
+
+  /// Phones keep the rest of the app portrait; tablets get the orientation
+  /// handed back instead of being forced upright.
+  void _restoreSystemUi() {
+    Utils.setFullScreen(false);
+    if (Utils.isDesktop()) {
+      return;
+    }
+    if (Utils.isTablet()) {
+      Utils.unlockOrientation();
+    } else {
+      Utils.verticalScreen();
+    }
   }
 
   void _handleDanmaku() {
@@ -145,6 +195,11 @@ class _VideoPageState extends State<VideoPage>
     danmakuController.clear();
   }
 
+  @override
+  void didChangeMetrics() {
+    _syncFullscreenWithOrientation();
+  }
+
   /// 处理 Android/iOS 应用后台或熄屏
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -159,6 +214,7 @@ class _VideoPageState extends State<VideoPage>
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(_focusNode);
+      _syncFullscreenWithOrientation();
     });
     bool alwaysOntop =
         setting.get(SettingBoxKey.alwaysOntop, defaultValue: true);
@@ -220,6 +276,7 @@ class _VideoPageState extends State<VideoPage>
     videoController.playing = false;
     videoController.currentPosition = Duration.zero;
     videoController.duration = Duration.zero;
+    _restoreSystemUi();
     if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       windowManager.setAlwaysOnTop(false);
       windowManager.removeListener(this);
@@ -275,22 +332,14 @@ class _VideoPageState extends State<VideoPage>
   }
 
   void onBackPressed() {
-    if (videoController.androidFullscreen) {
-      debugPrint('当前播放器全屏');
-      try {
-        danmakuController.clear();
-      } catch (_) {}
-      try {
-        Utils.exitFullScreen();
-        videoController.androidFullscreen = false;
-        return;
-      } catch (e) {
-        debugPrint(e.toString());
-      }
+    // A tablet in landscape is always fullscreen, so there is nothing to leave.
+    if (isFullscreen && !Utils.isTablet()) {
+      _handleFullscreen();
+      return;
     }
-    debugPrint('当前播放器非全屏');
     if (!isPopping) {
       isPopping = true;
+      _restoreSystemUi();
       Navigator.of(context).pop();
     }
   }
@@ -480,72 +529,44 @@ class _VideoPageState extends State<VideoPage>
   @override
   Widget build(BuildContext context) {
     i18n = Translations.of(context);
-    return OrientationBuilder(builder: (context, orientation) {
-      return Observer(builder: (context) {
-        if (!Utils.isDesktop()) {
-          if (orientation == Orientation.landscape &&
-              !videoController.androidFullscreen) {
-            _handleFullscreen();
-          } else if (orientation == Orientation.portrait &&
-              videoController.androidFullscreen) {
-            _handleFullscreen();
-          }
-        }
-        return PopScope(
-          canPop: false,
-          onPopInvoked: (bool didPop) async {
-            onBackPressed();
-          },
-          child: Scaffold(
-            body: SafeArea(
-                top: !videoController.androidFullscreen,
-                bottom: !videoController.androidFullscreen,
-                left: !videoController.androidFullscreen,
-                right: !videoController.androidFullscreen,
-                child: (Utils.isTablet() &&
-                        MediaQuery.of(context).size.height <
-                            MediaQuery.of(context).size.width)
-                    ? Row(
-                        children: [
-                          SizedBox(
-                              height: MediaQuery.of(context).size.height,
-                              width: (!videoController.androidFullscreen)
-                                  ? MediaQuery.of(context).size.height
-                                  : MediaQuery.of(context).size.width,
-                              child: playerBody),
-                          videoController.androidFullscreen
-                              ? Container()
-                              : BangumiPanel(
-                                  title: videoController.title,
-                                  episodeLength: videoController.token.length,
-                                  currentEpisode: videoController.episode,
-                                  onChangeEpisode:
-                                      videoController.changeEpisode,
-                                ),
-                        ],
-                      )
-                    : Column(
-                        children: [
-                          SizedBox(
-                              height: videoController.androidFullscreen
-                                  ? MediaQuery.of(context).size.height
-                                  : MediaQuery.of(context).size.width * 9 / 16,
-                              width: MediaQuery.of(context).size.width,
-                              child: playerBody),
-                          videoController.androidFullscreen
-                              ? Container()
-                              : BangumiPanel(
-                                  title: videoController.title,
-                                  episodeLength: videoController.token.length,
-                                  currentEpisode: videoController.episode,
-                                  onChangeEpisode:
-                                      videoController.changeEpisode,
-                                ),
-                        ],
-                      )),
+    return Observer(builder: (context) {
+      final bool fullscreen = isFullscreen;
+      final Widget player = playerBody;
+      return PopScope(
+        canPop: false,
+        onPopInvoked: (bool didPop) async {
+          onBackPressed();
+        },
+        child: Scaffold(
+          body: SafeArea(
+            top: !fullscreen,
+            bottom: !fullscreen,
+            left: !fullscreen,
+            right: !fullscreen,
+            child: fullscreen
+                ? SizedBox.expand(child: player)
+                : LayoutBuilder(builder: (context, constraints) {
+                    return Column(
+                      children: [
+                        SizedBox(
+                            height: math.min(
+                                constraints.maxWidth * 9 / 16,
+                                math.max(0.0,
+                                    constraints.maxHeight - _minPanelExtent)),
+                            width: constraints.maxWidth,
+                            child: player),
+                        BangumiPanel(
+                          title: videoController.title,
+                          episodeLength: videoController.token.length,
+                          currentEpisode: videoController.episode,
+                          onChangeEpisode: videoController.changeEpisode,
+                        ),
+                      ],
+                    );
+                  }),
           ),
-        );
-      });
+        ),
+      );
     });
   }
 
@@ -553,7 +574,7 @@ class _VideoPageState extends State<VideoPage>
     return Container(
       color: Colors.black,
       child: MouseRegion(
-        cursor: (videoController.androidFullscreen && !showPositioned)
+        cursor: (isFullscreen && !showPositioned)
             ? SystemMouseCursors.none
             : SystemMouseCursors.basic,
         onHover: (_) {
@@ -618,13 +639,8 @@ class _VideoPageState extends State<VideoPage>
                     }
                     // Esc键被按下
                     if (event.logicalKey == LogicalKeyboardKey.escape) {
-                      if (videoController.androidFullscreen) {
-                        try {
-                          danmakuController.clear();
-                        } catch (_) {}
-                        Utils.exitFullScreen();
-                        videoController.androidFullscreen =
-                            !videoController.androidFullscreen;
+                      if (isFullscreen) {
+                        _handleFullscreen();
                       }
                     }
                     // F键被按下
@@ -637,11 +653,7 @@ class _VideoPageState extends State<VideoPage>
                     }
                   }
                 },
-                child: SizedBox(
-                  height: videoController.androidFullscreen
-                      ? (MediaQuery.of(context).size.height)
-                      : (MediaQuery.of(context).size.width * 9.0 / (16.0)),
-                  width: MediaQuery.of(context).size.width,
+                child: SizedBox.expand(
                   child: Stack(alignment: Alignment.center, children: [
                     const Center(child: PlayerItem()),
                     videoController.isBuffering
@@ -722,7 +734,7 @@ class _VideoPageState extends State<VideoPage>
                               final double delta = details.delta.dy;
 
                               /// 非全屏时禁用
-                              if (!videoController.androidFullscreen) {
+                              if (!isFullscreen) {
                                 return;
                               }
                               if (tapPosition < sectionWidth) {
@@ -882,7 +894,7 @@ class _VideoPageState extends State<VideoPage>
                       top: 0,
                       left: 0,
                       right: 0,
-                      height: videoController.androidFullscreen
+                      height: isFullscreen
                           ? MediaQuery.sizeOf(context).height * danmakuArea
                           : (MediaQuery.sizeOf(context).width *
                               9 /
@@ -990,7 +1002,7 @@ class _VideoPageState extends State<VideoPage>
                                 }
                               },
                             ),
-                            (videoController.androidFullscreen == true)
+                            isFullscreen
                                 ? IconButton(
                                     color: Colors.white,
                                     icon: const Icon(Icons.skip_next),
@@ -1026,7 +1038,7 @@ class _VideoPageState extends State<VideoPage>
                               ),
                             ),
                             ((Platform.isAndroid || Platform.isIOS) &&
-                                    !videoController.androidFullscreen)
+                                    !isFullscreen)
                                 ? Container()
                                 : Container(
                                     padding: const EdgeInsets.only(left: 10.0),
@@ -1042,31 +1054,7 @@ class _VideoPageState extends State<VideoPage>
                                       ),
                                     ),
                                   ),
-                            // (videoController.androidFullscreen ==
-                            //             true &&
-                            //         videoController.danmakuOn ==
-                            //             true)
-                            //     ? IconButton(
-                            //         color: Colors.white,
-                            //         icon:
-                            //             const Icon(Icons.notes),
-                            //         onPressed: () {
-                            //           if (videoController
-                            //                   .danDanmakus
-                            //                   .length ==
-                            //               0) {
-                            //             SmartDialog.showToast(
-                            //                 '当前剧集不支持弹幕发送的说',
-                            //                 displayType:
-                            //                     SmartToastType
-                            //                         .last);
-                            //             return;
-                            //           }
-                            //           showShootDanmakuSheet();
-                            //         },
-                            //       )
-                            //     : Container(),
-                            (videoController.androidFullscreen == true)
+                            isFullscreen
                                 ? IconButton(
                                     color: Colors.white,
                                     icon: const Icon(Icons.filter_none),
@@ -1086,7 +1074,7 @@ class _VideoPageState extends State<VideoPage>
                             ),
                             IconButton(
                               color: Colors.white,
-                              icon: Icon(videoController.androidFullscreen
+                              icon: Icon(isFullscreen
                                   ? Icons.fullscreen_exit
                                   : Icons.fullscreen),
                               onPressed: () {

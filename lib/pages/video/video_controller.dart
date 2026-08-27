@@ -59,10 +59,6 @@ abstract class _VideoController with Store {
   @observable
   double playerSpeed = 1.0;
 
-  // 安卓全屏状态
-  @observable
-  bool androidFullscreen = false;
-
   String videoUrl = '';
   String videoCookie = '';
   String title = '';

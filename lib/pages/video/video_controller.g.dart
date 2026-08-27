@@ -201,22 +201,6 @@ mixin _$VideoController on _VideoController, Store {
     });
   }
 
-  late final _$androidFullscreenAtom =
-      Atom(name: '_VideoController.androidFullscreen', context: context);
-
-  @override
-  bool get androidFullscreen {
-    _$androidFullscreenAtom.reportRead();
-    return super.androidFullscreen;
-  }
-
-  @override
-  set androidFullscreen(bool value) {
-    _$androidFullscreenAtom.reportWrite(value, super.androidFullscreen, () {
-      super.androidFullscreen = value;
-    });
-  }
-
   late final _$followAtom =
       Atom(name: '_VideoController.follow', context: context);
 
@@ -248,7 +232,6 @@ danmakuOn: ${danmakuOn},
 volume: ${volume},
 brightness: ${brightness},
 playerSpeed: ${playerSpeed},
-androidFullscreen: ${androidFullscreen},
 follow: ${follow}
     ''';
   }

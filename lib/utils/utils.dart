@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oneanime/request/api.dart';
-import 'package:flutter/foundation.dart';
 import 'package:oneanime/utils/constans.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:window_manager/window_manager.dart';
@@ -126,73 +125,48 @@ class Utils {
     return !isDesktop() && !isWideScreen();
   }
 
-  // 进入全屏显示
-  static Future<void> enterFullScreen() async {
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      await windowManager.setFullScreen(true);
+  /// Window fullscreen on desktop, system bars on mobile.
+  /// Screen orientation is the caller's business.
+  static Future<void> setFullScreen(bool fullscreen) async {
+    if (isDesktop()) {
+      await windowManager.setFullScreen(fullscreen);
       return;
     }
-    await landScape();
-    await SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.immersiveSticky,
-    );
-  }
-
-  //退出全屏显示
-  static Future<void> exitFullScreen() async {
-    debugPrint('退出全屏模式');
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      await windowManager.setFullScreen(false);
-    }
-    dynamic document;
-    late SystemUiMode mode = SystemUiMode.edgeToEdge;
     try {
-      if (kIsWeb) {
-        document.exitFullscreen();
-      } else if (Platform.isAndroid || Platform.isIOS) {
-        if (Platform.isAndroid &&
-            (await DeviceInfoPlugin().androidInfo).version.sdkInt < 29) {
-          mode = SystemUiMode.manual;
-        }
-        await SystemChrome.setEnabledSystemUIMode(
-          mode,
-          overlays: SystemUiOverlay.values,
-        );
-        if (isCompact()) {
-          verticalScreen();
-        }
+      if (fullscreen) {
+        await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+        return;
       }
+      SystemUiMode mode = SystemUiMode.edgeToEdge;
+      if (Platform.isAndroid &&
+          (await DeviceInfoPlugin().androidInfo).version.sdkInt < 29) {
+        mode = SystemUiMode.manual;
+      }
+      await SystemChrome.setEnabledSystemUIMode(
+        mode,
+        overlays: SystemUiOverlay.values,
+      );
     } catch (exception, stacktrace) {
       debugPrint(exception.toString());
       debugPrint(stacktrace.toString());
     }
   }
 
-  //横屏
   static Future<void> landScape() async {
-    dynamic document;
-    try {
-      if (kIsWeb) {
-        await document.documentElement?.requestFullscreen();
-      } else if (Platform.isAndroid || Platform.isIOS) {
-        await SystemChrome.setPreferredOrientations(
-          [
-            DeviceOrientation.landscapeLeft,
-            DeviceOrientation.landscapeRight,
-          ],
-        );
-      }
-    } catch (exception, stacktrace) {
-      debugPrint(exception.toString());
-      debugPrint(stacktrace.toString());
-    }
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
   }
 
-  //竖屏
   static Future<void> verticalScreen() async {
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+  }
+
+  static Future<void> unlockOrientation() async {
+    await SystemChrome.setPreferredOrientations([]);
   }
 
   static String generateDandanSignature(String path, int timestamp) {
